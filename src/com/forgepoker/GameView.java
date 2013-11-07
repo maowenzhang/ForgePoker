@@ -9,7 +9,11 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-
+/**
+ * Represents view for game table
+ * @author zhanglo
+ *
+ */
 public class GameView extends SurfaceView implements SurfaceHolder.Callback,
 		OnTouchListener {
 	

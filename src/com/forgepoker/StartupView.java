@@ -12,7 +12,11 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import com.forgepoker.R;
 
-
+/**
+ * Represents startup view (several menu items: start game, exit game, etc.)
+ * @author zhanglo
+ *
+ */
 public class StartupView extends SurfaceView implements SurfaceHolder.Callback, 
 	OnTouchListener
 {

@@ -9,6 +9,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import com.forgepoker.R;
 
+/**
+ * Main activity for poker game, includes elements like game table, startup menu, etc.
+ * @author zhanglo
+ *
+ */
 public class MainActivity extends Activity {
 
 	public final static int MENU=0;
