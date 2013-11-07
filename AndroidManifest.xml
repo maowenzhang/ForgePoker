@@ -15,7 +15,9 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.forgepoker.StartActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,7 +26,9 @@
         </activity>
         <activity
             android:name="com.forgepoker.GameActivity"
-            android:label="@string/title_activity_game" >
+            android:label="@string/title_activity_game"
+            android:screenOrientation="landscape" 
+            android:configChanges="keyboardHidden|orientation">
         </activity>
         
     </application>
