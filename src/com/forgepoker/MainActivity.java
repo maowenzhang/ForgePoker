@@ -20,9 +20,8 @@ public class MainActivity extends Activity {
 	public final static int GAME=1;
 	public final static int RESULT=2;
 	
-	private GameView mGameView;
-	private StartupView mStartView;
-	private MainActivity mMain;
+	private GameView gameView;
+	private StartupView startupView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +31,10 @@ public class MainActivity extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
-		mMain = this;
-		mGameView = new GameView(this, this);
-		mStartView = new StartupView(this, this);
+		//gameView = new GameView(this, this);
+		startupView = new StartupView(this);
 		
-		setContentView(mStartView);		
+		setContentView(startupView);		
 //		setContentView(R.layout.activity_main);		
 	}
 
@@ -46,25 +44,4 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
-	Handler handler = new Handler() {
-
-		@Override
-		public void handleMessage(Message msg) {
-			super.handleMessage(msg);
-
-			switch (msg.what) {
-				case 0:
-					setContentView(mStartView);
-					break;
-				case 1:
-					setContentView(mGameView);
-					break;
-				case 2:
-					break;
-			}
-		}
-
-	};
-
 }
