@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -16,47 +17,45 @@ import android.view.View.OnTouchListener;
  * @author zhanglo
  *
  */
-public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnTouchListener, Runnable {
+public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnTouchListener {
+
+	/** SurfaceView implementation */
+	private GameViewThread viewThread;
+	private boolean hasSurface = false;	
+	private SurfaceHolder holder;
+		
+	/** Draw graphics */
+	private Context context;
+	private Canvas canvas;
+	private Bitmap gameBackground;
+	private Paint paint = null;
+	
+	private int screenWidth = 0;
+	private int screenHeight = 0;
+	private int touchPosX = 0;
+	private int touchPosY = 0;
 	
 	/** Game states */
-	static final int STATE_GAME = 0;
-	int mGameState = STATE_GAME;	
-
-	int mScreenWidth = 0;
-	int mScreenHeight = 0;
-	int mTouchPosX = 0;
-	int mTouchPosY = 0;
-	
-	/** View render thread */
-	Thread mThread;
-	boolean mIsThreadRunning = false;
-	
-	SurfaceHolder mSurfHolder;
-	Canvas mCanvas;
-	Context mContext;
-	Bitmap mGameBackground;
-	Paint mPaint = null;
+	private static final int STATE_GAME = 0;
+	private int gameState = STATE_GAME;	
 	
 	
-	public GameView(Context context) {
+	public GameView(Context context, int screenWidth, int screenHeight) {
 		super(context);
 		
-		mContext = context;
+		holder = getHolder();
+		holder.addCallback(this);
+		hasSurface = false;
 		
-		mSurfHolder = getHolder();
-		mSurfHolder.addCallback(this);
+		this.context = context;
+		this.screenWidth = screenWidth;
+		this.screenHeight = screenHeight;
 		
-		mGameState = STATE_GAME;
-		mPaint = new Paint();
-		mGameBackground = BitmapFactory.decodeResource(getResources(), R.drawable.game_background);
-		this.getHolder().addCallback(this);
+		gameState = STATE_GAME;
+		paint = new Paint();
+		gameBackground = BitmapFactory.decodeResource(getResources(), R.drawable.game_background);
+		
 		this.setOnTouchListener(this);
-	}
-
-	@Override
-	protected void onDraw(Canvas canvas) {
-//		canvas.drawBitmap(mGameBackground, 0, 0, mPaint);
-//		desk.paint(canvas);
 	}
 
 	/**
@@ -64,19 +63,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 	*/
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
+		if (viewThread != null) {
+			viewThread.onWindowResize(width, height);
+		}
 	}
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		mIsThreadRunning = true;
-		mThread = new Thread(this);
-		mThread.start();
+		hasSurface = true;
+		resume();
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		mIsThreadRunning = false;
+		hasSurface = false;
+		pause();
 	}
 
 	@Override
@@ -90,8 +91,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 			break;
 		// touch and move
 		case MotionEvent.ACTION_MOVE:
-			mTouchPosX = x;
-			mTouchPosY = y;
+			touchPosX = x;
+			touchPosY = y;
 			break;
 			
 		// end touch
@@ -102,39 +103,84 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 		return true;
 	}
 	
-	/** Implement Runnable */
-	@Override
-	public void run() {
-		while (mIsThreadRunning) {
-			synchronized (mSurfHolder) {
-				
-				// Lock before drawing, and then unlock to show
-				mCanvas = mSurfHolder.lockCanvas();
-				Draw();
-				mSurfHolder.unlockCanvasAndPost(mCanvas);
-			}
-			
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+	private void resume() {
+		if (viewThread == null) {
+			viewThread = new GameViewThread(this);
+			if (hasSurface == true) {
+				viewThread.start();
 			}
 		}
 	}
 	
-	protected void Draw() {
+	private void pause() {
 		
+		if (viewThread != null) {
+			viewThread.requestExitAndWait();
+			viewThread = null;
+		}
+	}
+	
+	public void renderGameView(Canvas canvas) {
+		
+		this.canvas = canvas;
 		renderBackground();
 		
-		switch (mGameState) {
+		switch (gameState) {
 		case STATE_GAME:
 			break;
 		}
 	}
 	
-	public void renderBackground() {
-		mCanvas.drawBitmap(mGameBackground, 0, 0, mPaint);
-//		mCanvas.drawBitmap(mGameBackground, mTouchPosX, mTouchPosY, mPaint);
+	private void renderBackground() {
+		Rect r = new Rect(0, 0, screenWidth, screenHeight);
+		canvas.drawBitmap(gameBackground, null, r, paint);
+//		canvas.drawBitmap(gameBackground, touchPosX, touchPosY, paint);
 	}
 	
+	
+	/** Thread for Game surface view 
+	 * 
+	*/
+	class GameViewThread extends Thread {
+		private boolean done = false;
+		private GameView gameView = null;
+		
+		GameViewThread(GameView gameView) {
+			super();
+			done = false;
+			this.gameView = gameView;
+		}
+		
+		@Override
+		public void run() {
+			System.out.print("run thread");
+			SurfaceHolder surfHolder = holder;
+			while (!done) {
+				System.out.print("run thread - doing ");
+				try {
+					Canvas canvas = surfHolder.lockCanvas();
+					// draw
+					gameView.renderGameView(canvas);
+					surfHolder.unlockCanvasAndPost(canvas);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}			
+		}
+		
+		public void requestExitAndWait() {
+			System.out.print("requestExitAndWait - begin");
+			done = true;
+			try {
+				join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			System.out.print("requestExitAndWait - end");
+		}
+		
+		public void onWindowResize(int w, int h) {
+			
+		}
+	}	
 }

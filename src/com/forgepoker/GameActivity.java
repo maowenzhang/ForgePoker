@@ -2,6 +2,7 @@ package com.forgepoker;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
@@ -23,7 +24,9 @@ public class GameActivity extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
-		gameView = new GameView(this);
+		Display display = getWindowManager().getDefaultDisplay();
+		gameView = new GameView(this, display.getWidth(), display.getHeight());
+		
 		setContentView(gameView);
 //		setContentView(R.layout.activity_game);
 	}
@@ -34,5 +37,29 @@ public class GameActivity extends Activity {
 		getMenuInflater().inflate(R.menu.game, menu);
 		return true;
 	}
-
+	
+	@Override
+	public void onRestart() {
+		super.onRestart();
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+	}	
 }
