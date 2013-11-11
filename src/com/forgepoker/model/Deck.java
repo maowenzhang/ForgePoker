@@ -13,6 +13,10 @@ public class Deck {
 	
 	private List<Card> mCards = new ArrayList<Card>();
 	
+	public List<Card> cards() {
+		return mCards;
+	}
+	
 	public Deck() {
 		initCards();
 	}
