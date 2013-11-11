@@ -1,5 +1,8 @@
 package com.forgepoker.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * One group of cards could produce
  * @author zhanglo
@@ -24,9 +27,9 @@ public class Suit {
 	}
 	
 	private EType mType;
-	private Card[] mCards;
+	private List<Card> mCards;
 	
-	public Suit(Card[] cards) {
+	public Suit(List<Card> cards) {
 		mCards = cards;
 		initType();
 	}
@@ -40,7 +43,7 @@ public class Suit {
 		return mType;
 	}
 	
-	public Card[] cards() {
+	public List<Card> cards() {
 		return mCards;
 	}
 }

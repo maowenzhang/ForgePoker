@@ -9,8 +9,6 @@ public class Card {
 	
 	/** Card type */
 	public enum EType {
-		One,
-		Two,
 		Three,
 		Four,
 		Five,
@@ -23,6 +21,7 @@ public class Card {
 		Queen,
 		King,
 		Ace,
+		Two,
 		BlackJoke,
 		RedJoke
 	}
@@ -32,10 +31,11 @@ public class Card {
 		Clubs, // 梅花
 		Diamonds, // 方块
 		Hearts, // 红桃
-		Spades // 黑桃
+		Spades, // 黑桃
+		Jokers
 	}
 	
-	private EType mType = EType.One;
+	private EType mType = EType.Three;
 	private ESuit mSuit = ESuit.Clubs;
 	private int mRank = 0;
 	
