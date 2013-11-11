@@ -25,20 +25,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 	private SurfaceHolder mHolder;
 		
 	/** Draw graphics */
-	private Context mContext;
-	private Canvas mCanvas;
-	private Bitmap mGameBackground;
-	private Paint mPaint = null;
+	private Context mContext;	
 	
-	private int mScreenWidth = 0;
-	private int mScreenHeight = 0;
-	private int mTouchPosX = 0;
-	private int mTouchPosY = 0;
-	
-	/** Game states */
-	private static final int STATE_GAME = 0;
-	private int mGameState = STATE_GAME;	
-	
+	private GameController mGameController;
 	
 	public GameView(Context context, int screenWidth, int screenHeight) {
 		super(context);
@@ -48,12 +37,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 		mHasSurface = false;
 		
 		this.mContext = context;
-		this.mScreenWidth = screenWidth;
-		this.mScreenHeight = screenHeight;
-		
-		mGameState = STATE_GAME;
-		mPaint = new Paint();
-		mGameBackground = BitmapFactory.decodeResource(getResources(), R.drawable.game_background);
+		mGameController = GameController.get();		
+		mGameController.init(context, screenWidth, screenHeight);
 		
 		this.setOnTouchListener(this);
 	}
@@ -82,30 +67,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-		// get touch position
-		int x = (int) event.getX();
-		int y = (int) event.getY();
-		switch (event.getAction()) {
-		// start touch
-		case MotionEvent.ACTION_DOWN:
-			break;
-		// touch and move
-		case MotionEvent.ACTION_MOVE:
-			mTouchPosX = x;
-			mTouchPosY = y;
-			break;
-			
-		// end touch
-		case MotionEvent.ACTION_UP:
-			break;
-		}		
-		
-		return true;
+		return mGameController.onTouch(v, event);
 	}
 	
 	private void resume() {
 		if (mViewThread == null) {
-			mViewThread = new GameViewThread(this);
+			mViewThread = new GameViewThread();
 			if (mHasSurface == true) {
 				mViewThread.start();
 			}
@@ -120,35 +87,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 		}
 	}
 	
-	public void renderGameView(Canvas canvas) {
-		
-		this.mCanvas = canvas;
-		renderBackground();
-		
-		switch (mGameState) {
-		case STATE_GAME:
-			break;
-		}
-	}
-	
-	private void renderBackground() {
-		Rect r = new Rect(0, 0, mScreenWidth, mScreenHeight);
-		mCanvas.drawBitmap(mGameBackground, null, r, mPaint);
-//		canvas.drawBitmap(gameBackground, touchPosX, touchPosY, paint);
-	}
-	
-	
 	/** Thread for Game surface view 
 	 * 
 	*/
 	class GameViewThread extends Thread {
 		private boolean done = false;
-		private GameView gameView = null;
 		
-		GameViewThread(GameView gameView) {
+		public GameViewThread() {
 			super();
 			done = false;
-			this.gameView = gameView;
 		}
 		
 		@Override
@@ -160,7 +107,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 				try {
 					Canvas canvas = surfHolder.lockCanvas();
 					// draw
-					gameView.renderGameView(canvas);
+					mGameController.render(canvas);
 					surfHolder.unlockCanvasAndPost(canvas);
 				} catch (Exception e) {
 					e.printStackTrace();
