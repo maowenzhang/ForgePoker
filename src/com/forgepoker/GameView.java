@@ -20,40 +20,40 @@ import android.view.View.OnTouchListener;
 public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnTouchListener {
 
 	/** SurfaceView implementation */
-	private GameViewThread viewThread;
-	private boolean hasSurface = false;	
-	private SurfaceHolder holder;
+	private GameViewThread mViewThread;
+	private boolean mHasSurface = false;	
+	private SurfaceHolder mHolder;
 		
 	/** Draw graphics */
-	private Context context;
-	private Canvas canvas;
-	private Bitmap gameBackground;
-	private Paint paint = null;
+	private Context mContext;
+	private Canvas mCanvas;
+	private Bitmap mGameBackground;
+	private Paint mPaint = null;
 	
-	private int screenWidth = 0;
-	private int screenHeight = 0;
-	private int touchPosX = 0;
-	private int touchPosY = 0;
+	private int mScreenWidth = 0;
+	private int mScreenHeight = 0;
+	private int mTouchPosX = 0;
+	private int mTouchPosY = 0;
 	
 	/** Game states */
 	private static final int STATE_GAME = 0;
-	private int gameState = STATE_GAME;	
+	private int mGameState = STATE_GAME;	
 	
 	
 	public GameView(Context context, int screenWidth, int screenHeight) {
 		super(context);
 		
-		holder = getHolder();
-		holder.addCallback(this);
-		hasSurface = false;
+		mHolder = getHolder();
+		mHolder.addCallback(this);
+		mHasSurface = false;
 		
-		this.context = context;
-		this.screenWidth = screenWidth;
-		this.screenHeight = screenHeight;
+		this.mContext = context;
+		this.mScreenWidth = screenWidth;
+		this.mScreenHeight = screenHeight;
 		
-		gameState = STATE_GAME;
-		paint = new Paint();
-		gameBackground = BitmapFactory.decodeResource(getResources(), R.drawable.game_background);
+		mGameState = STATE_GAME;
+		mPaint = new Paint();
+		mGameBackground = BitmapFactory.decodeResource(getResources(), R.drawable.game_background);
 		
 		this.setOnTouchListener(this);
 	}
@@ -63,20 +63,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 	*/
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-		if (viewThread != null) {
-			viewThread.onWindowResize(width, height);
+		if (mViewThread != null) {
+			mViewThread.onWindowResize(width, height);
 		}
 	}
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		hasSurface = true;
+		mHasSurface = true;
 		resume();
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		hasSurface = false;
+		mHasSurface = false;
 		pause();
 	}
 
@@ -91,8 +91,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 			break;
 		// touch and move
 		case MotionEvent.ACTION_MOVE:
-			touchPosX = x;
-			touchPosY = y;
+			mTouchPosX = x;
+			mTouchPosY = y;
 			break;
 			
 		// end touch
@@ -104,36 +104,36 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 	}
 	
 	private void resume() {
-		if (viewThread == null) {
-			viewThread = new GameViewThread(this);
-			if (hasSurface == true) {
-				viewThread.start();
+		if (mViewThread == null) {
+			mViewThread = new GameViewThread(this);
+			if (mHasSurface == true) {
+				mViewThread.start();
 			}
 		}
 	}
 	
 	private void pause() {
 		
-		if (viewThread != null) {
-			viewThread.requestExitAndWait();
-			viewThread = null;
+		if (mViewThread != null) {
+			mViewThread.requestExitAndWait();
+			mViewThread = null;
 		}
 	}
 	
 	public void renderGameView(Canvas canvas) {
 		
-		this.canvas = canvas;
+		this.mCanvas = canvas;
 		renderBackground();
 		
-		switch (gameState) {
+		switch (mGameState) {
 		case STATE_GAME:
 			break;
 		}
 	}
 	
 	private void renderBackground() {
-		Rect r = new Rect(0, 0, screenWidth, screenHeight);
-		canvas.drawBitmap(gameBackground, null, r, paint);
+		Rect r = new Rect(0, 0, mScreenWidth, mScreenHeight);
+		mCanvas.drawBitmap(mGameBackground, null, r, mPaint);
 //		canvas.drawBitmap(gameBackground, touchPosX, touchPosY, paint);
 	}
 	
@@ -154,7 +154,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 		@Override
 		public void run() {
 			System.out.print("run thread");
-			SurfaceHolder surfHolder = holder;
+			SurfaceHolder surfHolder = mHolder;
 			while (!done) {
 				System.out.print("run thread - doing ");
 				try {

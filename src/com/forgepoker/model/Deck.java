@@ -6,5 +6,18 @@ package com.forgepoker.model;
  *
  */
 public class Deck {
-
+	
+	private Card[] mCards;
+	
+	public Deck() {
+		initCards();
+	}
+	
+	private void initCards() {
+		
+	}
+	
+	public void shuffle() {
+		
+	}
 }

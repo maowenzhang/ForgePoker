@@ -14,7 +14,7 @@ import android.view.WindowManager;
  */
 public class GameActivity extends Activity {
 
-	GameView gameView;
+	private GameView mGameView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +25,9 @@ public class GameActivity extends Activity {
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
 		Display display = getWindowManager().getDefaultDisplay();
-		gameView = new GameView(this, display.getWidth(), display.getHeight());
+		mGameView = new GameView(this, display.getWidth(), display.getHeight());
 		
-		setContentView(gameView);
+		setContentView(mGameView);
 //		setContentView(R.layout.activity_game);
 	}
 
