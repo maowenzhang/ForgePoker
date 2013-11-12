@@ -33,7 +33,14 @@ public class GameController {
 	
 	/** Data */
 	private List<Player> mPlayers = new ArrayList<Player>();
+	public List<Player> players() {
+		return mPlayers;
+	}
+	
 	private List<Deck> mDesks = new ArrayList<Deck>();
+	public Deck deck() {
+		return mDesks.get(0);
+	}
 	
 	
 	/** Single instance */
@@ -64,6 +71,10 @@ public class GameController {
 		Player p1 = new Player("张飞", R.drawable.ic_launcher, 0);
 		Player p2 = new Player("关羽", R.drawable.ic_launcher, 100);
 		Player p3 = new Player("刘备", R.drawable.ic_launcher, 10);
+		
+		p3.isCurrentPlayer(true);
+		p3.isLord(true);
+		
 		mPlayers.add(p1);
 		mPlayers.add(p2);
 		mPlayers.add(p3);		

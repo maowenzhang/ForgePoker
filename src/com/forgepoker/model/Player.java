@@ -10,12 +10,17 @@ import java.util.List;
  */
 public class Player {
 	
+	/** basic attributes */
 	private String mName;
 	private int mAvatar;
 	private int mScore;	
-	private boolean mIsLord = false;
+	
+	/** cards */
 	private List<Card> mCards = new ArrayList<Card>();
 	private Suit mCurPlayedSuit;
+	
+	private boolean mIsLord = false;
+	private boolean mIsCurrentPlayer = false;
 	
 	public Player(String name, int avatar, int score) {
 		mName = name;
@@ -61,5 +66,13 @@ public class Player {
 		
 		mCards.remove(playedSuit.cards());
 		return true;
+	}
+
+	public boolean isCurrentPlayer() {
+		return mIsCurrentPlayer;
+	}
+
+	public void isCurrentPlayer(boolean val) {
+		this.mIsCurrentPlayer = val;
 	}
 }

@@ -23,24 +23,26 @@ public class Deck {
 	
 	private void initCards() {
 		
-		// TODO: get rank value from configuration (via Jaon file, RuleManager)
-		for (Card.ESuit s: Card.ESuit.values()) {
-			if (s == Card.ESuit.Jokers) {
+		// TODO: get rank value from configuration (via JSON file, RuleManager)		
+		
+		// Rank from 3 to 15
+		int r = 3;
+		int imageIndex = 0;
+		for (Card.EType t: Card.EType.values()) {
+			if (t == Card.EType.BlackJoke || t == Card.EType.RedJoke) {
 				continue;
 			}
-			// rank from 3 to 15
-			int r = 1;
-			for (Card.EType t: Card.EType.values()) {
-				if (t == Card.EType.BlackJoke || t == Card.EType.RedJoke) {
+			
+			for (Card.ESuit s: Card.ESuit.values()) {
+				if (s == Card.ESuit.Jokers) {
 					continue;
 				}
-				mCards.add(new Card(t, s, r++));
+				mCards.add(new Card(t, s, r++, imageIndex++));
 			}
-		}
+		}					
 		
-		int r = 20;
-		mCards.add(new Card(Card.EType.BlackJoke, Card.ESuit.Jokers, 20));
-		mCards.add(new Card(Card.EType.RedJoke, Card.ESuit.Jokers, 21));
+		mCards.add(new Card(Card.EType.BlackJoke, Card.ESuit.Jokers, r++, imageIndex++));
+		mCards.add(new Card(Card.EType.RedJoke, Card.ESuit.Jokers, r, imageIndex++));
 	}
 	
 	public void shuffle() {

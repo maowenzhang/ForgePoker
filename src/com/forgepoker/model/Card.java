@@ -28,8 +28,8 @@ public class Card {
 	
 	/** Card suit */
 	public enum ESuit {
-		Clubs, // 梅花
 		Diamonds, // 方块
+		Clubs, // 梅花		
 		Hearts, // 红桃
 		Spades, // 黑桃
 		Jokers
@@ -38,11 +38,13 @@ public class Card {
 	private EType mType = EType.Three;
 	private ESuit mSuit = ESuit.Clubs;
 	private int mRank = 0;
+	private int mImageIndex = 0;	// index used to find card's image
 	
-	public Card(EType type, ESuit suit, int rank) {
+	public Card(EType type, ESuit suit, int rank, int imageIndex) {
 		mType = type;
 		mSuit = suit;
 		mRank = rank;
+		mImageIndex = imageIndex;
 	}
 	
 	public EType type() {
@@ -57,7 +59,19 @@ public class Card {
 		return mRank;
 	}
 	
+	public String id() {
+		return toString();
+	}
+	
 	public String toString() {
 		return mType.toString() + "-" + mSuit.toString();
+	}
+
+	public int imageIndex() {
+		return mImageIndex;
+	}
+
+	public void imageIndex(int val) {
+		mImageIndex = val;
 	}
 }
