@@ -79,7 +79,7 @@ public class GameController {
 		int numOfCards = d.cards().size() / size;
 		int i = 0;
 		for (Player p: mPlayers) {
-//			p.cards().addAll(d.cards().subList(i++ * numOfCards, i++ * numOfCards + numOfCards));
+			p.cards().addAll(d.cards().subList(i++ * numOfCards, i * numOfCards));
 		}
 	}
 	
