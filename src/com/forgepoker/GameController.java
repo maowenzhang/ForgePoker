@@ -57,23 +57,31 @@ public class GameController {
 	}
 	
 	public void init(Context context, int screenWidth, int screenHeight) {
-		mRender = new GameViewRender(this, context);
 		mScreenWidth = screenWidth;
 		mScreenHeight = screenHeight;
 		
 		initPlayers();
 		// bid
 		dealCards();
+		
+		mRender = new GameViewRender(this, context);
 	}
 	
 	private void initPlayers() {
 		
+		// TODO: restore status when re-enter game
+		mPlayers.clear();
+		
 		Player p1 = new Player("张飞", R.drawable.ic_launcher, 0);
 		Player p2 = new Player("关羽", R.drawable.ic_launcher, 100);
 		Player p3 = new Player("刘备", R.drawable.ic_launcher, 10);
+
+		p1.seatIndex(1);
+		p2.seatIndex(2);
+		p3.seatIndex(3);
 		
-		p3.isCurrentPlayer(true);
-		p3.isLord(true);
+		p2.isCurrentPlayer(true);
+		p2.isLord(true);
 		
 		mPlayers.add(p1);
 		mPlayers.add(p2);
@@ -81,6 +89,9 @@ public class GameController {
 	}
 	
 	private void dealCards() {
+		// TODO: restore status when re-enter game
+		mDesks.clear();
+		
 		Deck d = new Deck();
 		mDesks.add(d);
 		
@@ -90,7 +101,7 @@ public class GameController {
 		int numOfCards = d.cards().size() / size;
 		int i = 0;
 		for (Player p: mPlayers) {
-			p.cards().addAll(d.cards().subList(i++ * numOfCards, i * numOfCards));
+			p.cards(d.cards().subList(i++ * numOfCards, i * numOfCards));
 		}
 	}
 	

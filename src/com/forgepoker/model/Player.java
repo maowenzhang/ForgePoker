@@ -1,6 +1,7 @@
 package com.forgepoker.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -21,6 +22,7 @@ public class Player {
 	
 	private boolean mIsLord = false;
 	private boolean mIsCurrentPlayer = false;
+	private int mSeatIndex = 1;
 	
 	public Player(String name, int avatar, int score) {
 		mName = name;
@@ -59,6 +61,16 @@ public class Player {
 	public List<Card> cards() {
 		return mCards;
 	}
+	
+	public void cards(List<Card> cards) {
+		mCards.clear();
+		mCards.addAll(cards);
+		sortCards();
+	}
+	
+	public void sortCards() {
+		Collections.sort(mCards);
+	}
 
 	/** Produce/play cards */
 	public boolean playCards(Suit playedSuit) {
@@ -74,5 +86,13 @@ public class Player {
 
 	public void isCurrentPlayer(boolean val) {
 		this.mIsCurrentPlayer = val;
+	}
+	
+	public int seatIndex() {
+		return mSeatIndex;
+	}
+	
+	public void seatIndex(int val) {
+		mSeatIndex = val;
 	}
 }

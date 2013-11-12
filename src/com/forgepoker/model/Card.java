@@ -5,7 +5,7 @@ package com.forgepoker.model;
  * @author zhanglo
  *
  */
-public class Card {
+public class Card implements Comparable<Card> {
 	
 	/** Card type */
 	public enum EType {
@@ -45,6 +45,16 @@ public class Card {
 		mSuit = suit;
 		mRank = rank;
 		mImageIndex = imageIndex;
+	}
+	
+	public int compareTo(Card c) {
+		if (mRank == c.rank()) {
+			return 0;
+		}
+		if (mRank < c.rank()) {
+			return -1;
+		}
+		return 1;
 	}
 	
 	public EType type() {
