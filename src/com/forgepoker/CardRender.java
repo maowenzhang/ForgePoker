@@ -95,6 +95,12 @@ public class CardRender {
 	
 	private void renderCard(Card c, Rect des) {
 		CardSceneNode cnode = mCardNodes.get(c);
+		
+		if (cnode.isSelected()) {
+			des.offset(0, -30);
+		}
+		
+		cnode.desRect(des);		
 		mCanvas.drawBitmap(mCardsImage, cnode.srcRect(), des, null);		
 	}
 	
@@ -155,5 +161,23 @@ public class CardRender {
 		}
 		
 		return new Rect(left, top, left + mCardWidth, top + mCardHeight);
+	}
+	
+	public boolean OnTouch(int x, int y) {
+		for (Player p: mGameController.players()) {
+			if (!p.isCurrentPlayer())
+				continue;
+			
+			for (int i=p.cards().size()-1; i>=0; i--) {
+				CardSceneNode cnode = mCardNodes.get(p.cards().get(i));
+				if (cnode.isHit(x, y))
+					return true;
+			}
+			for (Card c: p.cards()) {
+				
+			}
+		}
+		
+		return false;
 	}
 }

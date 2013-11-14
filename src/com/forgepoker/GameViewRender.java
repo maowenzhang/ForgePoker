@@ -51,4 +51,8 @@ public class GameViewRender {
 	private void renderJiaoFen() {
 		// 
 	}
+	
+	public boolean OnTouch(int x, int y) {
+		return mCardRender.OnTouch(x, y);
+	}
 }

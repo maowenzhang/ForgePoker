@@ -10,7 +10,9 @@ import android.graphics.Rect;
 public class SceneNode {
 	
 	private Rect mSrcRect;	
-	private Rect mDesRect;
+	private Rect mDesRect = null;
+	private boolean mIsHit = false;
+	private boolean mIsSelected = false;
 	
 	
 	public void srcRect(Rect val) {
@@ -27,6 +29,23 @@ public class SceneNode {
 	}
 	
 	public boolean isHit(int x, int y) {
-		return mDesRect.contains(x, y);
+		mIsHit = false;
+		
+		if (mDesRect == null)
+			return false;
+		
+		if (mDesRect.contains(x, y)) {
+			mIsHit = true;
+			mIsSelected = !mIsSelected;
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isHit() {
+		return mIsHit;
+	}
+	public boolean isSelected() {
+		return mIsSelected;
 	}
 }

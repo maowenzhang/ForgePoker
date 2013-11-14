@@ -116,6 +116,8 @@ public class GameController {
 		switch (event.getAction()) {
 		// start touch
 		case MotionEvent.ACTION_DOWN:
+			mRender.OnTouch(x, y);
+			
 			break;
 		// touch and move
 		case MotionEvent.ACTION_MOVE:
