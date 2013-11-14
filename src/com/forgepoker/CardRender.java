@@ -1,7 +1,7 @@
 package com.forgepoker;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,6 +11,7 @@ import android.graphics.Rect;
 
 import com.forgepoker.model.Card;
 import com.forgepoker.model.Deck;
+import com.forgepoker.model.Player;
 
 /** Render poker card
  * 
@@ -20,18 +21,20 @@ import com.forgepoker.model.Deck;
 public class CardRender {
 	/** Card attributes */
 	
-	private int leftRightDelta = 20;
-	private int bottomDelta = 30;
-	private int cardHeight = 94;
-	private int cardWidth = 70;
-	private int cardHeightImage = 52;
-	private int cardWidthImage = 35;
+	static int mCardHeight = 94;
+	static int mCardWidth = 70;
+	private int mCardHeightImage = 52;
+	private int mCardWidthImage = 35;
 	private Bitmap mCardsImage;
 	
 	private GameController mGameController;
 	private GameViewRender mViewRender;
 	private Canvas mCanvas;
 	private Context mContext;	
+	
+	public int cardHeight() {
+		return mCardHeight;
+	}
 	
 	public CardRender(GameViewRender viewRender, Context context) {
 		mViewRender = viewRender;
@@ -46,6 +49,40 @@ public class CardRender {
 	
 	public void render(Canvas canvas) {
 		mCanvas = canvas;
+		
+		for (Player p: mGameController.players()) {
+			if (p.isCurrentPlayer())
+				renderCurrentPlayer(p);
+			else
+				renderOtherPlayer(p);
+		}
+	}
+	
+	public void renderCurrentPlayer(Player p) {
+		int totalCardWidth = (mGameController.mScreenWidth * 2) / 3;
+		int indexOfCard = 0;
+		int top = mGameController.mScreenHeight - mCardHeight - GameViewRender.mBottomSideMargin;
+		for (Card c: p.cards()) {
+			indexOfCard++;
+			Rect des = getCardPosition(indexOfCard, p.cards().size(), totalCardWidth, top);
+			renderCard(c, des);
+		}
+	}
+	
+	public void renderOtherPlayer(Player p) {
+		
+		int totalCardHeight = (mGameController.mScreenHeight * 1) / 6;
+	
+		boolean isLeftOrRight = true;
+		if (p.seatIndex() != 1) {
+			isLeftOrRight = false;
+		}
+		int indexOfCard = 0;
+		for (Card c: p.cards()) {
+			indexOfCard++;
+			Rect des = getCardPositionLeftOrRight(indexOfCard, p.cards().size(), isLeftOrRight, totalCardHeight);
+			renderCardBack(des);
+		}
 	}
 	
 	private Rect getCardPosition(int indexOfCard, int numOfCards, int totalWidth, int top) {
@@ -53,13 +90,23 @@ public class CardRender {
 		int eachCardWidthOverlap = totalWidth / numOfCards;		
 		int start = (mGameController.mScreenWidth - totalWidth) / 2;
 		int left = start + eachCardWidthOverlap * indexOfCard;
-		return new Rect(left, top, left + cardWidth, top + cardHeight);
-	}	
+		return new Rect(left, top, left + mCardWidth, top + mCardHeight);
+	}
+	
+	private void renderCard(Card c, Rect des) {
+		CardSceneNode cnode = mCardNodes.get(c);
+		mCanvas.drawBitmap(mCardsImage, cnode.srcRect(), des, null);		
+	}
+	
+	private void renderCardBack(Rect des) {
+		mCanvas.drawBitmap(mCardsImage, mCardBackPos, des, null);		
+	}
 	
 	/** Draw poker cards
 	 * 
 	 */
-	private List<CardSceneNode> mCardNodes = new ArrayList<CardSceneNode>();
+	private Map<Card, CardSceneNode> mCardNodes = new HashMap<Card, CardSceneNode>();
+//	private List<CardSceneNode> mCardNodes = new ArrayList<CardSceneNode>();
 	private Rect mCardBackPos;
 	private void initCardNodes() {
 		if (mCardNodes.size() > 0) {
@@ -74,42 +121,39 @@ public class CardRender {
 			
 			int col = c.imageIndex() % numOfCol;
 			int row = c.imageIndex() / numOfCol;
-			int left = cardWidthImage * col;
-			int top = cardHeightImage * row;
-			int right = left + cardWidthImage;
-			int bottom = top + cardHeightImage;			
+			int left = mCardWidthImage * col;
+			int top = mCardHeightImage * row;
+			int right = left + mCardWidthImage;
+			int bottom = top + mCardHeightImage;			
 			Rect r = new Rect(left, top, right, bottom);
 			
 			CardSceneNode cnode = new CardSceneNode(c);
 			cnode.srcRect(r);
-			mCardNodes.add(cnode);
+			mCardNodes.put(c,  cnode);
 		}
 		
 		// Card back is at 55th
 		int col = 55 % numOfCol;
 		int row = 55 / numOfCol;
-		int left = cardWidthImage * col;
-		int top = cardHeightImage * row;
-		int right = left + cardWidthImage;
-		int bottom = top + cardHeightImage;			
+		int left = mCardWidthImage * col;
+		int top = mCardHeightImage * row;
+		int right = left + mCardWidthImage;
+		int bottom = top + mCardHeightImage;			
 		mCardBackPos = new Rect(left, top, right, bottom);
 	}
 	
-	private void renderCardBack(Rect des) {
-		mCanvas.drawBitmap(mCardsImage, mCardBackPos, des, null);		
-	}
 	
 	private Rect getCardPositionLeftOrRight(int indexOfCard, int numOfCards, boolean isLeftOrRight, int totalHeight) {
 		
 		int eachCardOverlap = totalHeight / numOfCards;		
 		int start = (mGameController.mScreenHeight - totalHeight) / 2;
-		int left = leftRightDelta;
+		int left = GameViewRender.mLeftOrRightSideMargin;
 		int top = start + eachCardOverlap * indexOfCard;
 		
 		if (!isLeftOrRight) {
-			left = mGameController.mScreenWidth - left - cardWidth;
+			left = mGameController.mScreenWidth - left - mCardWidth;
 		}
 		
-		return new Rect(left, top, left + cardWidth, top + cardHeight);
+		return new Rect(left, top, left + mCardWidth, top + mCardHeight);
 	}
 }

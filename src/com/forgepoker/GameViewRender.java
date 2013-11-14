@@ -10,13 +10,17 @@ import android.graphics.Rect;
 public class GameViewRender {
 	
 	GameController mGameController;
-	private Paint mPaint;
+	static Paint mPaint = new Paint();
 	private Bitmap mGameBackground;
 	
 	private Canvas mCanvas;
 	private Context mContext;
 	private CardRender mCardRender;
 	private PlayerRender mPlayerRender;
+	
+	/** margins */
+	static int mLeftOrRightSideMargin = 20;
+	static int mBottomSideMargin = 30;
 	
 	public GameViewRender(GameController gameController, Context context) {
 		mGameController = gameController;
