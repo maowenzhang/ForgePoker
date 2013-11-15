@@ -32,10 +32,12 @@ public class PlayerRender {
 	}
 	
 	public void init() {
+		int top = mGameController.get().mScreenHeight - mCurPlayerTop;
+		
 		mCurPlayerDesRect = new Rect(mCurPlayerLeft, 
-				mCurPlayerTop, 
+				top, 
 				mCurPlayerLeft+mAvatarWidthHeight, 
-				mCurPlayerTop+mAvatarWidthHeight);		
+				top+mAvatarWidthHeight);		
 		
 		initPlayerImages();
 	}
