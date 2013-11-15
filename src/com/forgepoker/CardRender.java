@@ -19,22 +19,22 @@ import com.forgepoker.model.Player;
  *
  */
 public class CardRender {
-	/** Card attributes */
-	
-	static int mCardHeight = 94;
-	static int mCardWidth = 70;
-	private int mCardHeightImage = 52;
-	private int mCardWidthImage = 35;
-	private Bitmap mCardsImage;
 	
 	private GameController mGameController;
 	private GameViewRender mViewRender;
 	private Canvas mCanvas;
 	private Context mContext;	
+	private Bitmap mCardsImage;						// Image sprite contains all cards
 	
-	public int cardHeight() {
-		return mCardHeight;
-	}
+	/** Card layout attributes 
+	 */
+	static double mCardTotalWidthRate =  2 / 3.0; 	// (Width of all current player's cards) / screenWidth
+	static double mCardTotalHeightRate = 1 / 6.0;	// (Height of left/right player's cards) / screenHeight
+	static int mCardHeight = 94;					// Single card height render in canvas
+	static int mCardWidth = 70;						// Single card width render in canvas
+	private int mCardHeightImage = 52;				// Single card height in image
+	private int mCardWidthImage = 35;				// Single card width in image
+	private int mCardSelectedPopupHeight = 30; 		// Height of selected card jumps
 	
 	public CardRender(GameViewRender viewRender, Context context) {
 		mViewRender = viewRender;
@@ -58,8 +58,8 @@ public class CardRender {
 		}
 	}
 	
-	public void renderCurrentPlayer(Player p) {
-		int totalCardWidth = (mGameController.mScreenWidth * 2) / 3;
+	private void renderCurrentPlayer(Player p) {
+		int totalCardWidth = (int)(mGameController.mScreenWidth * mCardTotalWidthRate);
 		int indexOfCard = 0;
 		int top = mGameController.mScreenHeight - mCardHeight - GameViewRender.mBottomSideMargin;
 		for (Card c: p.cards()) {
@@ -69,9 +69,9 @@ public class CardRender {
 		}
 	}
 	
-	public void renderOtherPlayer(Player p) {
+	private void renderOtherPlayer(Player p) {
 		
-		int totalCardHeight = (mGameController.mScreenHeight * 1) / 6;
+		int totalCardHeight = (int)(mGameController.mScreenHeight * mCardTotalHeightRate);
 	
 		boolean isLeftOrRight = true;
 		if (p.seatIndex() != 1) {
@@ -97,7 +97,7 @@ public class CardRender {
 		CardSceneNode cnode = mCardNodes.get(c);
 		
 		if (cnode.isSelected()) {
-			des.offset(0, -30);
+			des.offset(0, -mCardSelectedPopupHeight);
 		}
 		
 		cnode.desRect(des);		
@@ -148,7 +148,6 @@ public class CardRender {
 		mCardBackPos = new Rect(left, top, right, bottom);
 	}
 	
-	
 	private Rect getCardPositionLeftOrRight(int indexOfCard, int numOfCards, boolean isLeftOrRight, int totalHeight) {
 		
 		int eachCardOverlap = totalHeight / numOfCards;		
@@ -172,9 +171,6 @@ public class CardRender {
 				CardSceneNode cnode = mCardNodes.get(p.cards().get(i));
 				if (cnode.isHit(x, y))
 					return true;
-			}
-			for (Card c: p.cards()) {
-				
 			}
 		}
 		

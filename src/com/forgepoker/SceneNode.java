@@ -14,7 +14,12 @@ public class SceneNode {
 	private boolean mIsHit = false;
 	private boolean mIsSelected = false;
 	
-	
+//	public SceneNode() {
+//		
+//	}
+	public SceneNode(Rect srcRect) {
+		mSrcRect = srcRect;
+	}
 	public void srcRect(Rect val) {
 		mSrcRect = val;
 	}

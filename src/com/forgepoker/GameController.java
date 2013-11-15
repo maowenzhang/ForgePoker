@@ -31,17 +31,40 @@ public class GameController {
 	private static final int STATE_GAME = 0;
 	private int mGameState = STATE_GAME;	
 	
+	public enum EPlayAction {
+		eBid1,
+		eBid2,
+		eBid3,
+		eBidNo,
+		eBid1Disalbe,
+		eBid2Disalbe,
+		
+		ePlayCard,
+		ePassCard,
+		ePromptCard,
+		eReselectCard
+	}
+	private List<EPlayAction> mCurActions = new ArrayList<EPlayAction>();
+	public List<EPlayAction> curActions() {
+		return mCurActions;
+	}
+	public void onAction(EPlayAction a) {
+		int bidScore = 1;
+		mCurActions.clear();
+//		mCurPlayer.bidScore()
+	}
+	
 	/** Data */
 	private List<Player> mPlayers = new ArrayList<Player>();
 	public List<Player> players() {
 		return mPlayers;
 	}
+	private Player mCurPlayer;
 	
 	private List<Deck> mDesks = new ArrayList<Deck>();
 	public Deck deck() {
 		return mDesks.get(0);
 	}
-	
 	
 	/** Single instance */
 	private static GameController sGameController;
@@ -63,6 +86,11 @@ public class GameController {
 		initPlayers();
 		// bid
 		dealCards();
+		// play action
+		mCurActions.add(EPlayAction.eBid1);
+		mCurActions.add(EPlayAction.eBid2);
+		mCurActions.add(EPlayAction.eBid3);
+		mCurActions.add(EPlayAction.eBidNo);
 		
 		mRender = new GameViewRender(this, context);
 	}
@@ -81,6 +109,7 @@ public class GameController {
 		p3.seatIndex(3);
 		
 		p2.isCurrentPlayer(true);
+		mCurPlayer = p2;
 		p2.isLord(true);
 		
 		mPlayers.add(p1);

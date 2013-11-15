@@ -17,6 +17,7 @@ public class GameViewRender {
 	private Context mContext;
 	private CardRender mCardRender;
 	private PlayerRender mPlayerRender;
+	private PlayActionRender mPlayActionRender;
 	
 	/** margins */
 	static int mLeftOrRightSideMargin = 20;
@@ -32,7 +33,9 @@ public class GameViewRender {
 		mCardRender = new CardRender(this, context);
 		mPlayerRender = new PlayerRender(this, context);
 		mCardRender.init();
-		mPlayerRender.init();		
+		mPlayerRender.init();
+		mPlayActionRender = new PlayActionRender(context);
+		mPlayActionRender.init();
 	}
 	
 	public void render(Canvas canvas) {
@@ -41,6 +44,7 @@ public class GameViewRender {
 		
 		mCardRender.render(canvas);
 		mPlayerRender.render(canvas);
+		mPlayActionRender.render(canvas);
 	}
 	
 	private void renderBackground() {
@@ -53,6 +57,11 @@ public class GameViewRender {
 	}
 	
 	public boolean OnTouch(int x, int y) {
-		return mCardRender.OnTouch(x, y);
+		if (mPlayActionRender.OnTouch(x, y))
+			return true;
+		if (mCardRender.OnTouch(x, y))
+			return true;
+		
+		return false;
 	}
 }

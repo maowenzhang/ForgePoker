@@ -18,10 +18,12 @@ public class PlayerRender {
 	private Canvas mCanvas;
 	private Context mContext;
 	
-	private int mBottomDelta = 100;
-	private Rect mDesRect;	
-	private int mAvatarWidthHeight = 50;
-	
+	/** Layout attributes
+	 */
+	private int mCurPlayerLeft = 100;
+	private int mCurPlayerTop = 160;
+	private Rect mCurPlayerDesRect;
+	private int mAvatarWidthHeight = 50;	
 	
 	public PlayerRender(GameViewRender viewRender, Context context) {
 		mViewRender = viewRender;
@@ -30,12 +32,10 @@ public class PlayerRender {
 	}
 	
 	public void init() {
-		// general
-		int totalCardWidth = (mGameController.mScreenWidth * 2) / 3;		
-		int top = mGameController.mScreenHeight - mBottomDelta;		
-		// render player basic attributes		
-		int left = (mGameController.mScreenWidth - totalCardWidth) / 2 - mAvatarWidthHeight;
-		mDesRect = new Rect(left, top, left+60, top+60);		
+		mCurPlayerDesRect = new Rect(mCurPlayerLeft, 
+				mCurPlayerTop, 
+				mCurPlayerLeft+mAvatarWidthHeight, 
+				mCurPlayerTop+mAvatarWidthHeight);		
 		
 		initPlayerImages();
 	}
@@ -56,15 +56,10 @@ public class PlayerRender {
 	}
 	
 	private void renderCurrentPlayer(Player p) {
-		renderPlayerBasic(p, mDesRect);
+		renderPlayerBasic(p, mCurPlayerDesRect);
 	}
 	
 	private void renderOtherPlayer(Player p) {
-		// general
-		int totalCardHeight = (mGameController.mScreenHeight * 1) / 6;
-	
-		// render cards
-		//
 		boolean isLeftOrRight = true;
 		if (p.seatIndex() != 1) {
 			isLeftOrRight = false;
@@ -75,6 +70,7 @@ public class PlayerRender {
 		if (!isLeftOrRight) {
 			left = mGameController.mScreenWidth - left - CardRender.mCardWidth;
 		}
+		int totalCardHeight = (int)(mGameController.mScreenHeight * CardRender.mCardTotalHeightRate);
 		int top = (mGameController.mScreenHeight - totalCardHeight) / 2 - mAvatarWidthHeight;
 		Rect des1 = new Rect(left, top, left+mAvatarWidthHeight, top+mAvatarWidthHeight);	
 		
