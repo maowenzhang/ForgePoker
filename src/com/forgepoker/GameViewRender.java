@@ -39,23 +39,17 @@ public class GameViewRender {
 	}
 	
 	public void render(Canvas canvas) {
-		mCanvas = canvas;
-		renderBackground();
-		
+		renderBackground(canvas);			
 		mCardRender.render(canvas);
 		mPlayerRender.render(canvas);
 		mPlayActionRender.render(canvas);
 	}
 	
-	private void renderBackground() {
+	private void renderBackground(Canvas canvas) {
 		Rect r = new Rect(0, 0, mGameController.mScreenWidth, mGameController.mScreenHeight);
-		mCanvas.drawBitmap(mGameBackground, null, r, mPaint);
+		canvas.drawBitmap(mGameBackground, null, r, mPaint);
 	}
-	
-	private void renderJiaoFen() {
-		// 
-	}
-	
+
 	public boolean OnTouch(int x, int y) {
 		if (mPlayActionRender.OnTouch(x, y))
 			return true;

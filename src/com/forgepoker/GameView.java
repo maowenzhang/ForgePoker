@@ -1,11 +1,8 @@
 package com.forgepoker;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -48,6 +45,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 	*/
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+		Log.d("forge", "surfaceChanged");
 		if (mViewThread != null) {
 			mViewThread.onWindowResize(width, height);
 		}
@@ -55,12 +53,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
+		Log.d("forge", "surfaceCreated");
 		mHasSurface = true;
 		resume();
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
+		Log.d("forge", "surfaceDestroyed");
 		mHasSurface = false;
 		pause();
 	}
@@ -100,30 +100,38 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 		
 		@Override
 		public void run() {
-			System.out.print("run thread");
 			SurfaceHolder surfHolder = mHolder;
 			while (!done) {
-				System.out.print("run thread - doing ");
+				Log.d("forge", "run thread");
+				Canvas canvas = null;
 				try {
-					Canvas canvas = surfHolder.lockCanvas();
-					// draw
-					mGameController.render(canvas);
-					surfHolder.unlockCanvasAndPost(canvas);
+					canvas = surfHolder.lockCanvas();
+					synchronized(surfHolder) {
+						mGameController.render(canvas);
+					}
+				} catch (NullPointerException e) {
+					e.printStackTrace();
 				} catch (Exception e) {
 					e.printStackTrace();
+				} finally {
+					// do this in a finally so that if an exception is thrown
+                    // during the above, we don't leave the Surface in an
+                    // inconsistent state
+					if (canvas != null) {
+						surfHolder.unlockCanvasAndPost(canvas);
+					}
 				}
-			}			
+			}
 		}
 		
 		public void requestExitAndWait() {
-			System.out.print("requestExitAndWait - begin");
+			Log.d("forge", "requestExitAndWait");
 			done = true;
 			try {
 				join();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			System.out.print("requestExitAndWait - end");
 		}
 		
 		public void onWindowResize(int w, int h) {

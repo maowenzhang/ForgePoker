@@ -2,6 +2,7 @@ package com.forgepoker;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.Window;
@@ -18,6 +19,10 @@ public class GameActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.d("forge", "GameActivity::onCreate");
+		final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+		Log.d("forge", ste[0].getMethodName());
+		
 		super.onCreate(savedInstanceState);
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);

@@ -21,7 +21,7 @@ public class PlayerRender {
 	/** Layout attributes
 	 */
 	private int mCurPlayerLeft = 100;
-	private int mCurPlayerTop = 160;
+	private int mCurPlayerTop = 120;
 	private Rect mCurPlayerDesRect;
 	private int mAvatarWidthHeight = 50;	
 	

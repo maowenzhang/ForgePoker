@@ -22,7 +22,6 @@ public class CardRender {
 	
 	private GameController mGameController;
 	private GameViewRender mViewRender;
-	private Canvas mCanvas;
 	private Context mContext;	
 	private Bitmap mCardsImage;						// Image sprite contains all cards
 	
@@ -48,28 +47,31 @@ public class CardRender {
 	}
 	
 	public void render(Canvas canvas) {
-		mCanvas = canvas;
-		
-		for (Player p: mGameController.players()) {
-			if (p.isCurrentPlayer())
-				renderCurrentPlayer(p);
-			else
-				renderOtherPlayer(p);
+		try {
+			for (Player p: mGameController.players()) {
+				if (p.isCurrentPlayer())
+					renderCurrentPlayer(canvas, p);
+				else
+					renderOtherPlayer(canvas, p);
+			}	
+		} catch( Exception ex) {
+			
 		}
+		
 	}
 	
-	private void renderCurrentPlayer(Player p) {
+	private void renderCurrentPlayer(Canvas canvas, Player p) {
 		int totalCardWidth = (int)(mGameController.mScreenWidth * mCardTotalWidthRate);
 		int indexOfCard = 0;
 		int top = mGameController.mScreenHeight - mCardHeight - GameViewRender.mBottomSideMargin;
 		for (Card c: p.cards()) {
 			indexOfCard++;
 			Rect des = getCardPosition(indexOfCard, p.cards().size(), totalCardWidth, top);
-			renderCard(c, des);
+			renderCard(canvas, c, des);
 		}
 	}
 	
-	private void renderOtherPlayer(Player p) {
+	private void renderOtherPlayer(Canvas canvas, Player p) {
 		
 		int totalCardHeight = (int)(mGameController.mScreenHeight * mCardTotalHeightRate);
 	
@@ -81,7 +83,7 @@ public class CardRender {
 		for (Card c: p.cards()) {
 			indexOfCard++;
 			Rect des = getCardPositionLeftOrRight(indexOfCard, p.cards().size(), isLeftOrRight, totalCardHeight);
-			renderCardBack(des);
+			renderCardBack(canvas, des);
 		}
 	}
 	
@@ -93,7 +95,7 @@ public class CardRender {
 		return new Rect(left, top, left + mCardWidth, top + mCardHeight);
 	}
 	
-	private void renderCard(Card c, Rect des) {
+	private void renderCard(Canvas canvas, Card c, Rect des) {
 		CardSceneNode cnode = mCardNodes.get(c);
 		
 		if (cnode.isSelected()) {
@@ -101,11 +103,11 @@ public class CardRender {
 		}
 		
 		cnode.desRect(des);		
-		mCanvas.drawBitmap(mCardsImage, cnode.srcRect(), des, null);		
+		canvas.drawBitmap(mCardsImage, cnode.srcRect(), des, null);		
 	}
 	
-	private void renderCardBack(Rect des) {
-		mCanvas.drawBitmap(mCardsImage, mCardBackPos, des, null);		
+	private void renderCardBack(Canvas canvas, Rect des) {
+		canvas.drawBitmap(mCardsImage, mCardBackPos, des, null);		
 	}
 	
 	/** Draw poker cards
