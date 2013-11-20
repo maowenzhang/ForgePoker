@@ -25,6 +25,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 	private Context mContext;	
 	
 	private GameController mGameController;
+	private GameViewRender mRender;	
+	public GameViewRender render() {
+		return mRender;
+	}
 	
 	public GameView(Context context, int screenWidth, int screenHeight) {
 		super(context);
@@ -35,9 +39,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 		
 		this.mContext = context;
 		mGameController = GameController.get();		
-		mGameController.init(context, screenWidth, screenHeight);
+		mGameController.init(context);
 		
 		this.setOnTouchListener(this);
+		
+		GameViewRender.mScreenWidth = screenWidth;
+		GameViewRender.mScreenHeight = screenHeight;
+		mRender = new GameViewRender(context);
+		
+		mViewThread = new GameViewThread(context, this, screenWidth, screenHeight);
 	}
 
 	/**
@@ -46,96 +56,114 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 		Log.d("forge", "surfaceChanged");
-		if (mViewThread != null) {
-			mViewThread.onWindowResize(width, height);
-		}
 	}
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		Log.d("forge", "surfaceCreated");
 		mHasSurface = true;
-		resume();
+		mViewThread.start();
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		Log.d("forge", "surfaceDestroyed");
 		mHasSurface = false;
-		pause();
+		mViewThread.requestExitAndWait();
 	}
 
+	private int mTouchPosX = 0;
+	private int mTouchPosY = 0;
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-		return mGameController.onTouch(v, event);
-	}
-	
-	private void resume() {
-		if (mViewThread == null) {
-			mViewThread = new GameViewThread();
-			if (mHasSurface == true) {
-				mViewThread.start();
-			}
+		if (!mHasSurface) {
+			return true;
 		}
-	}
-	
-	private void pause() {
+
+		// get touch position
+		int x = (int) event.getX();
+		int y = (int) event.getY();
+		switch (event.getAction()) {
+		// start touch
+		case MotionEvent.ACTION_DOWN:
+			mTouchPosX = x;
+			mTouchPosY = y;
+			mRender.OnTouch(x, y);
+			
+			break;
+		// touch and move
+		case MotionEvent.ACTION_MOVE:
+			mTouchPosX = x;
+			mTouchPosY = y;
+			break;
+			
+		// end touch
+		case MotionEvent.ACTION_UP:
+			break;
+		}
 		
-		if (mViewThread != null) {
-			mViewThread.requestExitAndWait();
-			mViewThread = null;
-		}
+		return true;
 	}
 	
 	/** Thread for Game surface view 
 	 * 
 	*/
 	class GameViewThread extends Thread {
-		private boolean done = false;
 		
-		public GameViewThread() {
+		private boolean mIsDone = false;
+		private GameViewRender mRender;	
+		private SurfaceHolder mHolder;
+		
+		public GameViewThread(Context context, GameView gameView, int screenWidth, int screenHeight) {
 			super();
-			done = false;
+			mIsDone = false;
+			mHolder = gameView.getHolder();
+			mRender = gameView.render();			
 		}
 		
 		@Override
 		public void run() {
-			SurfaceHolder surfHolder = mHolder;
-			while (!done) {
+			
+			mRender.init();
+			
+			while (!mIsDone) {
 				Log.d("forge", "run thread");
 				Canvas canvas = null;
 				try {
-					canvas = surfHolder.lockCanvas();
-					synchronized(surfHolder) {
-						mGameController.render(canvas);
+					canvas = mHolder.lockCanvas();
+					if (canvas == null) {
+						continue;
+					}
+					synchronized(mHolder) {
+						mRender.render(canvas);
 					}
 				} catch (NullPointerException e) {
 					e.printStackTrace();
 				} catch (Exception e) {
 					e.printStackTrace();
-				} finally {
+				}
+				
+				try {
 					// do this in a finally so that if an exception is thrown
                     // during the above, we don't leave the Surface in an
                     // inconsistent state
 					if (canvas != null) {
-						surfHolder.unlockCanvasAndPost(canvas);
+						mHolder.unlockCanvasAndPost(canvas);
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		}
 		
 		public void requestExitAndWait() {
 			Log.d("forge", "requestExitAndWait");
-			done = true;
+			mIsDone = true;
 			try {
 				join();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
-		
-		public void onWindowResize(int w, int h) {
-			
 		}
 	}	
 }

@@ -20,10 +20,11 @@ public class PlayerRender {
 	
 	/** Layout attributes
 	 */
-	private int mCurPlayerLeft = 100;
-	private int mCurPlayerTop = 120;
+	static int mAvatarWidthHeight = 60;
 	private Rect mCurPlayerDesRect;
-	private int mAvatarWidthHeight = 50;	
+	private Rect mLeftPlayerDesRect;
+	private Rect mRightPlayerDesRect;
+	private Map<Player, Bitmap> mPlayerImages = new HashMap<Player, Bitmap>();
 	
 	public PlayerRender(GameViewRender viewRender, Context context) {
 		mViewRender = viewRender;
@@ -32,12 +33,23 @@ public class PlayerRender {
 	}
 	
 	public void init() {
-		int top = mGameController.get().mScreenHeight - mCurPlayerTop;
 		
-		mCurPlayerDesRect = new Rect(mCurPlayerLeft, 
-				top, 
-				mCurPlayerLeft+mAvatarWidthHeight, 
-				top+mAvatarWidthHeight);		
+		// for current player
+		int left = GameViewRender.mLeftOrRightMargin;
+		int bottom = GameViewRender.mScreenHeight - GameViewRender.mBottomOrTopMargin - CardRender.mCardHeight;
+		mCurPlayerDesRect = new Rect(left, 
+				bottom - mAvatarWidthHeight, 
+				left + mAvatarWidthHeight, 
+				bottom);
+		
+		// for left player
+		left = GameViewRender.mLeftOrRightMargin;
+		int top = GameViewRender.mBottomOrTopMargin + 20;
+		bottom = top + mAvatarWidthHeight;
+		mLeftPlayerDesRect = new Rect(left, top, left + mAvatarWidthHeight, bottom);
+		
+		int right = GameViewRender.mScreenWidth - GameViewRender.mLeftOrRightMargin;
+		mRightPlayerDesRect = new Rect(right - mAvatarWidthHeight, top, right, bottom);
 		
 		initPlayerImages();
 	}
@@ -50,36 +62,19 @@ public class PlayerRender {
 		mCanvas = canvas;
 		
 		for (Player p: mGameController.players()) {
-			if (p.isCurrentPlayer())
-				renderCurrentPlayer(p);
+			if (p.isCurrentPlayer()) {
+				renderPlayerBasic(p, mCurPlayerDesRect);
+			}
+			// left player
+			else if (p.seatIndex() == 1) {
+				renderPlayerBasic(p, mLeftPlayerDesRect);
+			}
+			// right player
 			else
-				renderOtherPlayer(p);
+				renderPlayerBasic(p, mRightPlayerDesRect);
 		}
 	}
 	
-	private void renderCurrentPlayer(Player p) {
-		renderPlayerBasic(p, mCurPlayerDesRect);
-	}
-	
-	private void renderOtherPlayer(Player p) {
-		boolean isLeftOrRight = true;
-		if (p.seatIndex() != 1) {
-			isLeftOrRight = false;
-		}
-		
-		// render player basic attributes
-		int left = GameViewRender.mLeftOrRightSideMargin;
-		if (!isLeftOrRight) {
-			left = mGameController.mScreenWidth - left - CardRender.mCardWidth;
-		}
-		int totalCardHeight = (int)(mGameController.mScreenHeight * CardRender.mCardTotalHeightRate);
-		int top = (mGameController.mScreenHeight - totalCardHeight) / 2 - mAvatarWidthHeight;
-		Rect des1 = new Rect(left, top, left+mAvatarWidthHeight, top+mAvatarWidthHeight);	
-		
-		renderPlayerBasic(p, des1);
-	}
-	
-	private Map<Player, Bitmap> mPlayerImages = new HashMap<Player, Bitmap>();
 	private void initPlayerImages() {
 		for (Player p: mGameController.players()) {
 			Bitmap img = BitmapFactory.decodeResource(mContext.getResources(), p.avatar());		

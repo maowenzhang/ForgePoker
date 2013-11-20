@@ -9,33 +9,39 @@ import android.graphics.Rect;
 
 public class GameViewRender {
 	
-	GameController mGameController;
+	static int mScreenWidth = 0;
+	static int mScreenHeight = 0;
 	static Paint mPaint = new Paint();
 	private Bitmap mGameBackground;
 	
-	private Canvas mCanvas;
 	private Context mContext;
 	private CardRender mCardRender;
 	private PlayerRender mPlayerRender;
 	private PlayActionRender mPlayActionRender;
+	private boolean mHasInit = false;
 	
 	/** margins */
-	static int mLeftOrRightSideMargin = 20;
-	static int mBottomSideMargin = 30;
+	static int mLeftOrRightMargin = 10;
+	static int mBottomOrTopMargin = 10;
 	
-	public GameViewRender(GameController gameController, Context context) {
-		mGameController = gameController;
+	public GameViewRender(Context context) {
 		mContext = context;
 		mPaint = new Paint();
 		
 		mGameBackground = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.game_background);
-		
-		mCardRender = new CardRender(this, context);
-		mPlayerRender = new PlayerRender(this, context);
+	}
+	
+	public void init() {
+		if (mHasInit) {
+			return;
+		}
+		mCardRender = new CardRender(this, mContext);
+		mPlayerRender = new PlayerRender(this, mContext);
 		mCardRender.init();
 		mPlayerRender.init();
-		mPlayActionRender = new PlayActionRender(context);
+		mPlayActionRender = new PlayActionRender(mContext);
 		mPlayActionRender.init();
+		mHasInit = true;
 	}
 	
 	public void render(Canvas canvas) {
@@ -46,11 +52,15 @@ public class GameViewRender {
 	}
 	
 	private void renderBackground(Canvas canvas) {
-		Rect r = new Rect(0, 0, mGameController.mScreenWidth, mGameController.mScreenHeight);
+		Rect r = new Rect(0, 0, mScreenWidth, mScreenHeight);
 		canvas.drawBitmap(mGameBackground, null, r, mPaint);
 	}
 
 	public boolean OnTouch(int x, int y) {
+		if (!mHasInit) {
+			return true;
+		}
+		
 		if (mPlayActionRender.OnTouch(x, y))
 			return true;
 		if (mCardRender.OnTouch(x, y))

@@ -27,7 +27,7 @@ public class PlayActionRender {
 	// Bid action (score 1,2,3 or not)
 	private static int mButtonWidthImage = 44;
 	private static int mButtonHeightImage = 24;
-	private static int mDistanceAboveCard = 20;
+	private static int mDistanceAboveCard = 40;
 	private static int mGapBetweenButtons = 15;
 	private Bitmap mBitActionImage;
 	
@@ -47,8 +47,8 @@ public class PlayActionRender {
 		// calculate render position
 		//
 		int totalLength = GameController.get().curActions().size() * (mButtonWidthImage + mGapBetweenButtons);
-		int left = (GameController.get().mScreenWidth - totalLength ) / 2;
-		int top = GameController.get().mScreenHeight - GameViewRender.mBottomSideMargin - CardRender.mCardHeight - mDistanceAboveCard;
+		int left = (GameViewRender.mScreenWidth - totalLength ) / 2;
+		int top = GameViewRender.mScreenHeight - GameViewRender.mBottomOrTopMargin - CardRender.mCardHeight - mDistanceAboveCard;
 		top -= mButtonHeightImage;
 		
 		int i = 0;

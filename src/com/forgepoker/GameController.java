@@ -19,14 +19,6 @@ import com.forgepoker.model.Player;
  */
 public class GameController {
 	
-	private GameViewRender mRender;	
-	
-	/** Screen size related */
-	int mScreenWidth = 0;
-	int mScreenHeight = 0;
-	int mTouchPosX = 0;
-	int mTouchPosY = 0;
-	
 	/** Game states */
 	private static final int STATE_GAME = 0;
 	private int mGameState = STATE_GAME;	
@@ -79,10 +71,7 @@ public class GameController {
 		
 	}
 	
-	public void init(Context context, int screenWidth, int screenHeight) {
-		mScreenWidth = screenWidth;
-		mScreenHeight = screenHeight;
-		
+	public void init(Context context) {
 		initPlayers();
 		// bid
 		dealCards();
@@ -91,8 +80,6 @@ public class GameController {
 		mCurActions.add(EPlayAction.eBid2);
 		mCurActions.add(EPlayAction.eBid3);
 		mCurActions.add(EPlayAction.eBidNo);
-		
-		mRender = new GameViewRender(this, context);
 	}
 	
 	private void initPlayers() {
@@ -132,33 +119,5 @@ public class GameController {
 		for (Player p: mPlayers) {
 			p.cards(d.cards().subList(i++ * numOfCards, i * numOfCards));
 		}
-	}
-	
-	public void render(Canvas canvas) {
-		mRender.render(canvas);
-	}
-	
-	public boolean onTouch(View v, MotionEvent event) {
-		// get touch position
-		int x = (int) event.getX();
-		int y = (int) event.getY();
-		switch (event.getAction()) {
-		// start touch
-		case MotionEvent.ACTION_DOWN:
-			mRender.OnTouch(x, y);
-			
-			break;
-		// touch and move
-		case MotionEvent.ACTION_MOVE:
-			mTouchPosX = x;
-			mTouchPosY = y;
-			break;
-			
-		// end touch
-		case MotionEvent.ACTION_UP:
-			break;
-		}
-		
-		return true;
 	}
 }
