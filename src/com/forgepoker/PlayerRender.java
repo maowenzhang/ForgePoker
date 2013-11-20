@@ -37,6 +37,7 @@ public class PlayerRender {
 		// for current player
 		int left = GameViewRender.mLeftOrRightMargin;
 		int bottom = GameViewRender.mScreenHeight - GameViewRender.mBottomOrTopMargin - CardRender.mCardHeight;
+		bottom -= CardRender.mCardSelectedPopupHeight - 5;
 		mCurPlayerDesRect = new Rect(left, 
 				bottom - mAvatarWidthHeight, 
 				left + mAvatarWidthHeight, 
@@ -44,7 +45,7 @@ public class PlayerRender {
 		
 		// for left player
 		left = GameViewRender.mLeftOrRightMargin;
-		int top = GameViewRender.mBottomOrTopMargin + 20;
+		int top = GameViewRender.mBottomOrTopMargin;
 		bottom = top + mAvatarWidthHeight;
 		mLeftPlayerDesRect = new Rect(left, top, left + mAvatarWidthHeight, bottom);
 		

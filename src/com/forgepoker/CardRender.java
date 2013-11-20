@@ -30,7 +30,7 @@ public class CardRender {
 	static int mCardWidth = 70;						// Single card width render in canvas
 	private int mCardHeightImage = 52;				// Single card height in image
 	private int mCardWidthImage = 35;				// Single card width in image
-	private int mCardSelectedPopupHeight = 30; 		// Height of selected card jumps
+	static int mCardSelectedPopupHeight = 30; 		// Height of selected card jumps
 	private Rect mLeftPlayerCardRect;
 	private Rect mRightPlayerCardRect;
 	
@@ -44,7 +44,7 @@ public class CardRender {
 		initCardNodes();
 		
 		int left = GameViewRender.mLeftOrRightMargin;
-		int top = GameViewRender.mBottomOrTopMargin + PlayerRender.mAvatarWidthHeight + 5;
+		int top = GameViewRender.mBottomOrTopMargin + PlayerRender.mAvatarWidthHeight + 15;
 		int bottom = top + mCardHeight;
 		mLeftPlayerCardRect = new Rect(left, top, left + mCardWidth, bottom);
 		
