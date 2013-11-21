@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
+import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -31,7 +33,8 @@ public class GameActivity extends Activity {
 		
 		Display display = getWindowManager().getDefaultDisplay();
 		mGameView = new GameView(this, display.getWidth(), display.getHeight());
-		
+		//LayoutParams params = new LayoutParams(display.getWidth(), display.getHeight());
+		//mGameView.setLayoutParams(params);
 		setContentView(mGameView);
 //		setContentView(R.layout.activity_game);
 	}
@@ -67,4 +70,8 @@ public class GameActivity extends Activity {
 	public void onStop() {
 		super.onStop();
 	}	
+	
+	public void onClickReady(View v) {
+		v.setVisibility(0);
+	}
 }

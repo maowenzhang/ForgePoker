@@ -9,5 +9,6 @@
     <string name="start_game">Start Game</string>
     <string name="exit_game">Exit Game</string>
     <string name="game_rule">Game Rules</string>
+    <string name="action_ready">Ready ?</string>
 
 </resources>
