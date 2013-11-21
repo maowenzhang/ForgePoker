@@ -55,8 +55,8 @@ public class Card implements Comparable<Card> {
 			return -1;
 		}
 		return 1;
-	}
-	
+	}	
+
 	public EType type() {
 		return mType;
 	}

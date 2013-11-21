@@ -102,7 +102,8 @@ public class CardRender {
 			// last card shows no overlap
 			eachCardWidthOverlap = (totalWidth - mCardWidth) / (numOfCards - 1); 
 		}
-		int start = (GameViewRender.mScreenWidth - totalWidth) / 2;
+		int delta = 5; // small adjustment
+		int start = (GameViewRender.mScreenWidth - totalWidth) / 2 + delta;
 		int left = start + eachCardWidthOverlap * indexOfCard;
 		return new Rect(left, top, left + mCardWidth, top + mCardHeight);
 	}

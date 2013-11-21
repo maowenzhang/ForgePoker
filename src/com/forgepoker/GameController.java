@@ -75,7 +75,9 @@ public class GameController {
 		initPlayers();
 		// bid
 		dealCards();
+		
 		// play action
+		mCurActions.clear();
 		mCurActions.add(EPlayAction.eBid1);
 		mCurActions.add(EPlayAction.eBid2);
 		mCurActions.add(EPlayAction.eBid3);

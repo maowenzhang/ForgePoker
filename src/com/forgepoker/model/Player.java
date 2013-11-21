@@ -2,6 +2,7 @@ package com.forgepoker.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -70,6 +71,7 @@ public class Player {
 	
 	public void sortCards() {
 		Collections.sort(mCards);
+		Collections.reverse(mCards);
 	}
 
 	/** Produce/play cards */
