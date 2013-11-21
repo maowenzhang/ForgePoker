@@ -2,22 +2,24 @@ package com.forgepoker;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.RelativeLayout.LayoutParams;
 
 /**
  * Represents view for game table
  * @author zhanglo
  *
  */
-public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnTouchListener {
+public class GameView extends SurfaceView implements SurfaceHolder.Callback, 
+OnTouchListener, Runnable {
 
-	/** SurfaceView implementation */
-	private GameViewThread mViewThread;
+	/** SurfaceView */
 	private boolean mHasSurface = false;	
 	private SurfaceHolder mHolder;
 		
@@ -30,24 +32,41 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 		return mRender;
 	}
 	
-	public GameView(Context context, int screenWidth, int screenHeight) {
+	/** Thread */
+	private Thread mViewThread;
+	private boolean mIsThreadDone = false;
+	
+	/** Constructors */
+	public GameView(Context context, AttributeSet attrs) {
+		super(context,attrs);
+		
+		init(context);
+	}
+	
+	public GameView(Context context) {
 		super(context);
+		
+		init(context);
+		
+		Log.d("forge", "create GameView");
+	}
+	
+	private void init(Context context) { 
+		
+		setKeepScreenOn(true);
+		setLongClickable(true);
 		
 		mHolder = getHolder();
 		mHolder.addCallback(this);
 		mHasSurface = false;
 		
-		this.mContext = context;
+		mContext = context;
 		mGameController = GameController.get();		
 		mGameController.init(context);
 		
-		this.setOnTouchListener(this);
+		setOnTouchListener(this);
 		
-		GameViewRender.mScreenWidth = screenWidth;
-		GameViewRender.mScreenHeight = screenHeight;
 		mRender = new GameViewRender(context);
-		
-		mViewThread = new GameViewThread(context, this, screenWidth, screenHeight);
 	}
 
 	/**
@@ -60,8 +79,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
+		GameViewRender.mScreenWidth = getWidth();
+		GameViewRender.mScreenHeight = getHeight();
+		
 		Log.d("forge", "surfaceCreated");
 		mHasSurface = true;
+		
+		mIsThreadDone = false;
+		mViewThread = new Thread(this, "forge");
 		mViewThread.start();
 	}
 
@@ -69,7 +94,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		Log.d("forge", "surfaceDestroyed");
 		mHasSurface = false;
-		mViewThread.requestExitAndWait();
+		mIsThreadDone = true;
 	}
 
 	private int mTouchPosX = 0;
@@ -105,65 +130,60 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 		return true;
 	}
 	
-	/** Thread for Game surface view 
-	 * 
-	*/
-	class GameViewThread extends Thread {
+	private void draw() {
 		
-		private boolean mIsDone = false;
-		private GameViewRender mRender;	
-		private SurfaceHolder mHolder;
+		mRender.init();
 		
-		public GameViewThread(Context context, GameView gameView, int screenWidth, int screenHeight) {
-			super();
-			mIsDone = false;
-			mHolder = gameView.getHolder();
-			mRender = gameView.render();			
-		}
-		
-		@Override
-		public void run() {
-			
-			mRender.init();
-			
-			while (!mIsDone) {
-				Log.d("forge", "run thread");
-				Canvas canvas = null;
-				try {
-					canvas = mHolder.lockCanvas();
-					if (canvas == null) {
-						continue;
-					}
-					synchronized(mHolder) {
-						mRender.render(canvas);
-					}
-				} catch (NullPointerException e) {
-					e.printStackTrace();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				
-				try {
-					// do this in a finally so that if an exception is thrown
-                    // during the above, we don't leave the Surface in an
-                    // inconsistent state
-					if (canvas != null) {
-						mHolder.unlockCanvasAndPost(canvas);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+		Canvas canvas = null;
+		try {
+			canvas = mHolder.lockCanvas();
+			if (canvas == null) {
+				return;
 			}
-		}
-		
-		public void requestExitAndWait() {
-			Log.d("forge", "requestExitAndWait");
-			mIsDone = true;
+			
+			synchronized(mHolder) {	
+				mRender.render(canvas);
+			}
+			
+		} catch (Exception e) {
+			Log.v("forgepoker", "Error in draw of gameview thead!");
+			e.printStackTrace();
+			
+		} finally {
+			
 			try {
-				join();
-			} catch (InterruptedException e) {
+				// do this in a finally so that if an exception is thrown
+	            // during the above, we don't leave the Surface in an
+	            // inconsistent state
+				if (canvas != null) {
+					mHolder.unlockCanvasAndPost(canvas);
+				}
+			} catch (Exception e) {
+				Log.d("forge", "fail to unlockCanvasAndPost!");
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	/** Thread run method
+	 * 
+	*/
+	@Override
+	public void run() {
+		
+		Log.d("forge", "start run thread");
+		
+		while (!mIsThreadDone) {
+			
+			draw();
+			
+			try {    
+                Thread.sleep(100);    
+            } catch (Exception ex) {
+            	ex.printStackTrace();
+            } 
+		}
+		
+		Log.d("forge", "exit run thread");
 	}	
 }

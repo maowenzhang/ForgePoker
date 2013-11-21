@@ -1,5 +1,7 @@
 <resources>
 
     <color name="black_overlay">#66000000</color>
-
+    <color name="button_background">#110000</color>
+	<drawable name="translucent_background">#e0000000</drawable>
+	<drawable name="button_textcolor">#ffffff</drawable>
 </resources>
