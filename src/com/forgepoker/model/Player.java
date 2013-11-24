@@ -23,7 +23,6 @@ public class Player {
 	private Suit mCurPlayedSuit;
 	
 	private boolean mIsLord = false;
-	private boolean mIsCurrentPlayer = false;
 	private int mSeatIndex = 1;
 	private boolean mIsRobot = true;
 	
@@ -95,14 +94,6 @@ public class Player {
 		
 		mCards.remove(playedSuit.cards());
 		return true;
-	}
-
-	public boolean isCurrentPlayer() {
-		return mIsCurrentPlayer;
-	}
-
-	public void isCurrentPlayer(boolean val) {
-		this.mIsCurrentPlayer = val;
 	}
 	
 	public int seatIndex() {

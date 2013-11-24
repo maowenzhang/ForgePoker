@@ -34,7 +34,7 @@ public class CardRender {
 	static int mCardWidth = 70;						// Single card width render in canvas
 	private int mCardHeightImage = 52;				// Single card height in image
 	private int mCardWidthImage = 35;				// Single card width in image
-	private int mCardSelectedPopupHeight = 30; 		// Height of selected card jumps
+	private int mCardSelectedPopupHeight = 20; 		// Height of selected card jumps
 	
 	public CardRender(GameViewRender viewRender, Context context) {
 		mViewRender = viewRender;
@@ -50,8 +50,9 @@ public class CardRender {
 	public void render(Canvas canvas) {
 		mCanvas = canvas;
 		
+		Player thisJoinedPlayer = mGameController.ThisJoinedPlayer();
 		for (Player p: mGameController.players()) {
-			if (p.isCurrentPlayer())
+			if (p == thisJoinedPlayer)
 				renderCurrentPlayer(p);
 			else
 				renderOtherPlayer(p);
@@ -163,8 +164,10 @@ public class CardRender {
 	}
 	
 	public boolean OnTouch(int x, int y) {
+		
+		Player thisJoinedPlayer = mGameController.ThisJoinedPlayer();
 		for (Player p: mGameController.players()) {
-			if (!p.isCurrentPlayer())
+			if (p != thisJoinedPlayer)
 				continue;
 			
 			for (int i=p.cards().size()-1; i>=0; i--) {

@@ -3,6 +3,7 @@ package com.forgepoker;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -40,6 +41,8 @@ public class GameController {
 	private int mGameState = STATE_GAME;	
 	private boolean mBidCompleted = false;
 	
+	private List<Integer> mAvailableSeat = new LinkedList<Integer>();
+	
 	public enum EPlayAction {
 		eBid1,
 		eBid2,
@@ -58,10 +61,7 @@ public class GameController {
 		return mCurActions;
 	}
 	public void onAction(EPlayAction a) {
-		int bidScore = 1;
 		mCurActions.clear();
-//		mCurPlayer.bidScore()
-		
 		String str = new String();
 		switch(a)
 		{
@@ -90,6 +90,7 @@ public class GameController {
 			if(mCurPlayer.bid() == EPlayAction.eBid3.ordinal() || nextPlayer != null && nextPlayer.hasBid())
 			{
 				mBidCompleted = true;
+				mCurPlayer.isLord(true);
 				// Wait the current player to play cards.
 				
 			}
@@ -112,7 +113,24 @@ public class GameController {
 	public List<Player> players() {
 		return mPlayers;
 	}
-	private Player mCurPlayer;
+	
+	// The player which joins on current device.
+	// It will be rendered to show the cards in hand.
+	private Player mThisJoinedPlayer = null;
+	
+	public Player ThisJoinedPlayer() {
+		return mThisJoinedPlayer;
+	}
+	
+	// Current player is used to control the game round.
+	// Once the lord is decided, lord player will be the 
+	// first current player, then next player will become
+	// the current, and so on.
+	private Player mCurPlayer = null;
+	
+	public Player CurrentPlayer() {
+		return mCurPlayer;
+	}
 	
 	private List<Deck> mDesks = new ArrayList<Deck>();
 	public Deck deck() {
@@ -129,7 +147,8 @@ public class GameController {
 	}
 	
 	private GameController() {
-		
+		for(int i = 0; i < mRule.playerCount(); ++i)
+			mAvailableSeat.add(i);
 	}
 	
 	public void init(Context context, int screenWidth, int screenHeight) {
@@ -153,14 +172,13 @@ public class GameController {
 		// TODO: restore status when re-enter game
 		mPlayers.clear();
 		
-		Player playerMe = new Player("Me", R.drawable.ic_launcher, 0);
-		playerMe.seatIndex(0);
-		playerMe.isCurrentPlayer(true);
-		mPlayers.add(playerMe);
+		mThisJoinedPlayer = new Player("Me", R.drawable.ic_launcher, 0);
+		mThisJoinedPlayer.seatIndex(getSeat());
+		mPlayers.add(mThisJoinedPlayer);
 		for(int i = 1; i < mRule.playerCount(); ++i)
 		{
 			Player p = new Player("player" + i, R.drawable.ic_launcher, 0);
-			p.seatIndex(i);
+			p.seatIndex(getSeat());
 			mPlayers.add(p);
 		}
 		
@@ -169,25 +187,6 @@ public class GameController {
 		Random r = new Random();
 		int lordIdx = r.nextInt() % mRule.playerCount();
 		mCurPlayer = mPlayers.get(lordIdx);
-		mCurPlayer.isLord(true);
-		mCurPlayer.isCurrentPlayer(true);
-		
-		/*
-		Player p1 = new Player("张飞", R.drawable.ic_launcher, 0);
-		Player p2 = new Player("关羽", R.drawable.ic_launcher, 100);
-		Player p3 = new Player("刘备", R.drawable.ic_launcher, 10);
-
-		p1.seatIndex(1);
-		p2.seatIndex(2);
-		p3.seatIndex(3);
-		
-		p2.isCurrentPlayer(true);
-		mCurPlayer = p2;
-		p2.isLord(true);
-		
-		mPlayers.add(p1);
-		mPlayers.add(p2);
-		mPlayers.add(p3);	*/	
 	}
 	
 	private Player nextPlayer()
@@ -203,11 +202,25 @@ public class GameController {
 			}
 		});
 		
-		int next = (mCurPlayer.seatIndex() + 1) % mPlayers.size();
+		int next = (mThisJoinedPlayer.seatIndex() + 1) % mPlayers.size();
 		for(Player p : mPlayers)
 			if(p.seatIndex() == next)
 				return p;
 		return null;
+	}
+	
+	/// Get a available seat from current table. For now we just have
+	/// one table. 
+	/// TODO: we need to change getting approach once we have a game
+	/// hall which contains many tables.
+	public int getSeat()
+	{
+		if(mAvailableSeat.size() > 0)
+		{
+			return mAvailableSeat.remove(0);
+		}
+		assert(false);
+		return -1;
 	}
 	
 	private void dealCards() {

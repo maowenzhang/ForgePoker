@@ -28,7 +28,6 @@ public class GameActivity extends Activity {
 		mGameView = new GameView(this, display.getWidth(), display.getHeight());
 		
 		setContentView(mGameView);
-//		setContentView(R.layout.activity_game);
 	}
 
 	@Override

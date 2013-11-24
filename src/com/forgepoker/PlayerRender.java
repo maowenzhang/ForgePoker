@@ -49,8 +49,9 @@ public class PlayerRender {
 	public void render(Canvas canvas) {
 		mCanvas = canvas;
 		
+		Player thisJoinedPlayer = mGameController.ThisJoinedPlayer();
 		for (Player p: mGameController.players()) {
-			if (p.isCurrentPlayer())
+			if (p == thisJoinedPlayer)
 				renderCurrentPlayer(p);
 			else
 				renderOtherPlayer(p);

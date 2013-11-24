@@ -27,7 +27,7 @@ public class PlayActionRender {
 	// Bid action (score 1,2,3 or not)
 	private static int mButtonWidthImage = 44;
 	private static int mButtonHeightImage = 24;
-	private static int mDistanceAboveCard = 20;
+	private static int mDistanceAboveCard = 25;
 	private static int mGapBetweenButtons = 15;
 	private Bitmap mBitActionImage;
 	
