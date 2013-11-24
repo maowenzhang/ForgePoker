@@ -9,21 +9,29 @@ public class Card implements Comparable<Card> {
 	
 	/** Card type */
 	public enum EType {
-		Three,
-		Four,
-		Five,
-		Six,
-		Seven,
-		Eight,
-		Nine,
-		Ten,
-		Jack,
-		Queen,
-		King,
-		Ace,
-		Two,
-		BlackJoke,
-		RedJoke
+		Three('3'),
+		Four('4'),
+		Five('5'),
+		Six('6'),
+		Seven('7'),
+		Eight('8'),
+		Nine('9'),
+		Ten('A'),
+		Jack('B'),
+		Queen('C'),
+		King('D'),
+		Ace('E'),
+		Two('2'),
+		BlackJoke('J'),
+		RedJoke('K');
+		
+		private char shortName; 
+		public char getShort() {
+			return this.shortName;
+		}
+		private EType(char value) {
+			this.shortName = value;
+		}
 	}
 	
 	/** Card suit */

@@ -15,6 +15,8 @@ public class Player {
 	private String mName;
 	private int mAvatar;
 	private int mScore;	
+	private int mBid;
+	private boolean mHasBid = false;
 	
 	/** cards */
 	private List<Card> mCards = new ArrayList<Card>();
@@ -23,6 +25,7 @@ public class Player {
 	private boolean mIsLord = false;
 	private boolean mIsCurrentPlayer = false;
 	private int mSeatIndex = 1;
+	private boolean mIsRobot = true;
 	
 	public Player(String name, int avatar, int score) {
 		mName = name;
@@ -52,6 +55,20 @@ public class Player {
 	
 	public void score(int val) {
 		mScore = val;
+	}
+	
+	public int bid() {
+		return mBid;
+	}
+	
+	public void bid(int val) {
+		assert(mHasBid == false);
+		mBid = val;
+		mHasBid = true;
+	}
+	
+	public boolean hasBid() {
+		return mHasBid;
 	}
 	
 	public Suit curPlayedSuit() {
@@ -94,5 +111,9 @@ public class Player {
 	
 	public void seatIndex(int val) {
 		mSeatIndex = val;
+	}
+	
+	public boolean isRobot() {
+		return mIsRobot;
 	}
 }
