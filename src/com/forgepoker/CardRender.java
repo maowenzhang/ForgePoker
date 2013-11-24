@@ -30,10 +30,10 @@ public class CardRender {
 	 */
 	static double mCardTotalWidthRate =  2 / 3.0; 	// (Width of all current player's cards) / screenWidth
 	static double mCardTotalHeightRate = 1 / 6.0;	// (Height of left/right player's cards) / screenHeight
-	static int mCardHeight = 94;					// Single card height render in canvas
-	static int mCardWidth = 70;						// Single card width render in canvas
-	private int mCardHeightImage = 52;				// Single card height in image
-	private int mCardWidthImage = 35;				// Single card width in image
+	static int mCardHeight = 55;					// Single card height render in canvas
+	static int mCardWidth = 40;						// Single card width render in canvas
+	private int mCardHeightImage = 55;				// Single card height in image
+	private int mCardWidthImage = 40;				// Single card width in image
 	private int mCardSelectedPopupHeight = 20; 		// Height of selected card jumps
 	
 	public CardRender(GameViewRender viewRender, Context context) {
@@ -140,8 +140,8 @@ public class CardRender {
 		}
 		
 		// Card back is at 55th
-		int col = 55 % numOfCol;
-		int row = 55 / numOfCol;
+		int col = 2 % numOfCol;
+		int row = 54 / numOfCol;
 		int left = mCardWidthImage * col;
 		int top = mCardHeightImage * row;
 		int right = left + mCardWidthImage;
