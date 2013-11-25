@@ -41,6 +41,9 @@ public class CardRender {
 		mContext = context;
 		mGameController = GameController.get();
 		mCardsImage = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.cards);
+		
+		if(mGameController.rule().showRivalCards())
+			mCardTotalHeightRate = 2/3.0;
 	}
 	
 	public void init() {
@@ -66,7 +69,7 @@ public class CardRender {
 		for (Card c: p.cards()) {
 			indexOfCard++;
 			Rect des = getCardPosition(indexOfCard, p.cards().size(), totalCardWidth, top);
-			renderCard(c, des);
+			renderCard(p, c, des);
 		}
 	}
 	
@@ -82,7 +85,10 @@ public class CardRender {
 		for (Card c: p.cards()) {
 			indexOfCard++;
 			Rect des = getCardPositionLeftOrRight(indexOfCard, p.cards().size(), isLeftOrRight, totalCardHeight);
-			renderCardBack(des);
+			if(mGameController.rule().showRivalCards())
+				renderCard(p, c, des);
+			else
+				renderCardBack(des);
 		}
 	}
 	
@@ -94,11 +100,15 @@ public class CardRender {
 		return new Rect(left, top, left + mCardWidth, top + mCardHeight);
 	}
 	
-	private void renderCard(Card c, Rect des) {
+	private void renderCard(Player player, Card c, Rect des) {
 		CardSceneNode cnode = mCardNodes.get(c);
 		
 		if (cnode.isSelected()) {
-			des.offset(0, -mCardSelectedPopupHeight);
+			if(player.isRobot()) {
+				des.offset(mCardSelectedPopupHeight, 0);
+			} else {
+				des.offset(0, -mCardSelectedPopupHeight);
+			}
 		}
 		
 		cnode.desRect(des);		
@@ -108,7 +118,7 @@ public class CardRender {
 	private void renderCardBack(Rect des) {
 		mCanvas.drawBitmap(mCardsImage, mCardBackPos, des, null);		
 	}
-	
+
 	/** Draw poker cards
 	 * 
 	 */
@@ -165,9 +175,10 @@ public class CardRender {
 	
 	public boolean OnTouch(int x, int y) {
 		
+		boolean showRivalCards = mGameController.rule().showRivalCards();
 		Player thisJoinedPlayer = mGameController.ThisJoinedPlayer();
 		for (Player p: mGameController.players()) {
-			if (p != thisJoinedPlayer)
+			if (!showRivalCards && p != thisJoinedPlayer)
 				continue;
 			
 			for (int i=p.cards().size()-1; i>=0; i--) {

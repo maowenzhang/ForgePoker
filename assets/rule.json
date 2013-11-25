@@ -8,6 +8,7 @@
     "decksLowerBound": 1,
     "decksUpperBound": 1,
     "canPassRound": true,
+    "showRivalCards": false, 
     "patterns": [
         {
             "name": "Single",

@@ -31,4 +31,8 @@ public interface IPokerRule {
 	
 	/// Indicates if a player can pass a round if he/she doesn't have a bigger hand.
 	public boolean canPassRound();
+	
+	/// Indicates whether or not to display rival's cards when rendering.
+	/// By default, the flag is false and just used for debugging.
+	public boolean showRivalCards();
 }

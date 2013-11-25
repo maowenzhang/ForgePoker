@@ -26,10 +26,11 @@ public class Player {
 	private int mSeatIndex = 1;
 	private boolean mIsRobot = true;
 	
-	public Player(String name, int avatar, int score) {
+	public Player(String name, int avatar, int score, boolean isRobot) {
 		mName = name;
 		mAvatar = avatar;
 		mScore = score;
+		mIsRobot = isRobot;
 	}
 	
 	public boolean isLord() {

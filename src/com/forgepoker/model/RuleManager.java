@@ -38,6 +38,9 @@ public class RuleManager implements IPokerRule {
 	
 	private final ArrayList<ICardPattern> mPatterns = new ArrayList<ICardPattern>();
 	
+	// just for debugging.
+	private boolean mShowRivalCards = false;
+	
 	// Singleton for RuleManager.
 	private RuleManager()
 	{
@@ -170,6 +173,7 @@ public class RuleManager implements IPokerRule {
             	mDecksUpperBound = ruleObj.optInt("decksUpperBound");
             	
             	mCanPassRound = ruleObj.optBoolean("canPassRound");
+            	mShowRivalCards = ruleObj.optBoolean("showRivalCards");
             	
             	JSONArray patterns = ruleObj.optJSONArray("patterns");
             	for(int i = 0; i < patterns.length(); ++i)
@@ -185,5 +189,10 @@ public class RuleManager implements IPokerRule {
            e.printStackTrace();  
            //Log.d("ReadRule", " datajson is =========="+dataJson);   
         }
+	}
+
+	@Override
+	public boolean showRivalCards() {
+		return mShowRivalCards;
 	}
 }

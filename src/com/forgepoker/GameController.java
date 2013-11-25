@@ -29,6 +29,9 @@ public class GameController {
 
 	/** Define the rule of the game */
 	private RuleManager mRule = RuleManager.get();
+	public RuleManager rule() {
+		return mRule;
+	}
 	
 	/** Screen size related */
 	int mScreenWidth = 0;
@@ -172,12 +175,13 @@ public class GameController {
 		// TODO: restore status when re-enter game
 		mPlayers.clear();
 		
-		mThisJoinedPlayer = new Player("Me", R.drawable.ic_launcher, 0);
+		mThisJoinedPlayer = new Player("Me", R.drawable.ic_launcher, 0, false);
 		mThisJoinedPlayer.seatIndex(getSeat());
+		mThisJoinedPlayer.isRobot();
 		mPlayers.add(mThisJoinedPlayer);
 		for(int i = 1; i < mRule.playerCount(); ++i)
 		{
-			Player p = new Player("player" + i, R.drawable.ic_launcher, 0);
+			Player p = new Player("player" + i, R.drawable.ic_launcher, 0, true);
 			p.seatIndex(getSeat());
 			mPlayers.add(p);
 		}
