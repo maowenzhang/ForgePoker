@@ -47,10 +47,11 @@ public class GameController {
 	private List<Integer> mAvailableSeat = new LinkedList<Integer>();
 	
 	public enum EPlayAction {
+		eBidNo,
 		eBid1,
 		eBid2,
 		eBid3,
-		eBidNo,
+		
 		eBid1Disalbe,
 		eBid2Disalbe,
 		
@@ -64,7 +65,6 @@ public class GameController {
 		return mCurActions;
 	}
 	public void onAction(EPlayAction a) {
-		mCurActions.clear();
 		String str = new String();
 		switch(a)
 		{
@@ -84,33 +84,51 @@ public class GameController {
 			mCurPlayer.bid(0);
 			str = "不叫";
 			break;
+		case ePlayCard:
+			mCurPlayer.playCards();
+			mCurPlayer = this.nextPlayer();
+			break;
 		}
 		
 		// playing round
 		if(!mBidCompleted)
 		{
 			Player nextPlayer = this.nextPlayer();
-			if(mCurPlayer.bid() == EPlayAction.eBid3.ordinal() || nextPlayer != null && nextPlayer.hasBid())
+			if(a == EPlayAction.eBid3 || nextPlayer.hasBid())
 			{
+				if(a != EPlayAction.eBid3)
+				{
+					Player lordPlayer = null;
+					for(Player p : mPlayers)
+					{
+						if(lordPlayer == null) {
+							lordPlayer = p;
+							continue;
+						}
+						if(lordPlayer.bid() < p.bid())
+							lordPlayer = p;
+					}
+					mCurPlayer = lordPlayer;
+				}
 				mBidCompleted = true;
 				mCurPlayer.isLord(true);
-				// Wait the current player to play cards.
-				
+				// Prepare the actions and Wait the current player to play cards.
+				mCurActions.clear();
+				mCurActions.add(EPlayAction.ePlayCard);
+				mCurActions.add(EPlayAction.ePassCard);
+				mCurActions.add(EPlayAction.ePromptCard);
+				mCurActions.add(EPlayAction.eReselectCard);
 			}
 			else
 			{
+				if(a == EPlayAction.eBid1 || a == EPlayAction.eBid2)
+					mCurActions.remove(a);
 				mCurPlayer = nextPlayer;
-				if(mCurPlayer.isRobot())
-				{
-					// TODO: currently we don't allow a robot to be a lord.
-					// We need to change it base on AI manager.
-					mCurPlayer.bid(EPlayAction.eBidNo.ordinal());
-				}
 			}
 		}
-		Log.d("BidResult", str);
+		//Log.d("BidResult", str);
 	}
-	
+
 	/** Data */
 	private List<Player> mPlayers = new ArrayList<Player>();
 	public List<Player> players() {
@@ -206,7 +224,7 @@ public class GameController {
 			}
 		});
 		
-		int next = (mThisJoinedPlayer.seatIndex() + 1) % mPlayers.size();
+		int next = (mCurPlayer.seatIndex() + 1) % mPlayers.size();
 		for(Player p : mPlayers)
 			if(p.seatIndex() == next)
 				return p;

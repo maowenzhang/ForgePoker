@@ -34,7 +34,7 @@ public class CardRender {
 	static int mCardWidth = 80;						// Single card width render in canvas
 	private int mCardHeightImage = 110;				// Single card height in image
 	private int mCardWidthImage = 80;				// Single card width in image
-	private int mCardSelectedPopupHeight = 20; 		// Height of selected card jumps
+	static int mCardSelectedPopupHeight = 20; 		// Height of selected card jumps
 	
 	public CardRender(GameViewRender viewRender, Context context) {
 		mViewRender = viewRender;
@@ -78,7 +78,7 @@ public class CardRender {
 		int totalCardHeight = (int)(mGameController.mScreenHeight * mCardTotalHeightRate);
 	
 		boolean isLeftOrRight = true;
-		if (p.seatIndex() != 1) {
+		if (p.seatIndex() != 2) {
 			isLeftOrRight = false;
 		}
 		int indexOfCard = 0;
@@ -105,7 +105,7 @@ public class CardRender {
 		
 		if (cnode.isSelected()) {
 			if(player.isRobot()) {
-				des.offset(mCardSelectedPopupHeight, 0);
+				des.offset(player.seatIndex() == 2 ? mCardSelectedPopupHeight : (-mCardSelectedPopupHeight), 0);
 			} else {
 				des.offset(0, -mCardSelectedPopupHeight);
 			}
@@ -167,6 +167,7 @@ public class CardRender {
 		int top = start + eachCardOverlap * indexOfCard;
 		
 		if (!isLeftOrRight) {
+			// right
 			left = mGameController.mScreenWidth - left - mCardWidth;
 		}
 		
@@ -182,9 +183,12 @@ public class CardRender {
 				continue;
 			
 			for (int i=p.cards().size()-1; i>=0; i--) {
+				Card card = p.cards().get(i);
 				CardSceneNode cnode = mCardNodes.get(p.cards().get(i));
-				if (cnode.isHit(x, y))
+				if (cnode.isHit(x, y)) {
+					card.selected(!card.selected());
 					return true;
+				}
 			}
 		}
 		

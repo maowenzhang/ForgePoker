@@ -29,6 +29,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 	
 	private GameController mGameController;
 	
+	// Used to record the seat index when the player joins the game.
+	private int mSeatIndex = -1;
+		
 	public GameView(Context context, int screenWidth, int screenHeight) {
 		super(context);
 		

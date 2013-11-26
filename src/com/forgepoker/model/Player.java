@@ -64,7 +64,9 @@ public class Player {
 	public void bid(int val) {
 		assert(mHasBid == false);
 		mBid = val;
-		mHasBid = true;
+		if(val != 0) {
+			mHasBid = true;
+		}
 	}
 	
 	public boolean hasBid() {
@@ -95,6 +97,21 @@ public class Player {
 		
 		mCards.remove(playedSuit.cards());
 		return true;
+	}
+	
+	public void playCards() {
+		List<Card> selCards = new ArrayList<Card>();
+		for(Card c : mCards)
+		{
+			if(c.selected())
+				selCards.add(c);
+		}
+		
+		// Here we don't test if the cards is a valid pattern.
+		// Let controller to do the thing.
+		for(Card c : selCards) {
+			mCards.remove(c);
+		}
 	}
 	
 	public int seatIndex() {
