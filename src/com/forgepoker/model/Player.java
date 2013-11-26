@@ -2,8 +2,9 @@ package com.forgepoker.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+
+import junit.framework.Assert;
 
 /**
  * Represents game player
@@ -19,7 +20,7 @@ public class Player {
 	
 	/** cards */
 	private List<Card> mCards = new ArrayList<Card>();
-	private Suit mCurPlayedSuit;
+	private Suit mCurPlayedSuit = new Suit();
 	
 	private boolean mIsLord = false;
 	private boolean mIsCurrentPlayer = false;
@@ -76,9 +77,14 @@ public class Player {
 
 	/** Produce/play cards */
 	public boolean playCards(Suit playedSuit) {
-		mCurPlayedSuit = playedSuit;
+		synchronized(mCurPlayedSuit) {
+			mCurPlayedSuit = playedSuit;
+		}
 		
-		mCards.remove(playedSuit.cards());
+		synchronized(mCards) {
+			boolean re = mCards.removeAll(playedSuit.cards());
+			Assert.assertTrue("Fail to remove played cards!", re);
+		}
 		return true;
 	}
 
@@ -99,13 +105,15 @@ public class Player {
 	}
 	
 	public List<Card> selectedCards() {
-		List<Card> list = new ArrayList<Card>();
-		for (Card c: mCards) {
-			if (c.isSelected()) {
-				list.add(c);
+		synchronized (mCards) {
+			List<Card> list = new ArrayList<Card>();
+			for (Card c: mCards) {
+				if (c.isSelected()) {
+					list.add(c);
+				}
 			}
+			return list;
 		}
-		return list;
 	}
 	
 	public void clearSelectedCards() {

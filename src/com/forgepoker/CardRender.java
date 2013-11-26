@@ -70,19 +70,22 @@ public class CardRender {
 		return false;
 	}
 	
-	public void renderCards(List<Card> cards, Rect des) {
+	public void renderCards(List<Card> cards, Rect des, boolean isShowNarrowCards) {
 		
-		// get total cards width
-		int totalCardWidth = des.width();
-		int allRemainCardsWidth = cards.size() * mCardWidth;
-		if (totalCardWidth > allRemainCardsWidth) {
-			totalCardWidth = allRemainCardsWidth;
-		}
-		
-		int indexOfCard = 0;
-		for (Card c: cards) {
-			Rect tmp = getCardPosition(indexOfCard++, cards.size(), totalCardWidth, des);
-			renderCard(c, tmp);
+		synchronized (cards) {
+			// get total cards width
+			int totalCardWidth = des.width();
+			double showCardRate = isShowNarrowCards ? 0.7 : 1.0;
+			int allRemainCardsWidth = (int)(cards.size() * mCardWidth * showCardRate);
+			if (totalCardWidth > allRemainCardsWidth) {
+				totalCardWidth = allRemainCardsWidth;
+			}
+			
+			int indexOfCard = 0;
+			for (Card c: cards) {
+				Rect tmp = getCardPosition(indexOfCard++, cards.size(), totalCardWidth, des);
+				renderCard(c, tmp);
+			}
 		}
 	}
 	
@@ -94,7 +97,8 @@ public class CardRender {
 			eachCardWidthOverlap = (totalWidth - mCardWidth) / (numOfCards - 1); 
 		}
 		int delta = 5; // small adjustment
-		int start = des.left + delta;
+		
+		int start = des.centerX() - totalWidth / 2 + delta; // align in center
 		int left = start + eachCardWidthOverlap * indexOfCard;
 		return new Rect(left, des.top, left + mCardWidth, des.top + mCardHeight);
 	}

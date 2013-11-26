@@ -26,8 +26,11 @@ public class Suit {
 		Rockets
 	}
 	
-	private EType mType;
-	private List<Card> mCards;
+	private EType mType = EType.Invalid;
+	private List<Card> mCards = new ArrayList<Card>();
+	
+	public Suit() {
+	}
 	
 	public Suit(List<Card> cards) {
 		mCards = cards;

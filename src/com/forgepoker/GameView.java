@@ -1,5 +1,6 @@
 package com.forgepoker;
 
+import junit.framework.Assert;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
@@ -147,7 +148,7 @@ OnTouchListener, Runnable {
 		Canvas canvas = null;
 		try {
 			canvas = mHolder.lockCanvas();
-			Log.d("thread", "draw::lockCanvas");
+			//Log.d("thread", "draw::lockCanvas");
 			if (canvas == null) {
 				return;
 			}
@@ -158,6 +159,7 @@ OnTouchListener, Runnable {
 			
 		} catch (Exception e) {
 			Log.e("thread", "Error in draw of gameview thead!");
+			Assert.assertTrue("Error in draw of gameview thread!", true);
 			e.printStackTrace();
 			
 		} finally {
@@ -168,7 +170,7 @@ OnTouchListener, Runnable {
 	            // inconsistent state
 				if (canvas != null) {
 					mHolder.unlockCanvasAndPost(canvas);
-					Log.d("thread", "draw::unlockCanvasAndPost");
+					//Log.d("thread", "draw::unlockCanvasAndPost");
 				}
 			} catch (Exception e) {
 				Log.e("thread", "fail to unlockCanvasAndPost!");

@@ -34,15 +34,13 @@ public class GameController {
 	}
 
 	public enum EPlayAction {
-		eNone,
-		eBid,
-		ePlayCard, ePassCard, ePromptCard, eReselectCard
+		eNone, eBid, ePlayCard, ePassCard, ePromptCard, eReselectCard
 	}
-	
+
 	public void startGame() {
 		startBid();
 	}
-	
+
 	private void startBid() {
 		// TODO: get first player to bid
 		// TODO: handle AI bid
@@ -52,75 +50,72 @@ public class GameController {
 	public void endBid(int bidVal) {
 		// TODO: check which player has higher bid
 		mCurPlayer.isLord(true);
-		
+
 		startPlayCards();
 	}
-	
+
 	public void startPlayCards() {
 		// TODO: get lord to play cards first
 		gameActivity.showPlayButtons(true);
 	}
-	
+
 	private void playCards_curPlayer() {
 		// TODO: use AI to check played cards (suit)
 		Suit suit = new Suit(mCurPlayer.selectedCards());
 		mCurPlayer.playCards(suit);
 	}
-	
+
 	private void playCards_otherPlayer(Player p) {
 		// TODO: use AI to check played cards (suit)
 		List<Card> cards = new ArrayList<Card>();
 		cards.add(p.cards().get(0));
 		Suit suit = new Suit(cards);
-		
+
 		p.playCards(suit);
 	}
-	
+
 	private void playCards_otherPlayers() {
 		// other players
 		Player p = nextPlayer(mCurPlayer);
 		playCards_otherPlayer(p);
-		
+
 		playCards_otherPlayer(nextPlayer(p));
-		
-		startPlayCards();
 	}
 
 	public void onAction(EPlayAction a) {
-		
-		boolean isShowPlayButtons = true;
+
 		switch (a) {
 		case ePlayCard:
 			// get selected cards
 			playCards_curPlayer();
-			
-			isShowPlayButtons = false;
-			
+
 			playCards_otherPlayers();
-			
+
+			// continue
+			startPlayCards();
+
 			break;
 		case ePromptCard:
 			// get selected cards
-			isShowPlayButtons = true;
 			break;
 		case eReselectCard:
 			// get selected cards
-			isShowPlayButtons = true;
 			mCurPlayer.clearSelectedCards();
 			break;
 		case ePassCard:
 			// get selected cards
-			isShowPlayButtons = false;
 			mCurPlayer.clearSelectedCards();
-			
+
 			playCards_otherPlayers();
+
+			// continue
+			startPlayCards();
 			break;
 		default:
 			break;
 		}
-		gameActivity.showPlayButtons(isShowPlayButtons);
 	}
-	
+
 	/** Data */
 	private List<Player> mPlayers = new ArrayList<Player>();
 
@@ -164,7 +159,7 @@ public class GameController {
 		index %= mPlayers.size();
 		return mPlayers.get(index);
 	}
-	
+
 	private void initPlayers() {
 
 		// TODO: restore status when re-enter game
