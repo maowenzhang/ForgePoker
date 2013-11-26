@@ -9,7 +9,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.widget.RelativeLayout.LayoutParams;
 
 /**
  * Represents view for game table
@@ -20,7 +19,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback,
 OnTouchListener, Runnable {
 
 	/** SurfaceView */
-	private boolean mHasSurface = false;	
+	private boolean mHasSurface = false;
 	private SurfaceHolder mHolder;
 		
 	/** Draw graphics */
@@ -41,6 +40,8 @@ OnTouchListener, Runnable {
 		super(context,attrs);
 		
 		init(context);
+		
+		Log.d("forge", "create GameView");
 	}
 	
 	public GameView(Context context) {
@@ -85,6 +86,11 @@ OnTouchListener, Runnable {
 		Log.d("forge", "surfaceCreated");
 		mHasSurface = true;
 		
+		if (mViewThread != null) {
+			int i = 100;
+			i++;
+		}
+		
 		mIsThreadDone = false;
 		mViewThread = new Thread(this, "forge");
 		mViewThread.start();
@@ -95,12 +101,16 @@ OnTouchListener, Runnable {
 		Log.d("forge", "surfaceDestroyed");
 		mHasSurface = false;
 		mIsThreadDone = true;
+		mViewThread.interrupt();
+		mViewThread = null;
 	}
 
 	private int mTouchPosX = 0;
 	private int mTouchPosY = 0;
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
+		Log.d("forge", "GameView::onTouch");
+		
 		if (!mHasSurface) {
 			return true;
 		}
@@ -137,6 +147,7 @@ OnTouchListener, Runnable {
 		Canvas canvas = null;
 		try {
 			canvas = mHolder.lockCanvas();
+			Log.d("thread", "draw::lockCanvas");
 			if (canvas == null) {
 				return;
 			}
@@ -146,7 +157,7 @@ OnTouchListener, Runnable {
 			}
 			
 		} catch (Exception e) {
-			Log.v("forgepoker", "Error in draw of gameview thead!");
+			Log.e("thread", "Error in draw of gameview thead!");
 			e.printStackTrace();
 			
 		} finally {
@@ -157,9 +168,10 @@ OnTouchListener, Runnable {
 	            // inconsistent state
 				if (canvas != null) {
 					mHolder.unlockCanvasAndPost(canvas);
+					Log.d("thread", "draw::unlockCanvasAndPost");
 				}
 			} catch (Exception e) {
-				Log.d("forge", "fail to unlockCanvasAndPost!");
+				Log.e("thread", "fail to unlockCanvasAndPost!");
 				e.printStackTrace();
 			}
 		}
@@ -171,7 +183,7 @@ OnTouchListener, Runnable {
 	@Override
 	public void run() {
 		
-		Log.d("forge", "start run thread");
+		Log.d("forge", "start thread");
 		
 		while (!mIsThreadDone) {
 			
@@ -184,6 +196,6 @@ OnTouchListener, Runnable {
             } 
 		}
 		
-		Log.d("forge", "exit run thread");
+		Log.d("forge", "exit thread");
 	}	
 }

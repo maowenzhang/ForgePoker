@@ -10,5 +10,13 @@
     <string name="exit_game">Exit Game</string>
     <string name="game_rule">Game Rules</string>
     <string name="action_ready">Ready ?</string>
+    <string name="bid1">1分</string>
+    <string name="bid2">2分</string>
+    <string name="bid3">3分</string>
+    <string name="bidno">不叫</string>
+    <string name="play">出牌</string>
+    <string name="prompt">提示</string>
+    <string name="reselect">重选</string>
+    <string name="pass">不出</string>
 
 </resources>

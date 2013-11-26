@@ -39,7 +39,16 @@ public class Card implements Comparable<Card> {
 	private ESuit mSuit = ESuit.Clubs;
 	private int mRank = 0;
 	private int mImageIndex = 0;	// index used to find card's image
+	private boolean mIsSelected = false;
 	
+	public boolean isSelected() {
+		return mIsSelected;
+	}
+
+	public void setIsSelected(boolean mIsSelected) {
+		this.mIsSelected = mIsSelected;
+	}
+
 	public Card(EType type, ESuit suit, int rank, int imageIndex) {
 		mType = type;
 		mSuit = suit;
@@ -84,4 +93,5 @@ public class Card implements Comparable<Card> {
 	public void imageIndex(int val) {
 		mImageIndex = val;
 	}
+	
 }

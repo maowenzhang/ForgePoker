@@ -11,8 +11,6 @@ public class SceneNode {
 	
 	private Rect mSrcRect;	
 	private Rect mDesRect = null;
-	private boolean mIsHit = false;
-	private boolean mIsSelected = false;
 	
 //	public SceneNode() {
 //		
@@ -33,24 +31,5 @@ public class SceneNode {
 		return mDesRect;
 	}
 	
-	public boolean isHit(int x, int y) {
-		mIsHit = false;
-		
-		if (mDesRect == null)
-			return false;
-		
-		if (mDesRect.contains(x, y)) {
-			mIsHit = true;
-			mIsSelected = !mIsSelected;
-			return true;
-		}
-		return false;
-	}
 	
-	public boolean isHit() {
-		return mIsHit;
-	}
-	public boolean isSelected() {
-		return mIsSelected;
-	}
 }

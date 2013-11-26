@@ -1,53 +1,79 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:padding="0dp"
     tools:context=".GameActivity" >
 
-    <!-- Here is where we put the SurfaceView, in a frame so that we can
-         stack other views on top of it. -->
+    <!--
+         Here is where we put the SurfaceView, in a frame so that we can
+         stack other views on top of it.
+    -->
 
-    <FrameLayout
+    <com.forgepoker.GameView
+        android:id="@+id/gameview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+
+    <LinearLayout
+        android:id="@+id/layout_bid"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1" >
-            
-	    <com.forgepoker.GameView
-	        android:id="@+id/gameview"
-	        android:layout_width="match_parent"
-	        android:layout_height="match_parent" />
-	
-	    <LinearLayout	        android:layout_width="match_parent"
-	        android:layout_height="match_parent"
-	        android:gravity="center" >
-	
-	        <Button
-	            android:id="@+id/button_score1"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="1分"
-	            android:background="@drawable/translucent_background"
-	            android:textColor="@drawable/button_textcolor" />
-	
-		    <Button
-		        android:id="@+id/button_score2"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:text="2分"/>
-		    <Button
-		        android:id="@+id/button_score3"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:text="3分"/>
-		    <Button
-		        android:id="@+id/button_scoreNo"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:text="不叫"/>
-	    </LinearLayout>
-	    
-    </FrameLayout>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="40dp"
+        android:gravity="center" >
+
+        <Button
+            android:id="@+id/button_bid1"
+            style="@style/ActionButtonStyle"
+            android:text="@string/bid1" />
+
+        <Button
+            android:id="@+id/button_bid2"
+            style="@style/ActionButtonStyle"
+            android:text="@string/bid2" />
+
+        <Button
+            android:id="@+id/button_bid3"
+            style="@style/ActionButtonStyle"
+            android:text="@string/bid3" />
+
+        <Button
+            android:id="@+id/button_bidno"
+            style="@style/ActionButtonStyle"
+            android:text="@string/bidno" />
+        
+    </LinearLayout>
     
-</RelativeLayout>
+    <LinearLayout
+        android:id="@+id/layout_play"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:visibility="gone" >
+
+        <Button
+            android:id="@+id/button_play"
+            style="@style/ActionButtonStyle"
+            android:text="@string/play" />
+
+        <Button
+            android:id="@+id/button_prompt"
+            style="@style/ActionButtonStyle"
+            android:text="@string/prompt" />
+
+        <Button
+            android:id="@+id/button_reselect"
+            style="@style/ActionButtonStyle"
+            android:text="@string/reselect" />
+
+        <Button
+            android:id="@+id/button_pass"
+            style="@style/ActionButtonStyle"
+            android:text="@string/pass" />
+        
+    </LinearLayout>
+
+</FrameLayout>

@@ -3,10 +3,6 @@ package com.forgepoker;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.forgepoker.model.Card;
-import com.forgepoker.model.Deck;
-import com.forgepoker.model.Player;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +10,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
+
+import com.forgepoker.model.Card;
+import com.forgepoker.model.Player;
 
 public class GameViewRender {
 	
@@ -64,6 +64,8 @@ public class GameViewRender {
 		if (mHasInit) {
 			return;
 		}
+		Log.d("forge1", "GameViewRender::init");
+		
 		mCardRender.init();
 		initCards();
 		initPlayerAvatars();

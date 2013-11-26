@@ -97,4 +97,22 @@ public class Player {
 	public void seatIndex(int val) {
 		mSeatIndex = val;
 	}
+	
+	public List<Card> selectedCards() {
+		List<Card> list = new ArrayList<Card>();
+		for (Card c: mCards) {
+			if (c.isSelected()) {
+				list.add(c);
+			}
+		}
+		return list;
+	}
+	
+	public void clearSelectedCards() {
+		for (Card c: mCards) {
+			if (c.isSelected()) {
+				c.setIsSelected(false);
+			}
+		}
+	}
 }
