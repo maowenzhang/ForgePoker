@@ -165,9 +165,9 @@ public class GameController {
 		// TODO: restore status when re-enter game
 		mPlayers.clear();
 
-		Player p1 = new Player("张飞", R.drawable.ic_launcher, 0);
-		Player p2 = new Player("关羽", R.drawable.ic_launcher, 100);
-		Player p3 = new Player("刘备", R.drawable.ic_launcher, 10);
+		Player p1 = new Player("张飞", R.drawable.zhangfei, 0);
+		Player p2 = new Player("刘备", R.drawable.liubei, 100);
+		Player p3 = new Player("诸葛亮", R.drawable.zhugeliang, 10);
 
 		p1.seatIndex(1);
 		p2.seatIndex(2);

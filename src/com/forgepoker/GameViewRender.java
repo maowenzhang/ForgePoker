@@ -38,7 +38,7 @@ public class GameViewRender {
 	/**
 	 * Player Layout attributes
 	 */
-	static int mAvatarWidthHeight = 60;
+	static int mAvatarWidthHeight = 80;
 	private Rect mCurPlayerDesRect;
 	private Rect mLeftPlayerDesRect;
 	private Rect mRightPlayerDesRect;
@@ -62,6 +62,7 @@ public class GameViewRender {
 		mCardRender = new CardRender(context);
 
 		mPaint = new Paint();
+		mPaint.setTextSize(10);
 		mPaint.setAntiAlias(true);
 
 		mGameBackground = BitmapFactory.decodeResource(mContext.getResources(),
@@ -97,9 +98,9 @@ public class GameViewRender {
 
 		renderBackground();
 
-		renderCards();
-
 		renderPlayerAvatars();
+		
+		renderCards();
 	}
 
 	private void renderBackground() {
@@ -177,6 +178,7 @@ public class GameViewRender {
 	private void renderPlayerBasic(Player p, Rect des) {
 		// TODO: draw name, score
 		mCanvas.drawBitmap(mPlayerImages.get(p), null, des, mPaint);
+		mCanvas.drawText(p.name(), des.centerX(), des.centerY(), mPaint);
 	}
 
 	/**
