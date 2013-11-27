@@ -1,7 +1,7 @@
 package com.forgepoker.model;
 
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class DefaultPatternDef extends PatternDef {
@@ -25,16 +25,21 @@ public class DefaultPatternDef extends PatternDef {
 	}
 	
 	@Override
-	public boolean matched(LinkedList<Card> cards)
+	public boolean matched(List<Card> cards)
 	{
-		String inputPattern = cardsToString(cards);
-		Pattern p = Pattern.compile(mPattern);
-		boolean ret = p.matcher(inputPattern).matches();
-		return ret;
+		try {
+			String inputPattern = cardsToString(cards);
+			Pattern p = Pattern.compile(mPattern);
+			boolean ret = p.matcher(inputPattern).matches();
+			return ret;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	/// Convert input cards to a special string for matching.
-	public String cardsToString(LinkedList<Card> cards)
+	public String cardsToString(List<Card> cards)
 	{
 		Collections.sort(cards);
 		Collections.reverse(cards);

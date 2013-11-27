@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -106,17 +107,6 @@ public class RuleManager implements IPokerRule {
 		return mCanPassRound;
 	}
 	
-	public boolean isValidCards(LinkedList<Card> cards)
-	{
-		for(ICardPattern pattern : mPatterns)
-		{
-			// TODO: need improve the performance
-			if(pattern.definition().matched(cards))
-				return true;
-		}
-		return false;
-	}
-	
 	private String readJsonFile()
 	{
 		FileInputStream fis = null;
@@ -194,5 +184,25 @@ public class RuleManager implements IPokerRule {
 	@Override
 	public boolean showRivalCards() {
 		return mShowRivalCards;
+	}
+
+	@Override
+	public boolean matched(List<Card> cards) {
+		try {
+			int szCards = cards.size();
+			for(ICardPattern pattern : mPatterns)
+			{
+				if(pattern.hasLowerLimitation() && szCards < pattern.minCards())
+					continue;
+				if(pattern.hasUpperLimitation() && szCards > pattern.maxCards())
+					continue;
+				// TODO: need improve the performance
+				if(pattern.definition().matched(cards))
+					return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

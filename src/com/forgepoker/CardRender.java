@@ -1,6 +1,7 @@
 package com.forgepoker;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
@@ -35,6 +36,7 @@ public class CardRender {
 	private int mCardHeightImage = 110;				// Single card height in image
 	private int mCardWidthImage = 80;				// Single card width in image
 	static int mCardSelectedPopupHeight = 20; 		// Height of selected card jumps
+	private int mCardsOffset = 20;
 	
 	public CardRender(GameViewRender viewRender, Context context) {
 		mViewRender = viewRender;
@@ -60,6 +62,9 @@ public class CardRender {
 			else
 				renderOtherPlayer(p);
 		}
+		
+		// Draw the current played cards
+		renderCurPlayedCards();
 	}
 	
 	private void renderCurrentPlayer(Player p) {
@@ -89,6 +94,26 @@ public class CardRender {
 				renderCard(p, c, des);
 			else
 				renderCardBack(des);
+		}
+	}
+	
+	private void renderCurPlayedCards()
+	{
+		List<Card> playedCards = mGameController.CurrentPlayedCards();
+		if(playedCards != null)
+		{
+			int left = (mGameController.mScreenWidth - (mCardWidth + mCardsOffset)*playedCards.size())/2;
+			int top = (mGameController.mScreenHeight - mCardHeight)/2;
+			int bottom = top + mCardHeight;
+			for (Card c : playedCards)
+			{
+				left = left + mCardsOffset;
+				int right = left + mCardWidth;
+				Rect des = new Rect(left, top, right, bottom);
+				CardSceneNode cnode = mCardNodes.get(c);
+				cnode.desRect(des);	
+				mCanvas.drawBitmap(mCardsImage, cnode.srcRect(), des, null);
+			}
 		}
 	}
 	

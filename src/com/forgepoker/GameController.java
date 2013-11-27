@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.forgepoker.model.Card;
 import com.forgepoker.model.Deck;
 import com.forgepoker.model.Player;
 import com.forgepoker.model.RuleManager;
@@ -46,6 +47,10 @@ public class GameController {
 	
 	private List<Integer> mAvailableSeat = new LinkedList<Integer>();
 	
+	List<Card> mCurPlayedCards = null;
+	public List<Card> CurrentPlayedCards() {
+		return mCurPlayedCards;
+	}
 	public enum EPlayAction {
 		eBidNo,
 		eBid1,
@@ -85,7 +90,15 @@ public class GameController {
 			str = "不叫";
 			break;
 		case ePlayCard:
-			mCurPlayer.playCards();
+			{
+				if(mCurPlayedCards != null)
+					mCurPlayedCards.clear();
+				mCurPlayedCards = mCurPlayer.playCards();
+				if(mCurPlayedCards != null)
+					mCurPlayer = this.nextPlayer();
+			}
+			break;
+		case ePassCard:
 			mCurPlayer = this.nextPlayer();
 			break;
 		}

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.forgepoker.GameController;
+
 /**
  * Represents game player
  * @author zhanglo
@@ -99,7 +101,7 @@ public class Player {
 		return true;
 	}
 	
-	public void playCards() {
+	public List<Card> playCards() {
 		List<Card> selCards = new ArrayList<Card>();
 		for(Card c : mCards)
 		{
@@ -107,11 +109,15 @@ public class Player {
 				selCards.add(c);
 		}
 		
-		// Here we don't test if the cards is a valid pattern.
-		// Let controller to do the thing.
+		// Let controller to test if the cards is a valid pattern.
+		if(!GameController.get().rule().matched(selCards))
+			return null;
+		
 		for(Card c : selCards) {
 			mCards.remove(c);
 		}
+		
+		return selCards;
 	}
 	
 	public int seatIndex() {

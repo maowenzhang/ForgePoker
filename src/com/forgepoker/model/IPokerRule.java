@@ -1,6 +1,7 @@
 package com.forgepoker.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface IPokerRule {
 	
@@ -35,4 +36,7 @@ public interface IPokerRule {
 	/// Indicates whether or not to display rival's cards when rendering.
 	/// By default, the flag is false and just used for debugging.
 	public boolean showRivalCards();
+	
+	/// Indicates whether or not the input cards are matched this pattern definition.
+	public boolean matched(List<Card> cards);
 }
