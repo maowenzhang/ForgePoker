@@ -133,25 +133,25 @@ public class GameActivity extends Activity implements OnClickListener {
 		if (mLayoutBid.getVisibility() == View.VISIBLE) {
 			mLayoutBid.setVisibility(View.GONE);
 
-			int bidVal = 0;
+			GameController.EPlayAction a = EPlayAction.eNone;
 			switch (v.getId()) {
 			case R.id.button_bid1:
-				bidVal = 1;
+				a = EPlayAction.eBid1;
 				break;
 			case R.id.button_bid2:
-				bidVal = 2;
+				a = EPlayAction.eBid2;
 				break;
 			case R.id.button_bid3:
-				bidVal = 3;
+				a = EPlayAction.eBid3;
 				break;
 			case R.id.button_bidno:
-				bidVal = 0;
+				a = EPlayAction.eBidNo;
 				break;
 			default:
 				break;
 			}
 
-			GameController.get().endBid(bidVal);
+			GameController.get().onAction(a);
 			return;
 		}
 
@@ -178,9 +178,16 @@ public class GameActivity extends Activity implements OnClickListener {
 		}
 	}
 
-	public void showBidButtons(boolean isShow) {
+	public void showBidButtons(boolean isShow, boolean hideBid1, boolean hideBid2) {
 		if (isShow) {
 			mLayoutBid.setVisibility(View.VISIBLE);
+			if (hideBid1) {
+				mBtnBid1.setVisibility(View.GONE);
+			}
+			if (hideBid2) {
+				mBtnBid2.setVisibility(View.GONE);
+			}
+			
 		} else {
 			mLayoutBid.setVisibility(View.GONE);
 		}

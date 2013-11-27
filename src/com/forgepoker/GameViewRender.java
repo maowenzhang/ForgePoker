@@ -187,23 +187,36 @@ public class GameViewRender {
 	 */
 	private void initCardsPosition() {
 
-		int left = mLeftOrRightMargin;
-		int top = mBottomOrTopMargin + mAvatarWidthHeight + 15;
-		int bottom = top + CardRender.mCardHeight;
-		mLeftPlayerCardRect = new Rect(left, top, left + CardRender.mCardWidth,
-				bottom);
+		if (mGameController.rule().showRivalCards()) {
+			int left = mLeftOrRightMargin;
+			int top = mBottomOrTopMargin + mAvatarWidthHeight + 15;
+			int bottom = mScreenHeight - mCurPlayerDesRect.top - 15;
+			mLeftPlayerCardRect = new Rect(left, top, left + CardRender.mCardWidth,
+					bottom);
 
-		int right = mScreenWidth - mLeftOrRightMargin;
-		mRightPlayerCardRect = new Rect(right - CardRender.mCardWidth, top,
-				right, bottom);
+			int right = mScreenWidth - mLeftOrRightMargin;
+			mRightPlayerCardRect = new Rect(right - CardRender.mCardWidth, top,
+					right, bottom);
+		}
+		else {
+			int left = mLeftOrRightMargin;
+			int top = mBottomOrTopMargin + mAvatarWidthHeight + 15;
+			int bottom = top + CardRender.mCardHeight;
+			mLeftPlayerCardRect = new Rect(left, top, left + CardRender.mCardWidth,
+					bottom);
+
+			int right = mScreenWidth - mLeftOrRightMargin;
+			mRightPlayerCardRect = new Rect(right - CardRender.mCardWidth, top,
+					right, bottom);
+		}
 
 		// Cur player: Out cards on table, in center, but above at
 		// "marginBottom"
-		left = mLeftOrRightMargin;
-		right = mScreenWidth - mLeftOrRightMargin;
+		int left = mLeftOrRightMargin;
+		int right = mScreenWidth - mLeftOrRightMargin;
 		int marginBottom = 30;
-		bottom = mScreenHeight / 2 + CardRender.mCardHeight / 2 + marginBottom;
-		top = bottom - CardRender.mCardHeight;
+		int bottom = mScreenHeight / 2 + CardRender.mCardHeight / 2 + marginBottom;
+		int top = bottom - CardRender.mCardHeight;
 		mCurPlayerOutCardsRect = new Rect(left, top, right, bottom);
 
 		// Left player: Out cards on table, align with current cards position
@@ -221,6 +234,7 @@ public class GameViewRender {
 		bottom = mRightPlayerCardRect.bottom;
 		mRightPlayerOutCardRect = new Rect(left, top, right, bottom);
 		
+		// Playing/Out cards
 		totalWidth = CardRender.mCardWidth * 3;
 		left = (mScreenWidth - totalWidth) /2;
 		right = left + totalWidth;
@@ -248,7 +262,7 @@ public class GameViewRender {
 		Rect des = new Rect(left, top, right, bottom);
 
 		try {
-			mCardRender.renderCards(p.cards(), des, false);
+			mCardRender.renderCards(p, p.cards(), des, false);
 		} catch (Exception e) {
 			Assert.assertTrue("fail to render card!", false);
 			e.printStackTrace();
@@ -256,7 +270,7 @@ public class GameViewRender {
 
 		// render playing cards on table
 		if (!p.curPlayedSuit().cards().isEmpty()) {
-			mCardRender.renderCards(p.curPlayedSuit().cards(),
+			mCardRender.renderCards(p, p.curPlayedSuit().cards(),
 					mCurPlayerOutCardsRect, true);
 		}
 	}
@@ -265,11 +279,17 @@ public class GameViewRender {
 
 		// left player
 		if (p.seatIndex() == 1) {
-			mCardRender.renderCardBack(mLeftPlayerCardRect);
+			
+			if (mGameController.rule().showRivalCards()) {
+				mCardRender.renderCardsVertical(p, p.cards(), mLeftPlayerCardRect);
+			}
+			else {
+				mCardRender.renderCardBack(mLeftPlayerCardRect);
+			}
 
 			// render playing cards on table
 			if (!p.curPlayedSuit().cards().isEmpty()) {
-				mCardRender.renderCards(p.curPlayedSuit().cards(),
+				mCardRender.renderCards(p, p.curPlayedSuit().cards(),
 						mLeftPlayerOutCardsRect, true);
 			}
 		}
@@ -279,7 +299,7 @@ public class GameViewRender {
 
 			// render playing cards on table
 			if (!p.curPlayedSuit().cards().isEmpty()) {
-				mCardRender.renderCards(p.curPlayedSuit().cards(),
+				mCardRender.renderCards(p, p.curPlayedSuit().cards(),
 						mRightPlayerOutCardRect, true);
 			}
 		}

@@ -1,7 +1,11 @@
 package com.forgepoker;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import android.content.Context;
 import android.util.Log;
@@ -9,6 +13,7 @@ import android.util.Log;
 import com.forgepoker.model.Card;
 import com.forgepoker.model.Deck;
 import com.forgepoker.model.Player;
+import com.forgepoker.model.RuleManager;
 import com.forgepoker.model.Suit;
 
 /**
@@ -19,10 +24,23 @@ import com.forgepoker.model.Suit;
  */
 public class GameController {
 
+	/** Define the rule of the game */
+	private RuleManager mRule = RuleManager.get();
+
+	public RuleManager rule() {
+		return mRule;
+	}
+
+	/** Screen size related */
+	int mScreenWidth = 0;
+	int mScreenHeight = 0;
+	int mTouchPosX = 0;
+	int mTouchPosY = 0;
+
 	/** Game states */
 	private static final int STATE_GAME = 0;
 	private int mGameState = STATE_GAME;
-
+	private boolean mBidCompleted = false;
 	private GameActivity gameActivity;
 
 	public GameActivity getGameActivity() {
@@ -33,8 +51,21 @@ public class GameController {
 		this.gameActivity = gameActivity;
 	}
 
+	private List<Integer> mAvailableSeat = new LinkedList<Integer>();
+
+	List<Card> mCurPlayedCards = null;
+
+	public List<Card> CurrentPlayedCards() {
+		return mCurPlayedCards;
+	}
+
 	public enum EPlayAction {
-		eNone, eBid, ePlayCard, ePassCard, ePromptCard, eReselectCard
+		eNone, 
+		eBidNo, eBid1, eBid2, eBid3,
+
+		eBid1Disalbe, eBid2Disalbe,
+
+		ePlayCard, ePassCard, ePromptCard, eReselectCard
 	}
 
 	public void startGame() {
@@ -44,76 +75,147 @@ public class GameController {
 	private void startBid() {
 		// TODO: get first player to bid
 		// TODO: handle AI bid
-		gameActivity.showBidButtons(true);
+		gameActivity.showBidButtons(true, true, true);
 	}
 
-	public void endBid(int bidVal) {
-		// TODO: check which player has higher bid
-		mCurPlayer.isLord(true);
-
-		startPlayCards();
-	}
-
+	//
+	// public void endBid(int bidVal) {
+	// // TODO: check which player has higher bid
+	// mCurPlayer.isLord(true);
+	//
+	// startPlayCards();
+	// }
+	//
 	public void startPlayCards() {
 		// TODO: get lord to play cards first
 		gameActivity.showPlayButtons(true);
 	}
 
-	private void playCards_curPlayer() {
-		// TODO: use AI to check played cards (suit)
-		Suit suit = new Suit(mCurPlayer.selectedCards());
-		mCurPlayer.playCards(suit);
-	}
-
-	private void playCards_otherPlayer(Player p) {
-		// TODO: use AI to check played cards (suit)
-		List<Card> cards = new ArrayList<Card>();
-		cards.add(p.cards().get(0));
-		Suit suit = new Suit(cards);
-
-		p.playCards(suit);
-	}
-
-	private void playCards_otherPlayers() {
-		// other players
-		Player p = nextPlayer(mCurPlayer);
-		playCards_otherPlayer(p);
-
-		playCards_otherPlayer(nextPlayer(p));
-	}
+	//
+	// private void playCards_curPlayer() {
+	// // TODO: use AI to check played cards (suit)
+	// Suit suit = new Suit(mCurPlayer.selectedCards());
+	// mCurPlayer.playCards(suit);
+	// }
+	//
+	// private void playCards_otherPlayer(Player p) {
+	// // TODO: use AI to check played cards (suit)
+	// List<Card> cards = new ArrayList<Card>();
+	// cards.add(p.cards().get(0));
+	// Suit suit = new Suit(cards);
+	//
+	// p.playCards(suit);
+	// }
+	//
+	// private void playCards_otherPlayers() {
+	// // other players
+	// Player p = nextPlayer(mCurPlayer);
+	// playCards_otherPlayer(p);
+	//
+	// playCards_otherPlayer(nextPlayer(p));
+	// }
+	//
+	// public void onAction(EPlayAction a) {
+	//
+	// switch (a) {
+	// case ePlayCard:
+	// // get selected cards
+	// playCards_curPlayer();
+	//
+	// playCards_otherPlayers();
+	//
+	// // continue
+	// startPlayCards();
+	//
+	// break;
+	// case ePromptCard:
+	// // get selected cards
+	// break;
+	// case eReselectCard:
+	// // get selected cards
+	// mCurPlayer.clearSelectedCards();
+	// break;
+	// case ePassCard:
+	// // get selected cards
+	// mCurPlayer.clearSelectedCards();
+	//
+	// playCards_otherPlayers();
+	//
+	// // continue
+	// startPlayCards();
+	// break;
+	// default:
+	// break;
+	// }
+	// }
 
 	public void onAction(EPlayAction a) {
-
+		String str = new String();
 		switch (a) {
-		case ePlayCard:
-			// get selected cards
-			playCards_curPlayer();
-
-			playCards_otherPlayers();
-
-			// continue
-			startPlayCards();
-
+		case eBid1:
+			mCurPlayer.bid(1);
+			str = "一分";
 			break;
-		case ePromptCard:
-			// get selected cards
+		case eBid2:
+			mCurPlayer.bid(2);
+			str = "二分";
 			break;
-		case eReselectCard:
-			// get selected cards
-			mCurPlayer.clearSelectedCards();
+		case eBid3:
+			mCurPlayer.bid(3);
+			str = "三分";
+			break;
+		case eBidNo:
+			mCurPlayer.bid(0);
+			str = "不叫";
+			break;
+		case ePlayCard: {
+			if (mCurPlayedCards != null)
+				mCurPlayedCards.clear();
+			mCurPlayedCards = mCurPlayer.playCards();
+			if (mCurPlayedCards != null)
+				mCurPlayer = this.nextPlayer();
+		}
 			break;
 		case ePassCard:
-			// get selected cards
-			mCurPlayer.clearSelectedCards();
-
-			playCards_otherPlayers();
-
-			// continue
-			startPlayCards();
-			break;
-		default:
+			mCurPlayer = this.nextPlayer();
 			break;
 		}
+
+		// playing round
+		if (!mBidCompleted) {
+			Player nextPlayer = this.nextPlayer();
+			if (a == EPlayAction.eBid3 || nextPlayer.hasBid()) {
+				if (a != EPlayAction.eBid3) {
+					Player lordPlayer = null;
+					for (Player p : mPlayers) {
+						if (lordPlayer == null) {
+							lordPlayer = p;
+							continue;
+						}
+						if (lordPlayer.bid() < p.bid())
+							lordPlayer = p;
+					}
+					mCurPlayer = lordPlayer;
+				}
+				mBidCompleted = true;
+				mCurPlayer.isLord(true);
+				// Star play cards, wait the current player to play cards.
+				startPlayCards();
+
+			} else {
+				if (a == EPlayAction.eBid1 || a == EPlayAction.eBid2) {
+					boolean hideBid1 = true;
+					boolean hideBid2 = false;
+					if (a == EPlayAction.eBid2) {
+						hideBid1 = false;
+						hideBid2 = true;
+					}
+					gameActivity.showBidButtons(true, hideBid1, hideBid2);
+				}
+				mCurPlayer = nextPlayer;
+			}
+		}
+		// Log.d("BidResult", str);
 	}
 
 	/** Data */
@@ -123,7 +225,23 @@ public class GameController {
 		return mPlayers;
 	}
 
-	private Player mCurPlayer;
+	// The player which joins on current device.
+	// It will be rendered to show the cards in hand.
+	private Player mThisJoinedPlayer = null;
+
+	public Player ThisJoinedPlayer() {
+		return mThisJoinedPlayer;
+	}
+
+	// Current player is used to control the game round.
+	// Once the lord is decided, lord player will be the
+	// first current player, then next player will become
+	// the current, and so on.
+	private Player mCurPlayer = null;
+
+	public Player CurrentPlayer() {
+		return mCurPlayer;
+	}
 
 	private List<Deck> mDesks = new ArrayList<Deck>();
 
@@ -142,7 +260,8 @@ public class GameController {
 	}
 
 	private GameController() {
-
+		for (int i = 0; i < mRule.playerCount(); ++i)
+			mAvailableSeat.add(i);
 	}
 
 	public void init(Context context) {
@@ -153,33 +272,61 @@ public class GameController {
 		dealCards();
 	}
 
-	private Player nextPlayer(Player p) {
-		int index = mPlayers.indexOf(p);
-		index++;
-		index %= mPlayers.size();
-		return mPlayers.get(index);
-	}
-
 	private void initPlayers() {
 
 		// TODO: restore status when re-enter game
 		mPlayers.clear();
 
-		Player p1 = new Player("张飞", R.drawable.zhangfei, 0);
-		Player p2 = new Player("刘备", R.drawable.liubei, 100);
-		Player p3 = new Player("诸葛亮", R.drawable.zhugeliang, 10);
+		// Player p1 = new Player("张飞", R.drawable.zhangfei, 0);
+		// Player p2 = new Player("刘备", R.drawable.liubei, 100);
+		// Player p3 = new Player("诸葛亮", R.drawable.zhugeliang, 10);
 
-		p1.seatIndex(1);
-		p2.seatIndex(2);
-		p3.seatIndex(3);
+		mThisJoinedPlayer = new Player("Me", R.drawable.ic_launcher, 0, false);
+		mThisJoinedPlayer.seatIndex(getSeat());
+		mThisJoinedPlayer.isRobot();
+		mPlayers.add(mThisJoinedPlayer);
+		for (int i = 1; i < mRule.playerCount(); ++i) {
+			Player p = new Player("player" + i, R.drawable.ic_launcher, 0, true);
+			p.seatIndex(getSeat());
+			mPlayers.add(p);
+		}
 
-		p2.isCurrentPlayer(true);
-		mCurPlayer = p2;
-		p2.isLord(true);
+		// Generate a random layer as the initial lord.
+		// The final lord will be decided by the bid result.
+		Random r = new Random();
+		int lordIdx = r.nextInt() % mRule.playerCount();
+		mCurPlayer = mPlayers.get(lordIdx);
+	}
 
-		mPlayers.add(p1);
-		mPlayers.add(p2);
-		mPlayers.add(p3);
+	private Player nextPlayer() {
+		Collections.sort(mPlayers, new Comparator<Player>() {
+			public int compare(Player p1, Player p2) {
+				if (p1.seatIndex() < p2.seatIndex())
+					return -1;
+				else if (p1.seatIndex() == p2.seatIndex())
+					return 0;
+				else
+					return 1;
+			}
+		});
+
+		int next = (mCurPlayer.seatIndex() + 1) % mPlayers.size();
+		for (Player p : mPlayers)
+			if (p.seatIndex() == next)
+				return p;
+		return null;
+	}
+
+	// / Get a available seat from current table. For now we just have
+	// / one table.
+	// / TODO: we need to change getting approach once we have a game
+	// / hall which contains many tables.
+	public int getSeat() {
+		if (mAvailableSeat.size() > 0) {
+			return mAvailableSeat.remove(0);
+		}
+		assert (false);
+		return -1;
 	}
 
 	private void dealCards() {

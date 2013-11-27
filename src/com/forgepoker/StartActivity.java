@@ -1,8 +1,14 @@
 package com.forgepoker;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import com.forgepoker.util.FileUtils;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
@@ -19,6 +25,18 @@ public class StartActivity extends Activity {
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
 		setContentView(R.layout.activity_start);
+		
+		// Copy the rule file in assets into SD card. We may need to change
+		// the rule and save it out. So we need to do this
+		if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+		{
+			try {
+				copyAssetFileToSDCard("rule.json", "ForgePoker/");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -33,4 +51,13 @@ public class StartActivity extends Activity {
 		startActivity(intent);
 	}
 	
+	public void copyAssetFileToSDCard(String assetName, String dir) throws IOException
+    {  
+        InputStream inputStream = this.getBaseContext().getAssets().open(assetName);  
+ 
+        FileUtils fileUtil = new FileUtils();
+		fileUtil.creatSDFile("ForgePoker/rule.json");
+		fileUtil.write2SDFromInput(dir, assetName, inputStream);
+		inputStream.close();
+    }  
 }
