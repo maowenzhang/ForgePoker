@@ -80,8 +80,9 @@ public class GameViewRender {
 		Log.d("forge1", "GameViewRender::init");
 
 		mCardRender.init();
-		initCardsPosition();
 		initPlayerAvatars();
+		initCardsPosition();
+		
 		mHasInit = true;
 	}
 
