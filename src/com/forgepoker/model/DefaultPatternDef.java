@@ -42,7 +42,7 @@ public class DefaultPatternDef extends PatternDef {
 	public String cardsToString(List<Card> cards)
 	{
 		Collections.sort(cards);
-		Collections.reverse(cards);
+		//Collections.reverse(cards);
 		
 		StringBuilder builder = new StringBuilder();
 		for(Card card : cards)

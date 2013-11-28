@@ -59,7 +59,7 @@ public class GameActivity extends Activity implements OnClickListener {
 
 	private void initControls() {
 		mGameView = (GameView) findViewById(R.id.gameview);
-
+		
 		mLayoutBid = (LinearLayout) findViewById(R.id.layout_bid);
 		mBtnBid1 = (Button) findViewById(R.id.button_bid1);
 		mBtnBid2 = (Button) findViewById(R.id.button_bid2);
@@ -178,16 +178,12 @@ public class GameActivity extends Activity implements OnClickListener {
 		}
 	}
 
-	public void showBidButtons(boolean isShow, boolean hideBid1, boolean hideBid2) {
+	public void showBidButtons(boolean isShow, boolean showBid1, boolean showBid2, boolean showBid3) {
 		if (isShow) {
 			mLayoutBid.setVisibility(View.VISIBLE);
-			if (hideBid1) {
-				mBtnBid1.setVisibility(View.GONE);
-			}
-			if (hideBid2) {
-				mBtnBid2.setVisibility(View.GONE);
-			}
-			
+			mBtnBid1.setVisibility(showBid1 ? View.VISIBLE : View.GONE);
+			mBtnBid2.setVisibility(showBid2 ? View.VISIBLE : View.GONE);
+			mBtnBid3.setVisibility(showBid3 ? View.VISIBLE : View.GONE);
 		} else {
 			mLayoutBid.setVisibility(View.GONE);
 		}

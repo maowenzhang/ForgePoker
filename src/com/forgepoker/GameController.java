@@ -60,12 +60,20 @@ public class GameController {
 	}
 
 	public enum EPlayAction {
-		eNone, 
-		eBidNo, eBid1, eBid2, eBid3,
+		eNone(-1), 
+		eBidNo(0), eBid1(1), eBid2(2), eBid3(3),
 
-		eBid1Disalbe, eBid2Disalbe,
+		eBid1Disalbe(4), eBid2Disalbe(5),
 
-		ePlayCard, ePassCard, ePromptCard, eReselectCard
+		ePlayCard(6), ePassCard(7), ePromptCard(8), eReselectCard(9);
+		
+		private int value; 
+		public int value() {
+			return this.value;
+		}
+		private EPlayAction(int val) {
+			this.value = val;
+		}
 	}
 
 	public void startGame() {
@@ -75,7 +83,7 @@ public class GameController {
 	private void startBid() {
 		// TODO: get first player to bid
 		// TODO: handle AI bid
-		gameActivity.showBidButtons(true, true, true);
+		gameActivity.showBidButtons(true, true, true, true);
 	}
 
 	//
@@ -182,7 +190,27 @@ public class GameController {
 		}
 
 		// playing round
-		if (!mBidCompleted) {
+		if (!mBidCompleted) 
+		{
+			boolean showBid1 = true, 
+					showBid2 = true, 
+					showBid3 = true,
+					hasNoBid = false;
+			for(Player p : this.mPlayers)
+			{
+				if(p.bid() == 1)
+					showBid1 = false;
+				else if(p.bid() == 2)
+					showBid2 = false;
+				else if(p.bid() == 3)
+					showBid3 = false;
+				else if(p.bid() == -1)
+					hasNoBid = true;
+			}
+
+			boolean showBidLayout = hasNoBid && (!showBid1 || !showBid2) || !hasNoBid && showBid3;
+			gameActivity.showBidButtons(showBidLayout, showBid1, showBid2, showBid3);
+				
 			Player nextPlayer = this.nextPlayer();
 			if (a == EPlayAction.eBid3 || nextPlayer.hasBid()) {
 				if (a != EPlayAction.eBid3) {
@@ -203,15 +231,6 @@ public class GameController {
 				startPlayCards();
 
 			} else {
-				if (a == EPlayAction.eBid1 || a == EPlayAction.eBid2) {
-					boolean hideBid1 = true;
-					boolean hideBid2 = false;
-					if (a == EPlayAction.eBid2) {
-						hideBid1 = false;
-						hideBid2 = true;
-					}
-					gameActivity.showBidButtons(true, hideBid1, hideBid2);
-				}
 				mCurPlayer = nextPlayer;
 			}
 		}

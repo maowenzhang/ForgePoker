@@ -20,7 +20,7 @@ public class Player {
 	private String mName;
 	private int mAvatar;
 	private int mScore;
-	private int mBid;
+	private int mBid = -1;
 	private boolean mHasBid = false;
 
 	/** cards */

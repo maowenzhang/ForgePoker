@@ -246,7 +246,7 @@ public class GameViewRender {
 
 	private void renderCards() {
 		for (Player p : mGameController.players()) {
-			if (p.isCurrentPlayer())
+			if (p == mGameController.ThisJoinedPlayer())
 				renderCards_CurrentPlayer(p);
 			else
 				renderCards_OtherPlayer(p);
@@ -308,7 +308,7 @@ public class GameViewRender {
 
 	private boolean OnTouchCards(int x, int y) {
 		for (Player p : mGameController.players()) {
-			if (!p.isCurrentPlayer())
+			if (p != mGameController.ThisJoinedPlayer())
 				continue;
 
 			for (int i = p.cards().size() - 1; i >= 0; i--) {
