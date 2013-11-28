@@ -19,6 +19,8 @@ public class FightLordPattern implements ICardPattern {
 			String caption,
 			String pattern)
 	{
+		mName = name;
+		mCaption = caption;
 		mPatternDef = new DefaultPatternDef(pattern);
 	}
 	
