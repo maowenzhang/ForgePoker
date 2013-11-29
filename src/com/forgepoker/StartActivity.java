@@ -57,8 +57,8 @@ public class StartActivity extends Activity {
         InputStream inputStream = this.getBaseContext().getAssets().open(assetName);  
  
         FileUtils fileUtil = new FileUtils();
-        fileUtil.creatSDDir("ForgePoker/");
-		fileUtil.creatSDFile("rule.json");
+        fileUtil.creatSDDir("ForgePoker/"); 
+		fileUtil.creatSDFile("rule.json"); 
 		fileUtil.write2SDFromInput(dir, assetName, inputStream);
 		inputStream.close();
     }  
