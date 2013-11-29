@@ -27,8 +27,9 @@ public class StartActivity extends Activity {
 		setContentView(R.layout.activity_start);
 		
 		// Copy the rule file in assets into SD card. We may need to change
-		// the rule and save it out. So we need to do this
-		if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+		// the rule and save it out. So we need to do thist
+		String state = Environment.getExternalStorageState();
+		if(state.equals(Environment.MEDIA_MOUNTED))
 		{
 			try {
 				copyAssetFileToSDCard("rule.json", "ForgePoker/");
@@ -56,7 +57,8 @@ public class StartActivity extends Activity {
         InputStream inputStream = this.getBaseContext().getAssets().open(assetName);  
  
         FileUtils fileUtil = new FileUtils();
-		fileUtil.creatSDFile("ForgePoker/rule.json");
+        fileUtil.creatSDDir("ForgePoker/");
+		fileUtil.creatSDFile("rule.json");
 		fileUtil.write2SDFromInput(dir, assetName, inputStream);
 		inputStream.close();
     }  
