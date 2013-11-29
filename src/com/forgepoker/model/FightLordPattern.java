@@ -1,6 +1,7 @@
 package com.forgepoker.model;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class FightLordPattern implements ICardPattern {
 
@@ -17,9 +18,9 @@ public class FightLordPattern implements ICardPattern {
 	
 	public FightLordPattern(String name, 
 			String caption,
-			String pattern)
+			List<String> patterns)
 	{
-		mPatternDef = new DefaultPatternDef(pattern);
+		mPatternDef = new DefaultPatternDef(patterns);
 	}
 	
 	@Override

@@ -13,6 +13,7 @@ import android.graphics.Rect;
 import com.forgepoker.model.Card;
 import com.forgepoker.model.Deck;
 import com.forgepoker.model.Player;
+import com.forgepoker.util.ImageUtil;
 
 /**
  * Render poker card
@@ -43,7 +44,7 @@ public class CardRender {
 
 	public void init() {
 
-		mCardsImage = BitmapFactory.decodeResource(mContext.getResources(),
+		mCardsImage = ImageUtil.decodeResource(mContext.getResources(),
 				R.drawable.cards);
 
 		initCardNodes();

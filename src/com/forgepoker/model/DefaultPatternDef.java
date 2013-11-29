@@ -1,5 +1,6 @@
 package com.forgepoker.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -8,20 +9,20 @@ public class DefaultPatternDef extends PatternDef {
 
 	/// Use a string to describe the default pattern definition.
 	/// It will be regex string.
-	private String mPattern;
+	private List<String> mPatterns = new ArrayList<String>();
 	
-	public DefaultPatternDef(String strPattern)
+	public DefaultPatternDef(List<String> patterns)
 	{
 		super();
-		mPattern = strPattern;
+		mPatterns = patterns;
 	}
 
-	public String getPattern() {
-		return mPattern;
+	public List<String> getPattern() {
+		return mPatterns;
 	}
 	
-	public void setPattern(String strPattern) {
-		mPattern = strPattern;
+	public void setPattern(List<String> patterns) {
+		mPatterns = patterns;
 	}
 	
 	@Override
@@ -29,9 +30,13 @@ public class DefaultPatternDef extends PatternDef {
 	{
 		try {
 			String inputPattern = cardsToString(cards);
-			Pattern p = Pattern.compile(mPattern);
-			boolean ret = p.matcher(inputPattern).matches();
-			return ret;
+			for(String pattern : mPatterns)
+			{
+				Pattern p = Pattern.compile(pattern);
+				boolean ret = p.matcher(inputPattern).matches();
+				if(ret)
+					return ret;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

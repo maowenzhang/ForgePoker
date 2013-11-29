@@ -169,8 +169,14 @@ public class RuleManager implements IPokerRule {
             	for(int i = 0; i < patterns.length(); ++i)
             	{
             		JSONObject pattern = patterns.getJSONObject(i);
+            		JSONArray patternDefs = pattern.optJSONArray("patternDef");
+            		List<String> strDefs= new ArrayList<String>();
+            		for(int j = 0; j < patternDefs.length(); ++j)
+            		{
+            			strDefs.add(patternDefs.getString(j));
+            		}
             		FightLordPattern _pattern = new FightLordPattern(pattern.optString("name"),
-            				pattern.optString("caption"), pattern.optString("patternDef"));
+            				pattern.optString("caption"), strDefs);
             		mPatterns.add(_pattern);
             	}
             }            
