@@ -256,9 +256,9 @@ public class GameViewRender {
 	private void renderCards_CurrentPlayer(Player p) {
 
 		// render current cards
-		int left = mLeftOrRightMargin;
+		int left = mLeftOrRightMargin + mLeftPlayerCardRect.width();
 		int bottom = mBottomOrTopMargin;
-		int right = mScreenWidth - mLeftOrRightMargin;
+		int right = mScreenWidth - mLeftOrRightMargin - mRightPlayerCardRect.width();
 		int top = mScreenHeight - CardRender.mCardHeight - mBottomOrTopMargin;
 		Rect des = new Rect(left, top, right, bottom);
 

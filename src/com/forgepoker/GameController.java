@@ -94,7 +94,7 @@ public class GameController {
 	//
 	public void startPlayCards() {
 		// TODO: get lord to play cards first
-		gameActivity.showPlayButtons(true);
+		gameActivity.showPlayButtons(true, false);
 	}
 
 	//
@@ -208,7 +208,8 @@ public class GameController {
 			}
 			break;
 		case ePassCard:
-			mCurPlayer = this.nextPlayer();
+			if(mLastCurPlayer != mCurPlayer)
+				mCurPlayer = this.nextPlayer();
 			break;
 		}
 
@@ -255,6 +256,15 @@ public class GameController {
 			} else {
 				mCurPlayer = nextPlayer;
 			}
+		}
+		else
+		{
+			boolean showPass = true;
+			if(mLastCurPlayer == null)
+				showPass = false;
+			else if(mLastCurPlayer == mCurPlayer)
+				showPass = false;
+			gameActivity.showPlayButtons(true, showPass);
 		}
 		// Log.d("BidResult", str);
 	}

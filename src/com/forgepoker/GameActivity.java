@@ -193,9 +193,10 @@ public class GameActivity extends Activity implements OnClickListener {
 		}
 	}
 
-	public void showPlayButtons(boolean isShow) {
+	public void showPlayButtons(boolean isShow, boolean showPass) {
 		if (isShow) {
 			mLayoutPlay.setVisibility(View.VISIBLE);
+			mBtnPass.setVisibility(showPass ? View.VISIBLE : View.GONE);
 		} else {
 			mLayoutPlay.setVisibility(View.GONE);
 		}
