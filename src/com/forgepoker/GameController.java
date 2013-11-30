@@ -46,6 +46,11 @@ public class GameController {
 	private GameActivity gameActivity;
 	private List<Integer> mAvailableSeat = new LinkedList<Integer>();
 	private Suit mLastSuit = null;
+	private List<Card> mBaseCards = new ArrayList<Card>();
+	
+	public List<Card> baseCards() {
+		return mBaseCards;
+	}
 	
 	public GameActivity getGameActivity() {
 		return gameActivity;
@@ -249,7 +254,8 @@ public class GameController {
 					}
 					mCurPlayer = lordPlayer;
 				}
-				mCurPlayer.isLord(true);
+				mCurPlayer.setLord(mBaseCards);
+				gameActivity.gameView().render().renderCards();
 				// Star play cards, wait the current player to play cards.
 				startPlayCards();
 
@@ -384,19 +390,33 @@ public class GameController {
 	}
 
 	private void dealCards() {
+		
+		if(mRule == null)
+			return;
+		
 		// TODO: restore status when re-enter game
 		mDesks.clear();
-
-		Deck d = new Deck();
-		mDesks.add(d);
-
-		d.shuffle();
-
+		mBaseCards = null;
+		
+		List<Card> allCards = new ArrayList<Card>();
+		for(int i = 0; i < mRule.deckCount(); ++i)
+		{
+			Deck d = mRule.deck();
+			mDesks.add(d);
+			allCards.addAll(d.cards());
+		}
+		Collections.shuffle(allCards);
+		
 		int size = mPlayers.size();
-		int numOfCards = d.cards().size() / size;
+		int numOfCards = (allCards.size() - mRule.baseCards()) / size;
 		int i = 0;
 		for (Player p : mPlayers) {
-			p.cards(d.cards().subList(i++ * numOfCards, i * numOfCards));
+			p.cards(allCards.subList(i++ * numOfCards, i * numOfCards));
 		}
+		for (Player p : mPlayers) {
+			allCards.removeAll(p.cards());
+		}
+		
+		mBaseCards = allCards;
 	}
 }

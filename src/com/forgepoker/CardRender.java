@@ -52,7 +52,7 @@ public class CardRender {
 	public void renderCard(Player player, Card c, Rect des) {
 		CardSceneNode cnode = mCardNodes.get(c);
 
-		if (cnode.isSelected()) {
+		if (c.isSelected()) {
 		
 			boolean bDebug = GameController.get().rule().showRivalCards();
 			if(bDebug && player.isRobot()) {
@@ -62,6 +62,12 @@ public class CardRender {
 			}
 		}
 
+		cnode.desRect(des);
+		mCanvas.drawBitmap(mCardsImage, cnode.srcRect(), des, null);
+	}
+	
+	public void renderCard(Card c, Rect des) {
+		CardSceneNode cnode = mCardNodes.get(c);
 		cnode.desRect(des);
 		mCanvas.drawBitmap(mCardsImage, cnode.srcRect(), des, null);
 	}

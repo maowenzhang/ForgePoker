@@ -15,6 +15,12 @@ public interface IPokerRule {
 	
 	public int playersUpperBound();
 	
+	/// The deck contents
+	public Deck deck();
+	
+	/// The number of base cards
+	public int baseCards();
+	
 	/// How many decks of the Poker game can be used.
 	public int deckCount();
 	

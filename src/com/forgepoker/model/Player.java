@@ -43,8 +43,19 @@ public class Player {
 		return mIsLord;
 	}
 
-	public void isLord(boolean val) {
-		mIsLord = val;
+	public void setLord(List<Card> baseCards) {
+		synchronized (mCards) {
+		mIsLord = true;
+		assert(baseCards != null);
+		if(null != baseCards) {
+			for(Card c : baseCards) {
+				c.setIsSelected(true);
+				mCards.add(c);
+			}
+			Collections.sort(mCards);
+			Collections.reverse(mCards);
+		}
+		}
 	}
 
 	public String name() {
@@ -88,14 +99,18 @@ public class Player {
 	}
 
 	public void cards(List<Card> cards) {
-		mCards.clear();
-		mCards.addAll(cards);
-		sortCards();
+		synchronized (mCards) {
+			mCards.clear();
+			mCards.addAll(cards);
+			sortCards();
+		}
 	}
 
 	public void sortCards() {
-		Collections.sort(mCards);
-		Collections.reverse(mCards);
+		synchronized (mCards) {
+			Collections.sort(mCards);
+			Collections.reverse(mCards);
+		}
 	}
 
 	/** Produce/play cards */
@@ -117,7 +132,9 @@ public class Player {
 	}
 
 	public void isCurrentPlayer(boolean val) {
+		synchronized (mCards) {
 		this.mIsCurrentPlayer = val;
+		}
 	}
 
 	public int seatIndex() {
@@ -125,7 +142,9 @@ public class Player {
 	}
 
 	public void seatIndex(int val) {
+		synchronized (mCards) {
 		mSeatIndex = val;
+		}
 	}
 
 	public List<Card> selectedCards() {
@@ -146,10 +165,12 @@ public class Player {
 	}
 
 	public void clearSelectedCards() {
+		synchronized (mCards) {
 		for (Card c : mCards) {
 			if (c.isSelected()) {
 				c.setIsSelected(false);
 			}
+		}
 		}
 	}
 

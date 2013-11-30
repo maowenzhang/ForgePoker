@@ -1,6 +1,7 @@
 package com.forgepoker;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
@@ -236,7 +237,7 @@ public class GameViewRender {
 		mRightPlayerOutCardRect = new Rect(left, top, right, bottom);
 		
 		// Playing/Out cards
-		totalWidth = CardRender.mCardWidth * 3;
+		totalWidth = (CardRender.mCardWidth + 5) * 3;
 		left = (mScreenWidth - totalWidth) /2;
 		right = left + totalWidth;
 		top = mBottomOrTopMargin;
@@ -244,12 +245,23 @@ public class GameViewRender {
 		mBaseCardRect = new Rect(left, top, right, bottom);
 	}
 
-	private void renderCards() {
+	public void renderCards() {
 		for (Player p : mGameController.players()) {
 			if (p == mGameController.ThisJoinedPlayer())
 				renderCards_CurrentPlayer(p);
 			else
 				renderCards_OtherPlayer(p);
+		}
+		// Render base cards
+		List<Card> baseCards = mGameController.baseCards();
+		if(baseCards != null) {
+			int i = 0;
+			for(Card c : baseCards) {
+				int left = mBaseCardRect.left + (i++) * (CardRender.mCardWidth + 5);
+				int right = left + CardRender.mCardWidth;
+				Rect des = new Rect(left, mBaseCardRect.top, right, mBaseCardRect.bottom);
+				mCardRender.renderCard(c, des);
+			}
 		}
 	}
 

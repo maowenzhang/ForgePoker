@@ -36,6 +36,10 @@ public class GameActivity extends Activity implements OnClickListener {
 	private Button mBtnReselect;
 	private Button mBtnPass;
 
+	public GameView gameView() {
+		return mGameView;
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.d("forge", "GameActivity::onCreate");

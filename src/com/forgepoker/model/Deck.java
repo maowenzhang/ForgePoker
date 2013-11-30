@@ -21,6 +21,10 @@ public class Deck {
 		initCards();
 	}
 	
+	public Deck(List<Card> cards) {
+		mCards = cards;
+	}
+	
 	private void initCards() {
 		
 		// TODO: get rank value from configuration (via JSON file, RuleManager)		

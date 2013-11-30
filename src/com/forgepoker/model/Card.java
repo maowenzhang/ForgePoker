@@ -1,5 +1,7 @@
 package com.forgepoker.model;
 
+import com.forgepoker.model.Card.EType;
+
 /**
  * Represent one poker card
  * @author zhanglo
@@ -36,11 +38,19 @@ public class Card implements Comparable<Card> {
 	
 	/** Card suit */
 	public enum ESuit {
-		Diamonds, // 方块
-		Clubs, // 梅花		
-		Hearts, // 红桃
-		Spades, // 黑桃
-		Jokers
+		Diamonds("diamond"), // 方块
+		Clubs("club"), // 梅花		
+		Hearts("heart"), // 红桃
+		Spades("spade"), // 黑桃
+		Jokers("joker");
+		
+		private String name; 
+		public String getName() {
+			return this.name;
+		}
+		private ESuit(String value) {
+			this.name = value;
+		}
 	}
 	
 	private EType mType = EType.Three;
@@ -102,4 +112,46 @@ public class Card implements Comparable<Card> {
 		mImageIndex = val;
 	}
 	
+	static public EType charToType(char c) {
+		switch(c)
+		{
+		case '3': return EType.Three;
+		case '4': return EType.Four;
+		case '5': return EType.Five;
+		case '6': return EType.Six;
+		case '7': return EType.Seven;
+		case '8': return EType.Eight;
+		case '9': return EType.Nine;
+		case 'A': return EType.Ten;
+		case 'B': return EType.Jack;
+		case 'C': return EType.Queen;
+		case 'D': return EType.King;
+		case 'E': return EType.Ace;
+		case '2': return EType.Two;
+		case 'J': return EType.BlackJoke;
+		case 'K': return EType.RedJoke;
+		default:
+			assert(false);
+			break;
+		}
+		return EType.Three;
+	}
+	
+	static public ESuit stringToSuit(String suit) {
+		if(suit.equals("spade"))
+			return ESuit.Spades;
+		else if(suit.equals("heart"))
+			return ESuit.Hearts;
+		else if(suit.equals("club"))
+			return ESuit.Clubs;
+		else if(suit.equals("diamond"))
+			return ESuit.Diamonds;
+		else if(suit.equals("joker"))
+			return ESuit.Jokers;
+		else 
+		{
+			assert(false);
+			return ESuit.Spades;
+		}
+	}
 }

@@ -31,6 +31,8 @@ public class RuleManager implements IPokerRule {
 	private int mPlayersLowerBound = 3;
 	private int mPlayersUpperBound = 3;
 	
+	private Deck mDeck = null;
+	private int mBaseCards = 3;
 	private int mDeckCount = 1;
 	private boolean mbDynamicDecks = false;
 	private int mDecksLowerBound = 1;
@@ -78,6 +80,16 @@ public class RuleManager implements IPokerRule {
 		return mPlayersUpperBound;
 	}
 
+	@Override
+	public Deck deck() {
+		return mDeck;
+	}
+	
+	@Override
+	public int baseCards() {
+		return mBaseCards;
+	}
+	
 	@Override
 	public int deckCount() {
 		return mDeckCount;
@@ -157,6 +169,17 @@ public class RuleManager implements IPokerRule {
             	mbDynamicPlayers = ruleObj.optBoolean("dynamicPlayers");
             	mPlayersLowerBound = ruleObj.optInt("playersLowerBound");
             	mPlayersUpperBound = ruleObj.optInt("playersUpperBound");
+            	
+            	JSONArray deck = ruleObj.optJSONArray("deck");
+            	List<Card> cards = new ArrayList<Card>();
+            	for(int i = 0; i < deck.length(); ++i) {
+            		JSONObject card = deck.optJSONObject(i);
+            		String cName = card.optString("name");
+            		String cSuit = card.optString("suit");
+            		int cRank = card.optInt("rank");
+            		cards.add(new Card(Card.charToType(cName.charAt(0)), Card.stringToSuit(cSuit), cRank, i));
+            	}
+            	mDeck = new Deck(cards);
             	
             	mDeckCount = ruleObj.optInt("deckCount");
             	mbDynamicDecks = ruleObj.optBoolean("dynamicDecks");
