@@ -9,6 +9,7 @@ import java.util.Random;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.forgepoker.model.Card;
 import com.forgepoker.model.Deck;
@@ -182,6 +183,10 @@ public class GameController {
 			mCurPlayedCards = mCurPlayer.playCards();
 			if (mCurPlayedCards != null)
 				mCurPlayer = this.nextPlayer();
+			else
+			{
+				Toast.makeText(gameActivity, "Selected cards are invalid", Toast.LENGTH_SHORT).show();
+			}
 		}
 			break;
 		case ePassCard:

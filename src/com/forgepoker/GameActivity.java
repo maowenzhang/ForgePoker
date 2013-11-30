@@ -58,6 +58,7 @@ public class GameActivity extends Activity implements OnClickListener {
 	}
 
 	private void initControls() {
+		try {
 		mGameView = (GameView) findViewById(R.id.gameview);
 		
 		mLayoutBid = (LinearLayout) findViewById(R.id.layout_bid);
@@ -81,6 +82,9 @@ public class GameActivity extends Activity implements OnClickListener {
 		mBtnPrompt.setOnClickListener(this);
 		mBtnReselect.setOnClickListener(this);
 		mBtnPass.setOnClickListener(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

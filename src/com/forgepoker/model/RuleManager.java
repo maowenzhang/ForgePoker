@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.forgepoker.model.Card.ESuit;
 import com.forgepoker.util.FileUtils;
 
 import android.util.Log;
@@ -177,6 +178,13 @@ public class RuleManager implements IPokerRule {
             		}
             		FightLordPattern _pattern = new FightLordPattern(pattern.optString("name"),
             				pattern.optString("caption"), strDefs);
+            		_pattern.setHasLowerLimitation(pattern.optBoolean("hasLowerLimit"));
+            		_pattern.setHasUpperLimitation(pattern.optBoolean("hasUpperLimit"));
+            		_pattern.setMinCards(pattern.optInt("minCards"));
+            		_pattern.setMaxCards(pattern.optInt("maxCards"));
+            		_pattern.setWeight(pattern.optInt("weight"));
+            		_pattern.setNeedMatchPattern(pattern.optBoolean("needMatchPattern"));
+            		_pattern.setNeedSameSuit(pattern.optBoolean("needSameSuit"));
             		mPatterns.add(_pattern);
             	}
             }            
@@ -192,15 +200,32 @@ public class RuleManager implements IPokerRule {
 		return mShowRivalCards;
 	}
 
+	public boolean hasSameSuit(List<Card> cards)
+	{
+		ESuit suit = null;
+		for(Card c : cards)
+		{
+			if(suit == null) {
+				suit = c.suit();
+				continue;
+			}
+			if(c.suit() != suit)
+				return false;
+		}
+		return true;
+	}
 	@Override
 	public boolean matched(List<Card> cards) {
 		try {
 			int szCards = cards.size();
+			boolean hasSameSuit = this.hasSameSuit(cards);
 			for(ICardPattern pattern : mPatterns)
 			{
 				if(pattern.hasLowerLimitation() && szCards < pattern.minCards())
 					continue;
 				if(pattern.hasUpperLimitation() && szCards > pattern.maxCards())
+					continue;
+				if(pattern.needSameSuit() && !hasSameSuit)
 					continue;
 				// TODO: need improve the performance
 				if(pattern.definition().matched(cards))

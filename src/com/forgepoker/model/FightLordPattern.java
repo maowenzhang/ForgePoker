@@ -20,6 +20,8 @@ public class FightLordPattern implements ICardPattern {
 			String caption,
 			List<String> patterns)
 	{
+		mName = name;
+		mCaption = caption;
 		mPatternDef = new DefaultPatternDef(patterns);
 	}
 	
@@ -53,7 +55,7 @@ public class FightLordPattern implements ICardPattern {
 	}
 
 	public void setHasUpperLimitation(boolean value) {
-		mHasLowerLimitation = value;
+		mHasUpperLimitation = value;
 	}
 	
 	@Override

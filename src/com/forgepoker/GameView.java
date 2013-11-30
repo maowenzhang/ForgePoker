@@ -54,7 +54,7 @@ OnTouchListener, Runnable {
 	}
 	
 	private void init(Context context) { 
-		
+		try {
 		setKeepScreenOn(true);
 		setLongClickable(true);
 		
@@ -69,6 +69,9 @@ OnTouchListener, Runnable {
 		setOnTouchListener(this);
 		
 		mRender = new GameViewRender(context);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -142,6 +145,9 @@ OnTouchListener, Runnable {
 	}
 	
 	private void draw() {
+		
+		if(mRender == null)
+			return;
 		
 		mRender.init();
 		
