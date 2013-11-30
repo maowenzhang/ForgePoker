@@ -1,6 +1,5 @@
 package com.forgepoker.model;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class FightLordPattern implements ICardPattern {
@@ -79,11 +78,49 @@ public class FightLordPattern implements ICardPattern {
 	}
 	
 	@Override
-	public int calcRank(LinkedList<Card> cards) {
+	public int calcRank(Suit suit) {
+		
+		List<Card> cards = suit.cards();
 		if(cards == null || cards.size() <= 0)
 			return 0;
-		//TODO: how to calculate the rank with a consistent approach?
-		return 0;
+		
+		int points = 0;
+		int szCards = cards.size();
+		
+		// NOTE: below calculation assumes the biggest cards is the last
+		// in the suit.
+		switch(suit.type()) {
+		case Invalid:
+			break;
+		case Single:
+		case Double:
+		case Triple:
+		case SingleSequence:
+		case DoubleSequence:
+		case TripleSequence:
+		case Bomb:
+		case Rocket:
+			points = szCards * cards.get(szCards-1).rank() * weight();
+			break;
+		case TripleWithOne:
+		case TripleWithTwo:
+		case TripleWithOneSequence:
+		case TripleWithTwoSequence:
+		case FourWithOne:
+		case FourWithTwo:
+			{
+				assert(szCards > 4);
+				Card card1 = cards.get(0);
+				Card card2 = cards.get(1);
+				if(card1.type() != card2.type()) {
+					card1 = cards.get(szCards - 1);
+					card2 = cards.get(szCards - 2);						
+				}
+				points = szCards * card1.rank() * weight();
+			}
+			break;
+		}
+		return points;
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package com.forgepoker.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface IPokerRule {
@@ -28,7 +27,7 @@ public interface IPokerRule {
 	public int decksUpperBound();
 	
 	/// Returns the patterns for the poker game.
-	public ArrayList<ICardPattern> patterns();
+	public List<ICardPattern> patterns();
 	
 	/// Indicates if a player can pass a round if he/she doesn't have a bigger hand.
 	public boolean canPassRound();
@@ -38,5 +37,5 @@ public interface IPokerRule {
 	public boolean showRivalCards();
 	
 	/// Indicates whether or not the input cards are matched this pattern definition.
-	public boolean matched(List<Card> cards);
+	public ICardPattern matched(Suit suit);
 }

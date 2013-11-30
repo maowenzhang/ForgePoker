@@ -1,6 +1,7 @@
 package com.forgepoker.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -21,19 +22,22 @@ public class Suit {
 		TripleSequence,
 		TripleWithOneSequence,
 		TripleWithTwoSequence,
+		FourWithOne,
 		FourWithTwo,
 		Bomb,
-		Rockets
+		Rocket
 	}
 	
 	private EType mType = EType.Invalid;
 	private List<Card> mCards = new ArrayList<Card>();
+	private int mPoints = 0;
 	
 	public Suit() {
 	}
 	
 	public Suit(List<Card> cards) {
 		mCards = cards;
+		Collections.sort(mCards);
 		initType();
 	}
 	
@@ -46,7 +50,20 @@ public class Suit {
 		return mType;
 	}
 	
+	public void setType(EType type) {
+		mType = type;
+	}
+	
 	public List<Card> cards() {
 		return mCards;
 	}
+	
+	public int points() {
+		return mPoints;
+	}
+	
+	public void setPoints(int val) {
+		mPoints = val;
+	}
+
 }

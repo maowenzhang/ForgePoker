@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.forgepoker.model.Card;
 import com.forgepoker.model.Deck;
+import com.forgepoker.model.ICardPattern;
 import com.forgepoker.model.Player;
 import com.forgepoker.model.RuleManager;
 import com.forgepoker.model.Suit;
@@ -177,18 +178,30 @@ public class GameController {
 			break;
 		case ePlayCard:
 			{
+				if(mLastCurPlayer == mCurPlayer)
+					mLastSuit = null; // clear last suit since no player's cards are greater than current.
+				
 				Suit selSuit = mCurPlayer.selectedSuit();
 				if(selSuit == null) {
 					Toast.makeText(gameActivity, "TO " + mCurPlayer.name() + ": No cards selected!", Toast.LENGTH_SHORT).show();
 					break;
 				}
 				// Check if the cards is valid or not.
-				if(!GameController.get().rule().matched(selSuit.cards())) {
+				ICardPattern pattern1 = GameController.get().rule().matched(selSuit);
+				if(pattern1 == null) {
 					Toast.makeText(gameActivity, "Selected cards are invalid", Toast.LENGTH_SHORT).show();
 					break;
 				}
+				
+				if(mLastSuit != null && selSuit.points() <= mLastSuit.points()) {
+					Toast.makeText(gameActivity, "Selected cards must be greater than last.", Toast.LENGTH_SHORT).show();
+					break;
+				}
+				
 				if (mCurPlayer.playCards(selSuit)) {
+					mLastCurPlayer = mCurPlayer;
 					mCurPlayer = this.nextPlayer();
+					mLastSuit = selSuit;
 				} else {
 					Toast.makeText(gameActivity, "Fail to remove played cards!", Toast.LENGTH_SHORT).show();
 				}
@@ -270,6 +283,8 @@ public class GameController {
 	public Player CurrentPlayer() {
 		return mCurPlayer;
 	}
+	
+	private Player mLastCurPlayer = null;
 
 	private List<Deck> mDesks = new ArrayList<Deck>();
 

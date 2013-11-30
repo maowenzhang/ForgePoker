@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -15,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.forgepoker.model.Card.ESuit;
+import com.forgepoker.model.Suit.EType;
 import com.forgepoker.util.FileUtils;
 
 import android.util.Log;
@@ -99,7 +99,7 @@ public class RuleManager implements IPokerRule {
 	}
 
 	@Override
-	public ArrayList<ICardPattern> patterns() {
+	public List<ICardPattern> patterns() {
 		return mPatterns;
 	}
 
@@ -214,11 +214,44 @@ public class RuleManager implements IPokerRule {
 		}
 		return true;
 	}
+	
+	public Suit.EType getSuitTypeByPatternName(String patternName) {
+		if(patternName.equals("Single"))
+			return Suit.EType.Single;
+		else if(patternName.equals("Double"))
+			return Suit.EType.Double;
+		else if(patternName.equals("Rocket"))
+			return Suit.EType.Rocket;
+		else if(patternName.equals("Bomb"))
+			return Suit.EType.Bomb;
+		else if(patternName.equals("DoubleSequence"))
+			return Suit.EType.DoubleSequence;
+		else if(patternName.equals("SingleSequence"))
+			return Suit.EType.SingleSequence;
+		else if(patternName.equals("TripleOne"))
+			return Suit.EType.TripleWithOne;
+		else if(patternName.equals("TripleOneSequence"))
+			return Suit.EType.TripleWithOneSequence;
+		else if(patternName.equals("Triple"))
+			return Suit.EType.Triple;
+		else if(patternName.equals("TripleSequence"))
+			return Suit.EType.TripleSequence;
+		else if(patternName.equals("TripleTwo"))
+			return Suit.EType.TripleWithTwo;
+		else if(patternName.equals("TripleTwoSequence"))
+			return Suit.EType.TripleWithTwoSequence;
+		else if(patternName.equals("FourOne"))
+			return Suit.EType.FourWithOne;
+		else if(patternName.equals("FourTwo"))
+			return Suit.EType.FourWithTwo;
+		return Suit.EType.Invalid;
+	}
+	
 	@Override
-	public boolean matched(List<Card> cards) {
+	public ICardPattern matched(Suit suit) {
 		try {
-			int szCards = cards.size();
-			boolean hasSameSuit = this.hasSameSuit(cards);
+			int szCards = suit.cards().size();
+			boolean hasSameSuit = this.hasSameSuit(suit.cards());
 			for(ICardPattern pattern : mPatterns)
 			{
 				// Quick check via the card count and suit.
@@ -229,12 +262,16 @@ public class RuleManager implements IPokerRule {
 				if(pattern.needSameSuit() && !hasSameSuit)
 					continue;
 				// Now check the real pattern.
-				if(pattern.definition().matched(cards))
-					return true;
+				if(pattern.definition().matched(suit.cards())) {
+					String patternName = pattern.name();
+					suit.setType(getSuitTypeByPatternName(patternName));
+					suit.setPoints(pattern.calcRank(suit));
+					return pattern;
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return false;
+		return null;
 	}
 }

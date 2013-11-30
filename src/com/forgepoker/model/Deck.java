@@ -37,8 +37,9 @@ public class Deck {
 				if (s == Card.ESuit.Jokers) {
 					continue;
 				}
-				mCards.add(new Card(t, s, r++, imageIndex++));
+				mCards.add(new Card(t, s, r, imageIndex++));
 			}
+			r++;
 		}					
 		
 		mCards.add(new Card(Card.EType.BlackJoke, Card.ESuit.Jokers, r++, imageIndex++));

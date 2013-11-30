@@ -46,8 +46,8 @@ public class DefaultPatternDef extends PatternDef {
 	/// Convert input cards to a special string for matching.
 	public String cardsToString(List<Card> cards)
 	{
-		Collections.sort(cards);
-		//Collections.reverse(cards);
+		// The cards have been sorted in creating a suit.
+		//Collections.sort(cards);
 		
 		StringBuilder builder = new StringBuilder();
 		for(Card card : cards)
