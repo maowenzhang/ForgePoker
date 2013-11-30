@@ -99,13 +99,14 @@ public class Player {
 	}
 
 	/** Produce/play cards */
-	public boolean playCards(Suit playedSuit) {
+	public boolean playCards(Suit curPlayedSuit) {
+		
 		synchronized (mCurPlayedSuit) {
-			mCurPlayedSuit = playedSuit;
+			mCurPlayedSuit = curPlayedSuit;
 		}
 
 		synchronized (mCards) {
-			boolean re = mCards.removeAll(playedSuit.cards());
+			boolean re = mCards.removeAll(curPlayedSuit.cards());
 			Assert.assertTrue("Fail to remove played cards!", re);
 		}
 		return true;
@@ -127,24 +128,21 @@ public class Player {
 		mSeatIndex = val;
 	}
 
-	public List<Card> playCards() {
-		synchronized (mCards) {
-			List<Card> selCards = new ArrayList<Card>();
-			for (Card c : mCards) {
-				if (c.isSelected())
-					selCards.add(c);
-			}
-
-			// Let controller to test if the cards is a valid pattern.
-			if (!GameController.get().rule().matched(selCards))
-				return null;
-
-			for (Card c : selCards) {
-				mCards.remove(c);
-			}
-
-			return selCards;
+	public List<Card> selectedCards() {
+		List<Card> selCards = new ArrayList<Card>();
+		for (Card c : mCards) {
+			if (c.isSelected())
+				selCards.add(c);
 		}
+		return selCards;
+	}
+	
+	public Suit selectedSuit() {
+		List<Card> selCards = this.selectedCards();
+		if(selCards != null && selCards.size() > 0) {
+			return new Suit(selCards);
+		}
+		return null;
 	}
 
 	public void clearSelectedCards() {

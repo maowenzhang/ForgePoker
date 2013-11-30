@@ -43,7 +43,9 @@ public class GameController {
 	private int mGameState = STATE_GAME;
 	private boolean mBidCompleted = false;
 	private GameActivity gameActivity;
-
+	private List<Integer> mAvailableSeat = new LinkedList<Integer>();
+	private Suit mLastSuit = null;
+	
 	public GameActivity getGameActivity() {
 		return gameActivity;
 	}
@@ -52,14 +54,8 @@ public class GameController {
 		this.gameActivity = gameActivity;
 	}
 
-	private List<Integer> mAvailableSeat = new LinkedList<Integer>();
-
-	List<Card> mCurPlayedCards = null;
-
-	public List<Card> CurrentPlayedCards() {
-		return mCurPlayedCards;
-	}
-
+	
+	
 	public enum EPlayAction {
 		eNone(-1), 
 		eBidNo(0), eBid1(1), eBid2(2), eBid3(3),
@@ -159,6 +155,8 @@ public class GameController {
 	// }
 
 	public void onAction(EPlayAction a) {
+		if(mCurPlayer == null)
+			return;
 		String str = new String();
 		switch (a) {
 		case eBid1:
@@ -177,17 +175,24 @@ public class GameController {
 			mCurPlayer.bid(0);
 			str = "不叫";
 			break;
-		case ePlayCard: {
-			if (mCurPlayedCards != null)
-				mCurPlayedCards.clear();
-			mCurPlayedCards = mCurPlayer.playCards();
-			if (mCurPlayedCards != null)
-				mCurPlayer = this.nextPlayer();
-			else
+		case ePlayCard:
 			{
-				Toast.makeText(gameActivity, "Selected cards are invalid", Toast.LENGTH_SHORT).show();
+				Suit selSuit = mCurPlayer.selectedSuit();
+				if(selSuit == null) {
+					Toast.makeText(gameActivity, "TO " + mCurPlayer.name() + ": No cards selected!", Toast.LENGTH_SHORT).show();
+					break;
+				}
+				// Check if the cards is valid or not.
+				if(!GameController.get().rule().matched(selSuit.cards())) {
+					Toast.makeText(gameActivity, "Selected cards are invalid", Toast.LENGTH_SHORT).show();
+					break;
+				}
+				if (mCurPlayer.playCards(selSuit)) {
+					mCurPlayer = this.nextPlayer();
+				} else {
+					Toast.makeText(gameActivity, "Fail to remove played cards!", Toast.LENGTH_SHORT).show();
+				}
 			}
-		}
 			break;
 		case ePassCard:
 			mCurPlayer = this.nextPlayer();
@@ -213,11 +218,11 @@ public class GameController {
 					hasNoBid = true;
 			}
 
-			boolean showBidLayout = hasNoBid && (!showBid1 || !showBid2) || !hasNoBid && showBid3;
-			gameActivity.showBidButtons(showBidLayout, showBid1, showBid2, showBid3);
-				
 			Player nextPlayer = this.nextPlayer();
-			if (a == EPlayAction.eBid3 || nextPlayer.hasBid()) {
+			mBidCompleted = (a == EPlayAction.eBid3 || nextPlayer.hasBid());
+			gameActivity.showBidButtons(!mBidCompleted, showBid1, showBid2, showBid3);
+				
+			if (mBidCompleted) {
 				if (a != EPlayAction.eBid3) {
 					Player lordPlayer = null;
 					for (Player p : mPlayers) {
@@ -230,7 +235,6 @@ public class GameController {
 					}
 					mCurPlayer = lordPlayer;
 				}
-				mBidCompleted = true;
 				mCurPlayer.isLord(true);
 				// Star play cards, wait the current player to play cards.
 				startPlayCards();
@@ -307,22 +311,14 @@ public class GameController {
 
 		mThisJoinedPlayer = new Player("Me", R.drawable.ic_launcher, 0, false);
 		mThisJoinedPlayer.seatIndex(getSeat());
-		mThisJoinedPlayer.isRobot();
 		mPlayers.add(mThisJoinedPlayer);
 		for (int i = 1; i < mRule.playerCount(); ++i) {
 			Player p = new Player("player" + i, R.drawable.ic_launcher, 0, true);
 			p.seatIndex(getSeat());
 			mPlayers.add(p);
 		}
-
-		// Generate a random layer as the initial lord.
-		// The final lord will be decided by the bid result.
-		Random r = new Random();
-		int lordIdx = r.nextInt() % mRule.playerCount();
-		mCurPlayer = mPlayers.get(lordIdx);
-	}
-
-	private Player nextPlayer() {
+		
+		// Sort the players by seat index. It's useful when getting next player in a round.
 		Collections.sort(mPlayers, new Comparator<Player>() {
 			public int compare(Player p1, Player p2) {
 				if (p1.seatIndex() < p2.seatIndex())
@@ -333,6 +329,15 @@ public class GameController {
 					return 1;
 			}
 		});
+
+		// Generate a random layer as the initial lord.
+		// The final lord will be decided by the bid result.
+		Random r = new Random();
+		int lordIdx = r.nextInt() % mRule.playerCount();
+		mCurPlayer = mPlayers.get(lordIdx);
+	}
+
+	private Player nextPlayer() {
 
 		int next = (mCurPlayer.seatIndex() + 1) % mPlayers.size();
 		for (Player p : mPlayers)

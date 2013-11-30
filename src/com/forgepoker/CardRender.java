@@ -6,7 +6,6 @@ import java.util.Map;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
@@ -54,15 +53,14 @@ public class CardRender {
 		CardSceneNode cnode = mCardNodes.get(c);
 
 		if (cnode.isSelected()) {
-			des.offset(0, -mCardSelectedPopupHeight);
-		}
 		
-		if(player.isRobot()) {
-			des.offset(player.seatIndex() == 2 ? mCardSelectedPopupHeight : (-mCardSelectedPopupHeight), 0);
-		} else {
-			des.offset(0, -mCardSelectedPopupHeight);
+			boolean bDebug = GameController.get().rule().showRivalCards();
+			if(bDebug && player.isRobot()) {
+				des.offset(player.seatIndex() == 2 ? mCardSelectedPopupHeight : (-mCardSelectedPopupHeight), 0);
+			} else {
+				des.offset(0, -mCardSelectedPopupHeight);
+			}
 		}
-
 
 		cnode.desRect(des);
 		mCanvas.drawBitmap(mCardsImage, cnode.srcRect(), des, null);
@@ -140,11 +138,11 @@ public class CardRender {
 		int eachCardOverlap = 0;
 		if (numOfCards > 1) {
 			// last card shows no overlap
-			eachCardOverlap = (totalHeight - mCardHeight) / (numOfCards - 1);
+			eachCardOverlap = 20;//(totalHeight - mCardHeight) / (numOfCards - 1);
 		}
 
-		int left = des.left + eachCardOverlap * indexOfCard;
-		return new Rect(left, des.top, left + mCardWidth, des.top + mCardHeight);
+		int top = des.top + eachCardOverlap * indexOfCard;
+		return new Rect(des.left, top, des.left + mCardWidth, top + mCardHeight);
 	}
 
 	

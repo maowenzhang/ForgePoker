@@ -221,13 +221,14 @@ public class RuleManager implements IPokerRule {
 			boolean hasSameSuit = this.hasSameSuit(cards);
 			for(ICardPattern pattern : mPatterns)
 			{
+				// Quick check via the card count and suit.
 				if(pattern.hasLowerLimitation() && szCards < pattern.minCards())
 					continue;
 				if(pattern.hasUpperLimitation() && szCards > pattern.maxCards())
 					continue;
 				if(pattern.needSameSuit() && !hasSameSuit)
 					continue;
-				// TODO: need improve the performance
+				// Now check the real pattern.
 				if(pattern.definition().matched(cards))
 					return true;
 			}

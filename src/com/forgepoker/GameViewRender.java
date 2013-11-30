@@ -278,37 +278,39 @@ public class GameViewRender {
 
 	private void renderCards_OtherPlayer(Player p) {
 
-		// left player
-		if (p.seatIndex() == 1) {
-			
-			if (mGameController.rule().showRivalCards()) {
-				mCardRender.renderCardsVertical(p, p.cards(), mLeftPlayerCardRect);
-			}
-			else {
-				mCardRender.renderCardBack(mLeftPlayerCardRect);
-			}
-
-			// render playing cards on table
-			if (!p.curPlayedSuit().cards().isEmpty()) {
-				mCardRender.renderCards(p, p.curPlayedSuit().cards(),
-						mLeftPlayerOutCardsRect, true);
-			}
+		// Default right player's rect info
+		Rect allCardsRect = mRightPlayerCardRect;
+		Rect outCardsRect = mRightPlayerOutCardRect;
+		
+		if (p.seatIndex() == 2) {
+			// left player seat index is 2 via counter-clockwise.
+			//		 
+			//	2(Player3)			1(Player2)
+			//					
+			//			0 (Player1)
+			//	
+			allCardsRect = mLeftPlayerCardRect;
+			outCardsRect = mLeftPlayerOutCardsRect;
 		}
-		// right player
+		
+		if (mGameController.rule().showRivalCards()) {
+			mCardRender.renderCardsVertical(p, p.cards(), allCardsRect);
+		}
 		else {
-			mCardRender.renderCardBack(mRightPlayerCardRect);
+			mCardRender.renderCardBack(allCardsRect);
+		}
 
-			// render playing cards on table
-			if (!p.curPlayedSuit().cards().isEmpty()) {
-				mCardRender.renderCards(p, p.curPlayedSuit().cards(),
-						mRightPlayerOutCardRect, true);
-			}
+		// render playing cards on table
+		if (p.curPlayedSuit() != null && !p.curPlayedSuit().cards().isEmpty()) {
+			mCardRender.renderCards(p, p.curPlayedSuit().cards(), outCardsRect, true);
 		}
 	}
 
 	private boolean OnTouchCards(int x, int y) {
+		
+		boolean bShowRivalCards = mGameController.rule().showRivalCards();
 		for (Player p : mGameController.players()) {
-			if (p != mGameController.ThisJoinedPlayer())
+			if (!bShowRivalCards && p != mGameController.ThisJoinedPlayer())
 				continue;
 
 			for (int i = p.cards().size() - 1; i >= 0; i--) {
