@@ -290,10 +290,12 @@ public class GameViewRender {
 			e.printStackTrace();
 		}		
 
-		// render playing cards on table
-		if (!p.curPlayedSuit().cards().isEmpty()) {
-			mCardRender.renderCards(p, p.curPlayedSuit().cards(),
-					mCurPlayerOutCardsRect, true);
+		// render playing cards on table, but only draw the current and last current player.
+		if(p == mGameController.LastCurrentPlayer()) {
+			if (p.curPlayedSuit() != null && !p.curPlayedSuit().cards().isEmpty()) {
+				mCardRender.renderCards(p, p.curPlayedSuit().cards(),
+						mCurPlayerOutCardsRect, true);
+			}
 		}
 	}
 
@@ -321,9 +323,11 @@ public class GameViewRender {
 			mCardRender.renderCardBack(allCardsRect);
 		}
 
-		// render playing cards on table
-		if (p.curPlayedSuit() != null && !p.curPlayedSuit().cards().isEmpty()) {
-			mCardRender.renderCards(p, p.curPlayedSuit().cards(), outCardsRect, true);
+		// render playing cards on table, but only draw the current and last current player.
+		if(p == mGameController.LastCurrentPlayer()) {
+			if (p.curPlayedSuit() != null && !p.curPlayedSuit().cards().isEmpty()) {
+				mCardRender.renderCards(p, p.curPlayedSuit().cards(), outCardsRect, true);
+			}
 		}
 	}
 

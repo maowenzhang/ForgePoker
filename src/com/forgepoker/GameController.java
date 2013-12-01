@@ -278,6 +278,10 @@ public class GameController {
 				showPass = false;
 			else if(mLastCurPlayer == mCurPlayer)
 				showPass = false;
+			
+			if(!showPass && mCurPlayer != null) {
+				mCurPlayer.clearCurPlayedSuit();
+			}
 			gameActivity.showPlayButtons(true, showPass);
 		}
 		// Log.d("BidResult", str);
@@ -309,7 +313,10 @@ public class GameController {
 	}
 	
 	private Player mLastCurPlayer = null;
-
+	public Player LastCurrentPlayer() {
+		return mLastCurPlayer;
+	}
+	
 	private List<Deck> mDesks = new ArrayList<Deck>();
 
 	public Deck deck() {

@@ -93,6 +93,10 @@ public class Player {
 	public Suit curPlayedSuit() {
 		return mCurPlayedSuit;
 	}
+	
+	public void clearCurPlayedSuit() {
+		mCurPlayedSuit.cards().clear();
+	}
 
 	public List<Card> cards() {
 		return mCards;
