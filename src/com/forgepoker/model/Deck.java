@@ -53,4 +53,12 @@ public class Deck {
 	public void shuffle() {
 		Collections.shuffle(mCards);
 	}
+	
+	public void resetCards() {
+		synchronized(mCards) {
+			for(Card c : mCards) {
+				c.setIsSelected(false);
+			}
+		}
+	}
 }

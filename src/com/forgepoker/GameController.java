@@ -207,12 +207,9 @@ public class GameController {
 				}
 				
 				if (mCurPlayer.playCards(selSuit)) {
-					if(mCurPlayer.cards().size() == 0) {
-						if(mCurPlayer.isLord())
-							Toast.makeText(gameActivity, "Lord wins! Come on, peasant!", Toast.LENGTH_SHORT).show();
-						else
-							Toast.makeText(gameActivity, "Peasant wins!", Toast.LENGTH_SHORT).show();
+					if(tryFinishGame()) {
 						gameActivity.finish();
+						return;
 					}
 					mLastCurPlayer = mCurPlayer;
 					mCurPlayer = this.nextPlayer();
@@ -253,6 +250,9 @@ public class GameController {
 			}
 
 			Player nextPlayer = this.nextPlayer();
+			if(null == nextPlayer)
+				return;
+			
 			mBidCompleted = (a == EPlayAction.eBid3 || nextPlayer.hasBid());
 			gameActivity.showBidButtons(!mBidCompleted, showBid1, showBid2, showBid3);
 				
@@ -294,6 +294,23 @@ public class GameController {
 		// Log.d("BidResult", str);
 	}
 
+	private boolean tryFinishGame() {
+		if(mCurPlayer.cards().size() == 0) {
+			if(mCurPlayer.isLord())
+				Toast.makeText(gameActivity, "Lord wins! Come on, peasant!", Toast.LENGTH_SHORT).show();
+			else
+				Toast.makeText(gameActivity, "Peasant wins!", Toast.LENGTH_SHORT).show();
+
+			// Reset game states
+			mCurPlayer = null;
+			mLastCurPlayer = null;
+			mLastSuit = null;
+			mBidCompleted = false;
+			return true;
+		}
+		return false;
+	}
+	
 	/** Data */
 	private List<Player> mPlayers = new ArrayList<Player>();
 
@@ -341,18 +358,24 @@ public class GameController {
 	}
 
 	private GameController() {
-		for (int i = 0; i < mRule.playerCount(); ++i)
-			mAvailableSeat.add(i);
+		
 	}
 
 	public void init(Context context) {
 		Log.d("forge1", "GameController::init");
 
+		initTableSeat();
+		
 		initPlayers();
 
 		dealCards();
 	}
 
+	private void initTableSeat() {
+		mAvailableSeat.clear();
+		for (int i = 0; i < mRule.playerCount(); ++i)
+			mAvailableSeat.add(i);
+	}
 	private void initPlayers() {
 
 		// TODO: restore status when re-enter game
@@ -392,6 +415,9 @@ public class GameController {
 
 	private Player nextPlayer() {
 
+		if(null == mCurPlayer)
+			return null;
+		
 		int next = (mCurPlayer.seatIndex() + 1) % mPlayers.size();
 		for (Player p : mPlayers)
 			if (p.seatIndex() == next)
@@ -424,6 +450,7 @@ public class GameController {
 		for(int i = 0; i < mRule.deckCount(); ++i)
 		{
 			Deck d = mRule.deck();
+			d.resetCards();
 			mDesks.add(d);
 			allCards.addAll(d.cards());
 		}

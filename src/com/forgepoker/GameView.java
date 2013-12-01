@@ -149,11 +149,11 @@ OnTouchListener, Runnable {
 		
 		if(mRender == null)
 			return;
-		
-		mRender.init();
-		
+
 		Canvas canvas = null;
 		try {
+			
+			mRender.init();
 			
 			synchronized(mHolder) {	
 				canvas = mHolder.lockCanvas();
