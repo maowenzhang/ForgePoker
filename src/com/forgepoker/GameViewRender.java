@@ -253,6 +253,11 @@ public class GameViewRender {
 				renderCards_OtherPlayer(p);
 		}
 		// Render base cards
+		renderBaseCards();
+	}
+
+	private void renderBaseCards()
+	{
 		List<Card> baseCards = mGameController.baseCards();
 		if(baseCards != null) {
 			int i = 0;
@@ -260,11 +265,14 @@ public class GameViewRender {
 				int left = mBaseCardRect.left + (i++) * (CardRender.mCardWidth + 5);
 				int right = left + CardRender.mCardWidth;
 				Rect des = new Rect(left, mBaseCardRect.top, right, mBaseCardRect.bottom);
-				mCardRender.renderCard(c, des);
+				if(mGameController.bidCompleted())
+					mCardRender.renderCard(c, des);
+				else 
+					mCardRender.renderCardBack(des);
 			}
 		}
 	}
-
+	
 	private void renderCards_CurrentPlayer(Player p) {
 
 		// render current cards

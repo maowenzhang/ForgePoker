@@ -102,6 +102,9 @@ public class GameController {
 		gameActivity.showPlayButtons(true, false);
 	}
 
+	public boolean bidCompleted() {
+		return mBidCompleted;
+	}
 	//
 	// private void playCards_curPlayer() {
 	// // TODO: use AI to check played cards (suit)
