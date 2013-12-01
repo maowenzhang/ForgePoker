@@ -68,6 +68,7 @@ public class GameViewRender {
 
 		mGameBackground = BitmapFactory.decodeResource(mContext.getResources(),
 				R.drawable.game_background);
+		
 	}
 
 	/**
@@ -266,7 +267,7 @@ public class GameViewRender {
 				int right = left + CardRender.mCardWidth;
 				Rect des = new Rect(left, mBaseCardRect.top, right, mBaseCardRect.bottom);
 				if(mGameController.bidCompleted())
-					mCardRender.renderCard(c, des);
+					mCardRender.renderBaseCard(c, des);
 				else 
 					mCardRender.renderCardBack(des);
 			}
@@ -328,7 +329,6 @@ public class GameViewRender {
 
 	private boolean OnTouchCards(int x, int y) {
 		
-		boolean bShowRivalCards = mGameController.rule().showRivalCards();
 		for (Player p : mGameController.players()) {
 			if (p != mGameController.CurrentPlayer())
 				continue;

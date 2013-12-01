@@ -72,6 +72,14 @@ public class CardRender {
 		mCanvas.drawBitmap(mCardsImage, cnode.srcRect(), des, null);
 	}
 
+	public void renderBaseCard(Card c, Rect des) {
+		CardSceneNode cnode = mBaseCardNodes.get(c);
+		if(cnode == null)
+			return;
+		cnode.desRect(des);
+		mCanvas.drawBitmap(mCardsImage, cnode.srcRect(), des, null);
+	}
+	
 	public void renderCardBack(Rect des) {
 		mCanvas.drawBitmap(mCardsImage, mCardBackPos, des, null);
 	}
@@ -178,6 +186,7 @@ public class CardRender {
 	 * 
 	 */
 	private Map<Card, CardSceneNode> mCardNodes = new HashMap<Card, CardSceneNode>();
+	private Map<Card, CardSceneNode> mBaseCardNodes = new HashMap<Card, CardSceneNode>();
 	private Rect mCardBackPos;
 
 	private void initCardNodes() {
@@ -202,6 +211,13 @@ public class CardRender {
 			CardSceneNode cnode = new CardSceneNode(c);
 			cnode.srcRect(r);
 			mCardNodes.put(c, cnode);
+		}
+		
+		for (Card c : GameController.get().baseCards()) {
+			CardSceneNode cnode = mCardNodes.get(c);
+			CardSceneNode cBaseNode = new CardSceneNode(c);
+			cBaseNode.srcRect(new Rect(cnode.srcRect()));
+			mBaseCardNodes.put(c, cBaseNode);
 		}
 
 		// Card back is at 55th

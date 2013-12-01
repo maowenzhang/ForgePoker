@@ -69,6 +69,7 @@ OnTouchListener, Runnable {
 		setOnTouchListener(this);
 		
 		mRender = new GameViewRender(context);
+		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -153,13 +154,13 @@ OnTouchListener, Runnable {
 		
 		Canvas canvas = null;
 		try {
-			canvas = mHolder.lockCanvas();
-			//Log.d("thread", "draw::lockCanvas");
-			if (canvas == null) {
-				return;
-			}
 			
 			synchronized(mHolder) {	
+				canvas = mHolder.lockCanvas();
+				//Log.d("thread", "draw::lockCanvas");
+				if (canvas == null) {
+					return;
+				}
 				mRender.render(canvas);
 			}
 			
