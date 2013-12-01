@@ -207,6 +207,13 @@ public class GameController {
 				}
 				
 				if (mCurPlayer.playCards(selSuit)) {
+					if(mCurPlayer.cards().size() == 0) {
+						if(mCurPlayer.isLord())
+							Toast.makeText(gameActivity, "Lord wins! Come on, peasant!", Toast.LENGTH_SHORT).show();
+						else
+							Toast.makeText(gameActivity, "Peasant wins!", Toast.LENGTH_SHORT).show();
+						gameActivity.finish();
+					}
 					mLastCurPlayer = mCurPlayer;
 					mCurPlayer = this.nextPlayer();
 					mLastSuit = selSuit;
