@@ -219,6 +219,11 @@ public class GameController {
 			if(mLastCurPlayer != mCurPlayer)
 				mCurPlayer = this.nextPlayer();
 			break;
+		case eReselectCard:
+			if(null != mCurPlayer) {
+				mCurPlayer.reselectCards();
+			}
+			break;
 		}
 
 		// playing round

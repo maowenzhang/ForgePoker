@@ -330,7 +330,7 @@ public class GameViewRender {
 		
 		boolean bShowRivalCards = mGameController.rule().showRivalCards();
 		for (Player p : mGameController.players()) {
-			if (!bShowRivalCards && p != mGameController.ThisJoinedPlayer())
+			if (p != mGameController.CurrentPlayer())
 				continue;
 
 			for (int i = p.cards().size() - 1; i >= 0; i--) {

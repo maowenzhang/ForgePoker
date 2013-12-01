@@ -177,4 +177,10 @@ public class Player {
 	public boolean isRobot() {
 		return mIsRobot;
 	}
+	
+	public void reselectCards() {
+		for(Card c : mCards) {
+			c.setIsSelected(false);
+		}
+	}
 }
