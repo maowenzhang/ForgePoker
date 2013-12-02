@@ -165,11 +165,11 @@ public class GameViewRender {
 	private void renderPlayerAvatars() {
 
 		for (Player p : mGameController.players()) {
-			if (p.isCurrentPlayer()) {
+			if (p == mGameController.ThisJoinedPlayer()) {
 				renderPlayerBasic(p, mCurPlayerDesRect);
 			}
 			// left player
-			else if (p.seatIndex() == 1) {
+			else if (p.seatIndex() == 2) {
 				renderPlayerBasic(p, mLeftPlayerDesRect);
 			}
 			// right player
@@ -180,8 +180,20 @@ public class GameViewRender {
 
 	private void renderPlayerBasic(Player p, Rect des) {
 		// TODO: draw name, score
+		mPaint.setStrokeWidth(0.5f);
+		mPaint.setColor(Color.BLACK);
+		mCanvas.save();
 		mCanvas.drawBitmap(mPlayerImages.get(p), null, des, mPaint);
 		mCanvas.drawText(p.name(), des.centerX(), des.centerY(), mPaint);
+		
+		if(p.isLord()) {
+			mPaint.setStyle(Paint.Style.STROKE);
+			mPaint.setStrokeWidth((float) 2.5);
+			mPaint.setColor(Color.RED);
+			mCanvas.drawRect(des, mPaint);
+		}
+		mCanvas.restore();
+		
 	}
 
 	/**
