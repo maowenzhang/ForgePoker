@@ -1,8 +1,6 @@
 package com.forgepoker;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +32,8 @@ public class CardRender {
 	private int mCardHeightImage = 110; // Single card height in image
 	private int mCardWidthImage = 80; // Single card width in image
 	static int mCardSelectedPopupHeight = 20; // Height of selected card jumps
-
+	static int mGapBetweenCards = 36;
+	
 	public CardRender(Context context) {
 		mContext = context;
 	}
@@ -93,39 +92,35 @@ public class CardRender {
 		return false;
 	}
 
-	public void renderCards(Player player, List<Card> cards, Rect des,
-			boolean isShowNarrowCards) {
+	public void renderCards(Player player, List<Card> cards, Rect des) {
 
 		synchronized (cards) {
-			// get total cards width
-			int totalCardWidth = des.width();
-			double showCardRate = isShowNarrowCards ? 0.7 : 1.0;
-			int allRemainCardsWidth = (int) (cards.size() * mCardWidth * showCardRate);
-			if (totalCardWidth > allRemainCardsWidth) {
-				totalCardWidth = allRemainCardsWidth;
-			}
-
 			int indexOfCard = 0;
 			for (Card c : cards) {
-				Rect tmp = getCardPosition(indexOfCard++, cards.size(),
-						totalCardWidth, des);
+				Rect tmp = getCardPosition(indexOfCard++, cards.size(), des);
 				renderCard(player, c, tmp);
 			}
 		}
 	}
+	
+	public void renderPlayedCards(Player player, List<Card> cards, Rect des) {
 
-	private Rect getCardPosition(int indexOfCard, int numOfCards,
-			int totalWidth, Rect des) {
-
-		int eachCardWidthOverlap = 0;
-		if (numOfCards > 1) {
-			// last card shows no overlap
-			eachCardWidthOverlap = (totalWidth - mCardWidth) / (numOfCards - 1);
+		synchronized (cards) {
+			int indexOfCard = 0;
+			for (Card c : cards) {
+				int left = des.left + mGapBetweenCards * indexOfCard++;
+				Rect tmp = new Rect(left, des.top, left + mCardWidth, des.top + mCardHeight);
+				renderCard(player, c, tmp);
+			}
 		}
-		int delta = 5; // small adjustment
+		
+	}
 
-		int start = des.centerX() - totalWidth / 2 + delta; // align in center
-		int left = start + eachCardWidthOverlap * indexOfCard;
+	private Rect getCardPosition(int indexOfCard, int numOfCards, Rect des) {
+		
+		int totalWidth = numOfCards * mGapBetweenCards + (mCardWidth - mGapBetweenCards);
+		int start = (GameViewRender.mScreenWidth - totalWidth)/2; 
+		int left = start + mGapBetweenCards * indexOfCard;
 		return new Rect(left, des.top, left + mCardWidth, des.top + mCardHeight);
 	}
 

@@ -284,7 +284,7 @@ public class GameViewRender {
 		Rect des = new Rect(left, top, right, bottom);
 
 		try {
-			mCardRender.renderCards(p, p.cards(), des, false);
+			mCardRender.renderCards(p, p.cards(), des);
 		} catch (Exception e) {
 			Assert.assertTrue("fail to render card!", false);
 			e.printStackTrace();
@@ -293,8 +293,7 @@ public class GameViewRender {
 		// render playing cards on table, but only draw the current and last current player.
 		if(p == mGameController.LastCurrentPlayer()) {
 			if (p.curPlayedSuit() != null && !p.curPlayedSuit().cards().isEmpty()) {
-				mCardRender.renderCards(p, p.curPlayedSuit().cards(),
-						mCurPlayerOutCardsRect, true);
+				mCardRender.renderCards(p, p.curPlayedSuit().cards(), mCurPlayerOutCardsRect);
 			}
 		}
 	}
@@ -326,7 +325,7 @@ public class GameViewRender {
 		// render playing cards on table, but only draw the current and last current player.
 		if(p == mGameController.LastCurrentPlayer()) {
 			if (p.curPlayedSuit() != null && !p.curPlayedSuit().cards().isEmpty()) {
-				mCardRender.renderCards(p, p.curPlayedSuit().cards(), outCardsRect, true);
+				mCardRender.renderPlayedCards(p, p.curPlayedSuit().cards(), outCardsRect);
 			}
 		}
 	}
