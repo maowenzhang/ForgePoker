@@ -14,7 +14,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.forgepoker.model.Card.ESuit;
-import com.forgepoker.model.Suit.EType;
 import com.forgepoker.util.FileUtils;
 
 import android.util.Log;
@@ -41,6 +40,10 @@ public class RuleManager implements IPokerRule {
 	private boolean mCanPassRound = true; // We can pass a round in fighting lord.
 	
 	private final ArrayList<ICardPattern> mPatterns = new ArrayList<ICardPattern>();
+	private static ICardPattern mbombPattern = null;
+	private static ICardPattern mTriplePattern = null;
+	private static ICardPattern mDoublePattern = null;
+	private static ICardPattern mRocketpattern = null;
 	
 	// just for debugging.
 	private boolean mShowRivalCards = false;
@@ -155,7 +158,14 @@ public class RuleManager implements IPokerRule {
             e.printStackTrace();  
             Log.d("ReadRule","=========="+str);    
         }
-        
+
+        try
+        {
+        	br.close();
+        }
+        catch(IOException e){  
+            e.printStackTrace();      
+        }
         return str;
 	}
 	
@@ -208,6 +218,7 @@ public class RuleManager implements IPokerRule {
             		_pattern.setWeight(pattern.optInt("weight"));
             		_pattern.setNeedMatchPattern(pattern.optBoolean("needMatchPattern"));
             		_pattern.setNeedSameSuit(pattern.optBoolean("needSameSuit"));
+            		initSpecialPatterns(_pattern);
             		mPatterns.add(_pattern);
             	}
             }            
@@ -216,6 +227,38 @@ public class RuleManager implements IPokerRule {
            e.printStackTrace();  
            //Log.d("ReadRule", " datajson is =========="+dataJson);   
         }
+	}
+	
+	private boolean initSpecialPatterns(ICardPattern pattern)
+	{
+		if(pattern.name() == "Bomb")
+			mbombPattern = pattern;
+		else if(pattern.name() == "Triple")
+			mTriplePattern = pattern;
+		else if(pattern.name() == "Double")
+			mDoublePattern = pattern;		
+		else if(pattern.name() == "Rocket")
+			mRocketpattern = pattern;
+
+		return true;
+	}
+	
+	public ICardPattern getBombPattern()
+	{
+		return mbombPattern;
+	}
+	
+	public ICardPattern getTriplePattern()
+	{
+		return mTriplePattern;
+	}
+	public ICardPattern getDoublePattern()
+	{
+		return mDoublePattern;
+	}
+	public ICardPattern getRocketPattern()
+	{
+		return mRocketpattern;
 	}
 
 	@Override
@@ -297,4 +340,21 @@ public class RuleManager implements IPokerRule {
 		}
 		return null;
 	}
+	
+	public ICardPattern getPatternByName(final String patternName)
+	{
+		if(patternName.length() > 0)
+		{
+			for(ICardPattern pattern : mPatterns)
+			{
+				if(pattern.name().equals(patternName))
+				{
+					return pattern;
+				}
+				
+			}
+		}
+		return null;
+	}
+	
 }

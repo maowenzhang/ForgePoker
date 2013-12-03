@@ -98,8 +98,21 @@ public class GameController {
 	// }
 	//
 	public void startPlayCards() {
-		// TODO: get lord to play cards first
-		gameActivity.showPlayButtons(true, false);
+		while(!mBidCompleted)
+		{
+			for(Player p : mPlayers)
+			{
+				if(p.isRobot()) {
+					
+				} else {
+					// TODO: get lord to play cards first
+					gameActivity.showPlayButtons(true, false);
+				}
+			}
+			
+			// bid complete
+			break;
+		}
 	}
 
 	public boolean bidCompleted() {

@@ -1,12 +1,8 @@
 package com.forgepoker.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import junit.framework.Assert;
 
-import com.forgepoker.GameController;
 
 /**
  * Represents game player
@@ -23,20 +19,21 @@ public class Player {
 	private int mBid = -1;
 	private boolean mHasBid = false;
 
-	/** cards */
-	private List<Card> mCards = new ArrayList<Card>();
-	private Suit mCurPlayedSuit = new Suit();
-
 	private boolean mIsLord = false;
 	private boolean mIsCurrentPlayer = false;
 	private int mSeatIndex = 1;
 	private boolean mIsRobot = true;
+	
+	private AIRobot mAI = null;
 
 	public Player(String name, int avatar, int score, boolean isRobot) {
 		mName = name;
 		mAvatar = avatar;
 		mScore = score;
 		mIsRobot = isRobot;
+		
+		// TODO create simple AIRobot for now
+		mAI = AIFactory.createAIRobot(AIFactory.AIDifficulty.valueOf(1));
 	}
 
 	public boolean isLord() {
@@ -44,18 +41,8 @@ public class Player {
 	}
 
 	public void setLord(List<Card> baseCards) {
-		synchronized (mCards) {
-		mIsLord = true;
-		assert(baseCards != null);
-		if(null != baseCards) {
-			for(Card c : baseCards) {
-				c.setIsSelected(true);
-				mCards.add(c);
-			}
-			Collections.sort(mCards);
-			Collections.reverse(mCards);
-		}
-		}
+		mIsLord = true;	
+		this.addBaseCard(baseCards);
 	}
 
 	public String name() {
@@ -90,55 +77,12 @@ public class Player {
 		return mHasBid;
 	}
 
-	public Suit curPlayedSuit() {
-		return mCurPlayedSuit;
-	}
-	
-	public void clearCurPlayedSuit() {
-		mCurPlayedSuit.cards().clear();
-	}
-
-	public List<Card> cards() {
-		return mCards;
-	}
-
-	public void cards(List<Card> cards) {
-		synchronized (mCards) {
-			mCards.clear();
-			mCards.addAll(cards);
-			sortCards();
-		}
-	}
-
-	public void sortCards() {
-		synchronized (mCards) {
-			Collections.sort(mCards);
-			Collections.reverse(mCards);
-		}
-	}
-
-	/** Produce/play cards */
-	public boolean playCards(Suit curPlayedSuit) {
-		
-		synchronized (mCurPlayedSuit) {
-			mCurPlayedSuit = curPlayedSuit;
-		}
-
-		synchronized (mCards) {
-			boolean re = mCards.removeAll(curPlayedSuit.cards());
-			Assert.assertTrue("Fail to remove played cards!", re);
-		}
-		return true;
-	}
-
 	public boolean isCurrentPlayer() {
 		return mIsCurrentPlayer;
 	}
 
 	public void isCurrentPlayer(boolean val) {
-		synchronized (mCards) {
 		this.mIsCurrentPlayer = val;
-		}
 	}
 
 	public int seatIndex() {
@@ -146,45 +90,55 @@ public class Player {
 	}
 
 	public void seatIndex(int val) {
-		synchronized (mCards) {
 		mSeatIndex = val;
-		}
-	}
-
-	public List<Card> selectedCards() {
-		List<Card> selCards = new ArrayList<Card>();
-		for (Card c : mCards) {
-			if (c.isSelected())
-				selCards.add(c);
-		}
-		return selCards;
-	}
-	
-	public Suit selectedSuit() {
-		List<Card> selCards = this.selectedCards();
-		if(selCards != null && selCards.size() > 0) {
-			return new Suit(selCards);
-		}
-		return null;
-	}
-
-	public void clearSelectedCards() {
-		synchronized (mCards) {
-		for (Card c : mCards) {
-			if (c.isSelected()) {
-				c.setIsSelected(false);
-			}
-		}
-		}
 	}
 
 	public boolean isRobot() {
 		return mIsRobot;
 	}
 	
+	public Suit curPlayedSuit() {
+		return mAI.curPlayedSuit();
+	}
+	
+	public void clearCurPlayedSuit() {
+		mAI.clearCurPlayedSuit();
+	}
+
+	public List<Card> cards() {
+		return mAI.cards();
+	}
+
+	public void cards(List<Card> cards) {
+		mAI.cards(cards);
+	}
+
+	/** Produce/play cards */
+	public boolean playCards(Suit curPlayedSuit) {
+		
+		return mAI.playCards(curPlayedSuit);
+	}
+	
+	public void clearSelectedCards() {
+		mAI.clearSelectedCards();
+	}
+	
 	public void reselectCards() {
-		for(Card c : mCards) {
-			c.setIsSelected(false);
-		}
+		mAI.reselectCards();
+	}
+	
+	public List<Card> selectedCards() 
+	{
+		return mAI.selectedCards();
+	}
+	
+	public Suit selectedSuit() 
+	{
+		return mAI.selectedSuit();
+	}
+	
+	public void addBaseCard(List<Card> baseCards)
+	{
+		mAI.addBaseCard(baseCards);
 	}
 }

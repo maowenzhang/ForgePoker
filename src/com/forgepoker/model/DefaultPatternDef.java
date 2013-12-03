@@ -1,8 +1,8 @@
 package com.forgepoker.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DefaultPatternDef extends PatternDef {
@@ -34,13 +34,33 @@ public class DefaultPatternDef extends PatternDef {
 			{
 				Pattern p = Pattern.compile(pattern);
 				boolean ret = p.matcher(inputPattern).matches();
-				if(ret)
-					return ret;
+				return ret;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	@Override
+	public int getMatchResult(List<Card> cards, List<String> matchedSuits)
+	{
+		try {
+			String inputPattern = cardsToString(cards);
+			for(String pattern : mPatterns)
+			{
+				Pattern p = Pattern.compile(pattern);
+				Matcher matcher = p.matcher(inputPattern);
+				while(matcher.find())
+				{
+					String result = matcher.group();
+					matchedSuits.add(result);
+				}				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return matchedSuits.size();
 	}
 	
 	/// Convert input cards to a special string for matching.

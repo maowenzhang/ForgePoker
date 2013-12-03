@@ -14,4 +14,6 @@ public abstract class PatternDef {
 		return false;
 	}
 	
+	public abstract int getMatchResult(List<Card> cards, List<String> matchedSuits);
+	
 }

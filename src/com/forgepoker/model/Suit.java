@@ -31,6 +31,8 @@ public class Suit {
 	private EType mType = EType.Invalid;
 	private List<Card> mCards = new ArrayList<Card>();
 	private int mPoints = 0;
+	// if the type is a sequence, we need to know the sequence count
+	private int mSequenceCount = 0; 
 	
 	public Suit() {
 	}
@@ -39,6 +41,34 @@ public class Suit {
 		mCards = cards;
 		Collections.sort(mCards);
 		initType();
+	}
+	
+	public Suit(List<Card> cards, EType type)
+	{
+		mCards = cards;
+		Collections.sort(mCards);
+		mType = type;
+		switch(type)
+		{
+		case SingleSequence:
+			mSequenceCount = cards.size();
+			break;
+		case DoubleSequence:
+			mSequenceCount = cards.size()/2;
+			break;
+		case TripleSequence:
+			mSequenceCount = cards.size()/3;
+			break;
+		case TripleWithOneSequence:
+			mSequenceCount = cards.size()/4;
+			break;
+		case TripleWithTwoSequence:
+			mSequenceCount = cards.size()/5;
+			break;
+		default:
+			mSequenceCount = 0; 
+			break;
+		}
 	}
 	
 	private void initType() {
@@ -65,5 +95,14 @@ public class Suit {
 	public void setPoints(int val) {
 		mPoints = val;
 	}
-
+	
+	public int compareTo(Suit comp) {
+		if(mSequenceCount != comp.sequenceCount())
+			return -1;
+		return mCards.get(0).compareTo(comp.cards().get(0));
+	}	
+	
+	public int sequenceCount() {
+		return mSequenceCount;
+	}
 }
