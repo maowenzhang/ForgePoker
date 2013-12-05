@@ -88,7 +88,10 @@ public class PlayCardRunnable implements Runnable {
 						waitTime--;
 					}
 					else 
+					{
+						bGameFinished = controller.gameFinished();
 						break;
+					}
 					
 					if(waitTime < 0)
 						break;
