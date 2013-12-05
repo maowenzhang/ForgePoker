@@ -231,13 +231,13 @@ public class RuleManager implements IPokerRule {
 	
 	private boolean initSpecialPatterns(ICardPattern pattern)
 	{
-		if(pattern.name() == "Bomb")
+		if(pattern.name().equals("Bomb"))
 			mbombPattern = pattern;
-		else if(pattern.name() == "Triple")
+		else if(pattern.name().equals("Triple") )
 			mTriplePattern = pattern;
-		else if(pattern.name() == "Double")
+		else if(pattern.name().equals("Double") )
 			mDoublePattern = pattern;		
-		else if(pattern.name() == "Rocket")
+		else if(pattern.name().equals("Rocket") )
 			mRocketpattern = pattern;
 
 		return true;

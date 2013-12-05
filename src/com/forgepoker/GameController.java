@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 import android.content.Context;
+import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,340 +27,6 @@ import com.forgepoker.model.Suit;
  */
 public class GameController {
 
-	/** Define the rule of the game */
-	private RuleManager mRule = RuleManager.get();
-
-	public RuleManager rule() {
-		return mRule;
-	}
-
-	/** Screen size related */
-	int mScreenWidth = 0;
-	int mScreenHeight = 0;
-	int mTouchPosX = 0;
-	int mTouchPosY = 0;
-
-	/** Game states */
-	private static final int STATE_GAME = 0;
-	private int mGameState = STATE_GAME;
-	private boolean mBidCompleted = false;
-	private GameActivity gameActivity;
-	private List<Integer> mAvailableSeat = new LinkedList<Integer>();
-	private Suit mLastSuit = null;
-	private List<Card> mBaseCards = new ArrayList<Card>();
-	
-	public List<Card> baseCards() {
-		return mBaseCards;
-	}
-	
-	public GameActivity getGameActivity() {
-		return gameActivity;
-	}
-
-	public void setGameActivity(GameActivity gameActivity) {
-		this.gameActivity = gameActivity;
-	}
-
-	
-	
-	public enum EPlayAction {
-		eNone(-1), 
-		eBidNo(0), eBid1(1), eBid2(2), eBid3(3),
-
-		eBid1Disalbe(4), eBid2Disalbe(5),
-
-		ePlayCard(6), ePassCard(7), ePromptCard(8), eReselectCard(9);
-		
-		private int value; 
-		public int value() {
-			return this.value;
-		}
-		private EPlayAction(int val) {
-			this.value = val;
-		}
-	}
-
-	public void startGame() {
-		startBid();
-	}
-
-	private void startBid() {
-		// TODO: get first player to bid
-		// TODO: handle AI bid
-		gameActivity.showBidButtons(true, true, true, true);
-	}
-
-	//
-	// public void endBid(int bidVal) {
-	// // TODO: check which player has higher bid
-	// mCurPlayer.isLord(true);
-	//
-	// startPlayCards();
-	// }
-	//
-	public void startPlayCards() {
-		while(!mBidCompleted)
-		{
-			for(Player p : mPlayers)
-			{
-				if(p.isRobot()) {
-					
-				} else {
-					// TODO: get lord to play cards first
-					gameActivity.showPlayButtons(true, false);
-				}
-			}
-			
-			// bid complete
-			break;
-		}
-	}
-
-	public boolean bidCompleted() {
-		return mBidCompleted;
-	}
-	//
-	// private void playCards_curPlayer() {
-	// // TODO: use AI to check played cards (suit)
-	// Suit suit = new Suit(mCurPlayer.selectedCards());
-	// mCurPlayer.playCards(suit);
-	// }
-	//
-	// private void playCards_otherPlayer(Player p) {
-	// // TODO: use AI to check played cards (suit)
-	// List<Card> cards = new ArrayList<Card>();
-	// cards.add(p.cards().get(0));
-	// Suit suit = new Suit(cards);
-	//
-	// p.playCards(suit);
-	// }
-	//
-	// private void playCards_otherPlayers() {
-	// // other players
-	// Player p = nextPlayer(mCurPlayer);
-	// playCards_otherPlayer(p);
-	//
-	// playCards_otherPlayer(nextPlayer(p));
-	// }
-	//
-	// public void onAction(EPlayAction a) {
-	//
-	// switch (a) {
-	// case ePlayCard:
-	// // get selected cards
-	// playCards_curPlayer();
-	//
-	// playCards_otherPlayers();
-	//
-	// // continue
-	// startPlayCards();
-	//
-	// break;
-	// case ePromptCard:
-	// // get selected cards
-	// break;
-	// case eReselectCard:
-	// // get selected cards
-	// mCurPlayer.clearSelectedCards();
-	// break;
-	// case ePassCard:
-	// // get selected cards
-	// mCurPlayer.clearSelectedCards();
-	//
-	// playCards_otherPlayers();
-	//
-	// // continue
-	// startPlayCards();
-	// break;
-	// default:
-	// break;
-	// }
-	// }
-
-	public void onAction(EPlayAction a) {
-		if(mCurPlayer == null)
-			return;
-		String str = new String();
-		switch (a) {
-		case eBid1:
-			mCurPlayer.bid(1);
-			str = "一分";
-			break;
-		case eBid2:
-			mCurPlayer.bid(2);
-			str = "二分";
-			break;
-		case eBid3:
-			mCurPlayer.bid(3);
-			str = "三分";
-			break;
-		case eBidNo:
-			mCurPlayer.bid(0);
-			str = "不叫";
-			break;
-		case ePlayCard:
-			{
-				if(mLastCurPlayer == mCurPlayer)
-					mLastSuit = null; // clear last suit since no player's cards are greater than current.
-				
-				Suit selSuit = mCurPlayer.selectedSuit();
-				if(selSuit == null) {
-					Toast.makeText(gameActivity, "TO " + mCurPlayer.name() + ": No cards selected!", Toast.LENGTH_SHORT).show();
-					break;
-				}
-				// Check if the cards is valid or not.
-				ICardPattern pattern1 = GameController.get().rule().matched(selSuit);
-				if(pattern1 == null) {
-					Toast.makeText(gameActivity, "Selected cards are invalid", Toast.LENGTH_SHORT).show();
-					break;
-				}
-				
-				if(mLastSuit != null && selSuit.points() <= mLastSuit.points()) {
-					Toast.makeText(gameActivity, "Selected cards must be greater than last.", Toast.LENGTH_SHORT).show();
-					break;
-				}
-				
-				if (mCurPlayer.playCards(selSuit)) {
-					if(tryFinishGame()) {
-						gameActivity.finish();
-						return;
-					}
-					mLastCurPlayer = mCurPlayer;
-					mCurPlayer = this.nextPlayer();
-					mLastSuit = selSuit;
-				} else {
-					Toast.makeText(gameActivity, "Fail to remove played cards!", Toast.LENGTH_SHORT).show();
-				}
-			}
-			break;
-		case ePassCard:
-			if(mLastCurPlayer != mCurPlayer)
-				mCurPlayer = this.nextPlayer();
-			break;
-		case eReselectCard:
-			if(null != mCurPlayer) {
-				mCurPlayer.reselectCards();
-			}
-			break;
-		}
-
-		// playing round
-		if (!mBidCompleted) 
-		{
-			boolean showBid1 = true, 
-					showBid2 = true, 
-					showBid3 = true,
-					hasNoBid = false;
-			for(Player p : this.mPlayers)
-			{
-				if(p.bid() == 1)
-					showBid1 = false;
-				else if(p.bid() == 2)
-					showBid2 = false;
-				else if(p.bid() == 3)
-					showBid3 = false;
-				else if(p.bid() == -1)
-					hasNoBid = true;
-			}
-
-			Player nextPlayer = this.nextPlayer();
-			if(null == nextPlayer)
-				return;
-			
-			mBidCompleted = (a == EPlayAction.eBid3 || nextPlayer.hasBid());
-			gameActivity.showBidButtons(!mBidCompleted, showBid1, showBid2, showBid3);
-				
-			if (mBidCompleted) {
-				if (a != EPlayAction.eBid3) {
-					Player lordPlayer = null;
-					for (Player p : mPlayers) {
-						if (lordPlayer == null) {
-							lordPlayer = p;
-							continue;
-						}
-						if (lordPlayer.bid() < p.bid())
-							lordPlayer = p;
-					}
-					mCurPlayer = lordPlayer;
-				}
-				mCurPlayer.setLord(mBaseCards);
-				gameActivity.gameView().render().renderCards();
-				// Star play cards, wait the current player to play cards.
-				startPlayCards();
-
-			} else {
-				mCurPlayer = nextPlayer;
-			}
-		}
-		else
-		{
-			boolean showPass = true;
-			if(mLastCurPlayer == null)
-				showPass = false;
-			else if(mLastCurPlayer == mCurPlayer)
-				showPass = false;
-			
-			if(!showPass && mCurPlayer != null) {
-				mCurPlayer.clearCurPlayedSuit();
-			}
-			gameActivity.showPlayButtons(true, showPass);
-		}
-		// Log.d("BidResult", str);
-	}
-
-	private boolean tryFinishGame() {
-		if(mCurPlayer.cards().size() == 0) {
-			if(mCurPlayer.isLord())
-				Toast.makeText(gameActivity, "Lord wins! Come on, peasant!", Toast.LENGTH_SHORT).show();
-			else
-				Toast.makeText(gameActivity, "Peasant wins!", Toast.LENGTH_SHORT).show();
-
-			// Reset game states
-			mCurPlayer = null;
-			mLastCurPlayer = null;
-			mLastSuit = null;
-			mBidCompleted = false;
-			return true;
-		}
-		return false;
-	}
-	
-	/** Data */
-	private List<Player> mPlayers = new ArrayList<Player>();
-
-	public List<Player> players() {
-		return mPlayers;
-	}
-
-	// The player which joins on current device.
-	// It will be rendered to show the cards in hand.
-	private Player mThisJoinedPlayer = null;
-
-	public Player ThisJoinedPlayer() {
-		return mThisJoinedPlayer;
-	}
-
-	// Current player is used to control the game round.
-	// Once the lord is decided, lord player will be the
-	// first current player, then next player will become
-	// the current, and so on.
-	private Player mCurPlayer = null;
-
-	public Player CurrentPlayer() {
-		return mCurPlayer;
-	}
-	
-	private Player mLastCurPlayer = null;
-	public Player LastCurrentPlayer() {
-		return mLastCurPlayer;
-	}
-	
-	private List<Deck> mDesks = new ArrayList<Deck>();
-
-	public Deck deck() {
-		return mDesks.get(0);
-	}
-
 	/** Single instance */
 	private static GameController sGameController;
 
@@ -373,7 +40,257 @@ public class GameController {
 	private GameController() {
 		
 	}
+	
+	public enum EPlayAction {
+		eNone(-1), 
+		eBidNo(0), eBid1(1), eBid2(2), eBid3(3),
 
+		ePlayCard(4), ePassCard(5), ePromptCard(6), eReselectCard(7);
+		
+		private int value; 
+		public int value() {
+			return this.value;
+		}
+		private EPlayAction(int val) {
+			this.value = val;
+		}
+	}
+	
+	/** Screen size related */
+	int mScreenWidth = 0;
+	int mScreenHeight = 0;
+	int mTouchPosX = 0;
+	int mTouchPosY = 0;
+
+	/** Game states */
+	//private static final int STATE_GAME = 0;
+	//private int mGameState = STATE_GAME;
+	
+	// bid related
+	private boolean mBidCompleted = false;
+	private int mBidNumber = 0;
+	
+	// play cards related
+	private List<Card> mBaseCards = new ArrayList<Card>();
+	private boolean mFinished = false;
+	private boolean mNewRoundBegin = false;
+	private Suit mLastSuit = null;
+	// Current player is used to control the game round.
+	// Once the lord is decided, lord player will be the
+	// first current player, then next player will become
+	// the current, and so on.
+	private Player mCurPlayer = null;
+	private Player mLastCurPlayer = null;
+
+	// general
+	private GameActivity gameActivity;
+	private List<Integer> mAvailableSeat = new LinkedList<Integer>();
+	private List<Player> mPlayers = new ArrayList<Player>();
+	private RuleManager mRule = RuleManager.get();	/** Define the rule of the game */
+	private List<Deck> mDesks = new ArrayList<Deck>();
+	// The player which joins on current device, It will be rendered to show the cards in hand.
+	private Player mThisJoinedPlayer = null;
+
+	public Player ThisJoinedPlayer() {
+		return mThisJoinedPlayer;
+	}
+		
+	public Deck deck() {
+		return mDesks.get(0);
+	}
+	
+	public RuleManager rule() {
+		return mRule;
+	}
+	
+	public List<Player> players() {
+		return mPlayers;
+	}
+	
+	public List<Card> baseCards() {
+		return mBaseCards;
+	}
+	
+	public void setGameActivity(GameActivity gameActivity) {
+		this.gameActivity = gameActivity;
+	}
+	
+	public boolean gameFinished()
+	{
+		return mFinished;
+	}
+	
+	public Player CurrentPlayer() {
+		return mCurPlayer;
+	}
+	
+	public Player LastCurrentPlayer() {
+		return mLastCurPlayer;
+	}
+	
+	public boolean bidCompleted() {
+		return mBidCompleted;
+	}
+	
+	public void startGame() {
+		PlayCardRunnable gameRunnable = new PlayCardRunnable();
+		new Thread(gameRunnable, "PlayCard").start();
+	}
+	
+	public void onAction(EPlayAction a) {
+		if(mCurPlayer == null)
+			return;
+		
+		switch (a) {
+		case eBid1:
+			mCurPlayer.bid(1);
+			mBidNumber = 1;
+			gameActivity.showBidButtons(false, false, false, false);
+			Toast.makeText(gameActivity, "TO " + mCurPlayer.name() + ": bid 1!", Toast.LENGTH_SHORT).show();
+			mCurPlayer = this.nextPlayer();
+			break;
+		case eBid2:
+			mCurPlayer.bid(2);
+			mBidNumber = 2; 
+			gameActivity.showBidButtons(false, false, false, false);
+			Toast.makeText(gameActivity, "TO " + mCurPlayer.name() + ": bid 2!", Toast.LENGTH_SHORT).show();
+			mCurPlayer = this.nextPlayer();
+			break;
+		case eBid3:
+			mCurPlayer.bid(3);
+			mBidNumber = 3;
+			gameActivity.showBidButtons(false, false, false, false);
+			setLord(mCurPlayer);
+			Toast.makeText(gameActivity, "TO " + mCurPlayer.name() + ": bid 3!", Toast.LENGTH_SHORT).show();
+			break;
+		case eBidNo:
+			mCurPlayer.bid(0);
+			gameActivity.showBidButtons(false, false, false, false);
+			Toast.makeText(gameActivity, "TO " + mCurPlayer.name() + ": bid 0!", Toast.LENGTH_SHORT).show();
+			mCurPlayer = this.nextPlayer();
+			break;
+		case ePlayCard:
+			{
+				if(mLastCurPlayer == mCurPlayer)
+				{
+					mNewRoundBegin = true;
+					mLastSuit = null; // clear last suit since no player's cards are greater than current.
+				}
+				
+				List<Card> selCards = mCurPlayer.selectedCards();
+				if(selCards.isEmpty()) {
+					Toast.makeText(gameActivity, "TO " + mCurPlayer.name() + ": No cards selected!", Toast.LENGTH_SHORT).show();
+					break;
+				}
+				
+				Suit selSuit = mCurPlayer.selectedSuit();
+				// Check if the cards is valid or not.
+				ICardPattern pattern1 = GameController.get().rule().matched(selSuit);
+				if(pattern1 == null) {
+					Toast.makeText(gameActivity, "Selected cards are invalid", Toast.LENGTH_SHORT).show();
+					break;
+				}
+				
+				if(mLastSuit != null && selSuit.points() <= mLastSuit.points()) {
+					Toast.makeText(gameActivity, "Selected cards must be greater than last.", Toast.LENGTH_SHORT).show();
+					break;
+				}
+				
+				gameActivity.showPlayButtons(false, false);
+				
+				mNewRoundBegin = false;
+				if (mCurPlayer.playCards(selSuit)) {
+					if(tryFinishGame()) {
+						//gameActivity.finish();
+						mFinished = true;
+						return;
+					}
+					mLastCurPlayer = mCurPlayer;
+					mCurPlayer = this.nextPlayer();
+					mLastSuit = selSuit;
+				} else {
+					Toast.makeText(gameActivity, "Fail to remove played cards!", Toast.LENGTH_SHORT).show();
+				}
+			}
+			break;
+		case ePassCard:
+			if(mLastCurPlayer != mCurPlayer)
+			{
+				mCurPlayer.clearSelectedCards();
+				mCurPlayer = this.nextPlayer();
+				if(mLastCurPlayer == mCurPlayer)
+				{
+					restartNewRound();
+				}	
+				gameActivity.showPlayButtons(false, false);
+			}
+			
+			break;
+		case eReselectCard:
+			if(null != mCurPlayer) {
+				mCurPlayer.reselectCards();
+			}
+			break;
+		case ePromptCard:
+		case eNone:
+		default:
+			break;
+			
+		}
+	}
+
+	public boolean tryFinishGame() {
+		if(mCurPlayer.cards().size() == 0) {
+			
+			if( Thread.currentThread().getName().equals("PlayCard") ) 
+			{
+				
+			}
+			else
+			{
+				if(mCurPlayer.isLord())
+					Toast.makeText(gameActivity, "Lord wins! Come on, peasant!", Toast.LENGTH_SHORT).show();
+				else
+					Toast.makeText(gameActivity, "Peasant wins!", Toast.LENGTH_SHORT).show();
+			}
+
+			// Reset game states
+			mCurPlayer = null;
+			mLastCurPlayer = null;
+			mLastSuit = null;
+			mBidCompleted = false;
+			mFinished = true;
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean tryFinishBid() {
+		if(mCurPlayer.cards().size() == 0) {
+			
+			if( Thread.currentThread().getName().equals("PlayCard") ) 
+			{
+				
+			}
+			else
+			{
+				if(mCurPlayer.isLord())
+					Toast.makeText(gameActivity, "Lord wins! Come on, peasant!", Toast.LENGTH_SHORT).show();
+				else
+					Toast.makeText(gameActivity, "Peasant wins!", Toast.LENGTH_SHORT).show();
+			}
+
+			// Reset game states
+			mCurPlayer = null;
+			mLastCurPlayer = null;
+			mLastSuit = null;
+			mBidCompleted = false;
+			mFinished = true;
+			return true;
+		}
+		return false;
+	}
+	
 	public void init(Context context) {
 		Log.d("forge1", "GameController::init");
 
@@ -389,6 +306,7 @@ public class GameController {
 		for (int i = 0; i < mRule.playerCount(); ++i)
 			mAvailableSeat.add(i);
 	}
+	
 	private void initPlayers() {
 
 		// TODO: restore status when re-enter game
@@ -422,7 +340,7 @@ public class GameController {
 		// Generate a random layer as the initial lord.
 		// The final lord will be decided by the bid result.
 		Random r = new Random();
-		int lordIdx = r.nextInt() % mRule.playerCount();
+		int lordIdx = r.nextInt(mRule.playerCount());
 		mCurPlayer = mPlayers.get(lordIdx);
 	}
 
@@ -438,6 +356,11 @@ public class GameController {
 		return null;
 	}
 
+	public int getPlayerCount()
+	{
+		return mPlayers.size();
+	}
+	
 	// / Get a available seat from current table. For now we just have
 	// / one table.
 	// / TODO: we need to change getting approach once we have a game
@@ -476,9 +399,144 @@ public class GameController {
 			p.cards(allCards.subList(i++ * numOfCards, i * numOfCards));
 		}
 		for (Player p : mPlayers) {
+			
 			allCards.removeAll(p.cards());
 		}
 		
+		
 		mBaseCards = allCards;
 	}
+	
+	public boolean isNewRoundBegin()
+	{
+		return mNewRoundBegin;
+	}
+	
+	private void restartNewRound()
+	{
+		mNewRoundBegin = true;
+		mLastCurPlayer = null;
+		mLastSuit = null;
+	}
+	
+	public void playCards()
+	{
+		if( mCurPlayer!= null && mCurPlayer.isRobot())
+		{
+			Suit showedSuit = mCurPlayer.showCards(mLastSuit);
+			mNewRoundBegin = false;
+			if(showedSuit != null)
+			{
+				if(tryFinishGame()) {
+					mFinished = true;
+					return;
+				}
+				mLastCurPlayer = mCurPlayer;
+				mCurPlayer = this.nextPlayer();
+				mLastSuit = showedSuit;
+			}
+			else
+			{
+				// don't update the last player
+				//mLastCurPlayer = mCurPlayer;
+				//mLastSuit = showedSuit;
+				Message message = Message.obtain();
+				message.what = GameActivity.SHOW_MSG;
+				message.obj = mCurPlayer.seatIndex() + " player does not play any cards " ;
+				gameActivity.getHandler().sendMessage(message);
+				
+				mCurPlayer = this.nextPlayer();	
+				if(mLastCurPlayer == mCurPlayer)
+					restartNewRound();
+			}
+		}	
+		else
+		{
+			Message message = Message.obtain();
+			message.what = GameActivity.SHOW_PLAY;
+			message.arg1 = 1 ;
+			message.arg2 = (mLastSuit == null) ? 0 : 1;
+			gameActivity.getHandler().sendMessage(message);
+			mNewRoundBegin = false;
+			//gameActivity.showPlayButtons(true, (mLastSuit == null) );
+		}
+	}
+	
+	public void bidForGame()
+	{
+		if( mCurPlayer!= null && mCurPlayer.isRobot())
+		{
+			int bidNum = mCurPlayer.getBidNum(mBidNumber);
+			if(bidNum > mBidNumber)
+			{
+				Message message = Message.obtain();
+				message.what = GameActivity.SHOW_MSG;
+				message.obj = mCurPlayer.seatIndex() + " player bids " + bidNum;
+				gameActivity.getHandler().sendMessage(message);
+				
+				mBidNumber = bidNum;
+				if(mBidNumber >= 3) {
+					setLord(mCurPlayer);
+					return;
+				}
+			}
+			mCurPlayer = this.nextPlayer();
+		}	
+		else
+		{
+			Message message = Message.obtain();
+			message.what = GameActivity.SHOW_BID;
+			message.arg1 = 1;
+			message.arg2 = mBidNumber;
+			gameActivity.getHandler().sendMessage(message);
+			//gameActivity.showBidButtons(!mBidCompleted, mBidNumber < 1, mBidNumber < 2, mBidNumber < 3);
+		}
+	}
+	
+	public void endGame()
+	{
+		Message message = Message.obtain();
+		message.what = GameActivity.END_GAME;
+		message.arg1 = 1;
+		gameActivity.getHandler().sendMessage(message);
+	}
+	
+	public void selectTopBidAsLord()
+	{
+		mBidNumber = 0;
+		int maxBidPlayer = 0;
+		for(int i = 0; i < getPlayerCount(); ++i)
+		{
+			int numBid = mPlayers.get(i).bid();
+			if( numBid > mBidNumber );
+			{
+				mBidNumber = numBid;
+				maxBidPlayer = i;
+			}
+		}
+		setLord( mPlayers.get(maxBidPlayer) );
+	}
+	
+	private void setLord(Player lord)
+	{
+		if(null != lord)
+		{
+			mCurPlayer = lord;
+			mBidCompleted = true;
+			mNewRoundBegin = true;
+			mFinished = false;
+			mLastCurPlayer = null;
+			mLastSuit = null;
+			
+			try
+			{
+				mCurPlayer.setLord(mBaseCards);
+			}
+			catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	
 }

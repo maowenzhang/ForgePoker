@@ -22,6 +22,18 @@ class GroupedSuits
 	public List<Suit> a111222	= new Vector<Suit>();   // sequence triple
 	public List<Suit> a4		= new Vector<Suit>();   // bomb
 	public List<Suit> a0 		= new Vector<Suit>();   // rocket
+	
+	public void clearGroups()
+	{
+		a1.clear();
+		a2.clear();
+		a3.clear();
+		a123.clear();
+		a112233.clear();
+		a111222.clear();
+		a4.clear();
+		a0.clear();
+	}
 }
 
 public abstract class AIRobot {
@@ -70,8 +82,16 @@ public abstract class AIRobot {
 		synchronized (mCards) {
 			boolean re = mCards.removeAll(curPlayedSuit.cards());
 			Assert.assertTrue("Fail to remove played cards!", re);
+			if(re)
+				reGroupCards();
 		}
 		return true;
+	}
+	
+	public int reGroupCards()
+	{
+		mSuits.clearGroups();
+		return groupSuits();
 	}
 	
 	public void clearSelectedCards() {

@@ -2,8 +2,6 @@ package com.forgepoker.model;
 
 import java.util.List;
 
-
-
 /**
  * Represents game player
  * 
@@ -20,7 +18,7 @@ public class Player {
 	private boolean mHasBid = false;
 
 	private boolean mIsLord = false;
-	private boolean mIsCurrentPlayer = false;
+	//private boolean mIsCurrentPlayer = false;
 	private int mSeatIndex = 1;
 	private boolean mIsRobot = true;
 	
@@ -40,9 +38,15 @@ public class Player {
 		return mIsLord;
 	}
 
-	public void setLord(List<Card> baseCards) {
+	public void setLord(List<Card> baseCards) throws InterruptedException {
 		mIsLord = true;	
 		this.addBaseCard(baseCards);
+		if(isRobot())
+		{
+			Thread.sleep(2 * 1000);
+			clearSelectedCards();
+			mAI.reGroupCards();	// group the cards after updating them
+		}
 	}
 
 	public String name() {
@@ -77,14 +81,6 @@ public class Player {
 		return mHasBid;
 	}
 
-	public boolean isCurrentPlayer() {
-		return mIsCurrentPlayer;
-	}
-
-	public void isCurrentPlayer(boolean val) {
-		this.mIsCurrentPlayer = val;
-	}
-
 	public int seatIndex() {
 		return mSeatIndex;
 	}
@@ -111,6 +107,7 @@ public class Player {
 
 	public void cards(List<Card> cards) {
 		mAI.cards(cards);
+		mAI.groupSuits();	// group the cards after got them
 	}
 
 	/** Produce/play cards */
@@ -118,7 +115,24 @@ public class Player {
 		
 		return mAI.playCards(curPlayedSuit);
 	}
-	
+
+
+	public Suit showCards(Suit lastPlayedSuit) {
+		Suit robotShowSuit = null;
+
+		if(null == lastPlayedSuit)
+			robotShowSuit = mAI.playSuit(0);
+		else
+			robotShowSuit = mAI.playCalledSuit(lastPlayedSuit, 0);
+		
+		if( null != robotShowSuit)
+		{
+			playCards(robotShowSuit);
+		}
+		
+		return robotShowSuit;
+	}
+
 	public void clearSelectedCards() {
 		mAI.clearSelectedCards();
 	}
@@ -136,9 +150,19 @@ public class Player {
 	{
 		return mAI.selectedSuit();
 	}
-	
-	public void addBaseCard(List<Card> baseCards)
+		
+	public int getBidNum(int curBidNumber)
 	{
-		mAI.addBaseCard(baseCards);
+		// TODO AI should do it
+		mBid = curBidNumber + 1;
+		if (mBid != 0) {
+			mHasBid = true;
+		}
+		return mBid;
+	}
+	
+	private void addBaseCard(List<Card> baseCards)
+	{
+		mAI.addBaseCard(baseCards);	
 	}
 }

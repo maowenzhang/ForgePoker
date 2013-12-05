@@ -3,6 +3,7 @@
  */
 package com.forgepoker.model;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -23,11 +24,11 @@ public class AIRobotSimple extends AIRobot {
 
 	private Suit playBomb(Suit res)
 	{
-			if(mSuits.a4.size() > 0)
-				return mSuits.a4.get(0);
-			else if(mSuits.a0.size() > 0)
-				return mSuits.a0.get(0);
-			return null;
+		if(mSuits.a4.size() > 0)
+			return mSuits.a4.get(0);
+		else if(mSuits.a0.size() > 0)
+			return mSuits.a0.get(0);
+		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -45,7 +46,10 @@ public class AIRobotSimple extends AIRobot {
 			for(; i < mSuits.a1.size(); ++i)
 			{
 				if(mSuits.a1.get(i).compareTo(oppo) > 0)
+				{
 					res = mSuits.a1.get(i);
+					break;
+				}
 			}
 			
 			if(null == res)
@@ -57,7 +61,10 @@ public class AIRobotSimple extends AIRobot {
 			for(i = 0; i < mSuits.a2.size(); ++i)
 			{
 				if(mSuits.a2.get(i).compareTo(oppo) > 0)
+				{
 					res = mSuits.a2.get(i);
+					break;
+				}
 			}
 			
 			if(null == res)
@@ -69,7 +76,10 @@ public class AIRobotSimple extends AIRobot {
 			for(i = 0; i < mSuits.a3.size(); ++i)
 			{
 				if(mSuits.a3.get(i).compareTo(oppo) > 0)
+				{
 					res = mSuits.a3.get(i);
+					break;
+				}
 			}
 			
 			if(null == res)
@@ -119,7 +129,10 @@ public class AIRobotSimple extends AIRobot {
 			for(i = 0; i < mSuits.a123.size(); ++i)
 			{
 				if(mSuits.a123.get(i).compareTo(oppo) > 0)
+				{
 					res = mSuits.a123.get(i);
+					break;
+				}
 			}
 			
 			if(null == res)
@@ -131,7 +144,10 @@ public class AIRobotSimple extends AIRobot {
 			for(i = 0; i < mSuits.a112233.size(); ++i)
 			{
 				if(mSuits.a112233.get(i).compareTo(oppo) > 0)
+				{
 					res = mSuits.a112233.get(i);
+					break;
+				}
 			}
 			
 			if(null == res)
@@ -143,7 +159,10 @@ public class AIRobotSimple extends AIRobot {
 			for(i = 0; i < mSuits.a111222.size(); ++i)
 			{
 				if(mSuits.a111222.get(i).compareTo(oppo) > 0)
+				{
 					res = mSuits.a111222.get(i);
+					break;
+				}
 			}
 			
 			if(null == res)
@@ -206,7 +225,10 @@ public class AIRobotSimple extends AIRobot {
 			for(i = 0; i < mSuits.a4.size(); ++i)
 			{
 				if(mSuits.a4.get(i).compareTo(oppo) > 0)
+				{
 					res = mSuits.a4.get(i);
+					break;
+				}
 			}
 			if(null == res)
 			{
@@ -230,7 +252,7 @@ public class AIRobotSimple extends AIRobot {
 	public int groupSuits() {
 		List<Card> allCards = cards();
 		List<Card> copiedCards = new Vector<Card>(allCards);
-
+		Collections.reverse(copiedCards);
 		getBomb(copiedCards);
 		getRocket(copiedCards);
 		getTriple(copiedCards);

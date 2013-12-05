@@ -1,7 +1,5 @@
 package com.forgepoker.model;
 
-import com.forgepoker.model.Card.EType;
-
 /**
  * Represent one poker card
  * @author zhanglo
@@ -76,7 +74,7 @@ public class Card implements Comparable<Card> {
 	
 	public int compareTo(Card c) {
 		if (mRank == c.rank()) {
-			return 0;
+			return 0; //mSuit.compareTo(c.suit());
 		}
 		if (mRank < c.rank()) {
 			return -1;

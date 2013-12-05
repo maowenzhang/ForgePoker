@@ -1,9 +1,13 @@
 package com.forgepoker;
 
+import java.lang.ref.WeakReference;
+
 import com.forgepoker.GameController.EPlayAction;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -12,6 +16,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 /**
  * Game activity for poker game, includes elements like game table, startup
@@ -23,7 +28,7 @@ import android.widget.LinearLayout;
 public class GameActivity extends Activity implements OnClickListener {
 
 	private GameView mGameView;
-
+	
 	private LinearLayout mLayoutBid;
 	private Button mBtnBid1;
 	private Button mBtnBid2;
@@ -35,9 +40,56 @@ public class GameActivity extends Activity implements OnClickListener {
 	private Button mBtnPrompt;
 	private Button mBtnReselect;
 	private Button mBtnPass;
+	
+	public final static int SHOW_MSG = 0;	
+	public final static int SHOW_BID = 1;	
+	public final static int SHOW_PLAY = 2;
+	public final static int END_GAME = 3;
 
 	public GameView gameView() {
 		return mGameView;
+	}
+	
+	static class MyHandler extends Handler {
+        WeakReference<GameActivity> mActivity;
+
+        MyHandler(GameActivity activity) {
+                mActivity = new WeakReference<GameActivity>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) 
+        {
+        	GameActivity theActivity = mActivity.get();
+        	switch (msg.what) 
+            {
+            case SHOW_MSG:
+   				 //Log.d("SHOW_MSG", msg.obj.toString());
+   				 Toast.makeText(theActivity, msg.obj.toString(), Toast.LENGTH_SHORT).show();
+   				 break;
+            case SHOW_BID:
+   				 boolean bShow = (msg.arg1==1);
+   				 theActivity.showBidButtons(bShow, msg.arg2 <1, msg.arg2 <2, msg.arg2 <3);
+   				 break;
+            case SHOW_PLAY:
+   				theActivity.showPlayButtons(true, (msg.arg2==1));
+   				 break;
+            case END_GAME:
+            	theActivity.finish();
+            default:  
+   		         super.handleMessage(msg);  
+   		         break; 
+            }
+        }
+	};
+
+	private Handler mHandler = new MyHandler(this);
+
+	
+	public Handler getHandler(){
+
+		return this.mHandler;
+
 	}
 	
 	@Override
@@ -57,7 +109,6 @@ public class GameActivity extends Activity implements OnClickListener {
 		mLayoutBid.setVisibility(View.GONE);
 		mLayoutPlay.setVisibility(View.GONE);
 		GameController.get().setGameActivity(this);
-		
 		GameController.get().startGame();
 	}
 
