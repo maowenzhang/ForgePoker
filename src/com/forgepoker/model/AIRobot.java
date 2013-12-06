@@ -182,7 +182,7 @@ public abstract class AIRobot {
 			if(k-i>=4)
 			{
 				List<Card> addedCards = new Vector<Card>();
-				for(int j=i; j<k; ++j)
+				for(int j=i; j<=k; ++j)
 				{
 					Card res = copiedCards.get(j);
 					addedCards.add(res);
@@ -218,7 +218,7 @@ public abstract class AIRobot {
 			if((k -i) >=2)
 			{
 				List<Card> addedCards = new Vector<Card>();
-				for(int j=i; j<k; ++j)
+				for(int j=i; j<=k; ++j)
 				{
 					Suit suit = mSuits.a2.get(j);
 					removedSuits.add(suit);
@@ -254,7 +254,7 @@ public abstract class AIRobot {
 			if((k -i) >=1)
 			{
 				List<Card> addedCards = new Vector<Card>();
-				for(int j=i; j<k; ++j)
+				for(int j=i; j<=k; ++j)
 				{
 					Suit suit = mSuits.a3.get(j);
 					removedSuits.add(suit);
@@ -313,7 +313,7 @@ public abstract class AIRobot {
 			if( (k-i) >= 2 )
 			{
 				List<Card> addedCards = new Vector<Card>();
-				for(int j=i; j<k; ++j)
+				for(int j=i; j<=k; ++j)
 				{
 					Card res = copiedCards.get(j);
 					addedCards.add(res);

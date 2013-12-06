@@ -105,7 +105,10 @@ public class PlayCardRunnable implements Runnable {
 		}
 		
 		if(bGameFinished)
+		{
+			waitForSecond(3);
 			controller.endGame();
+		}
 	}
 	
 	private void waitForSecond(int i) {
