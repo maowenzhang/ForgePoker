@@ -169,6 +169,8 @@ public abstract class AIRobot {
 		if(copiedCards.size() < 5)
 			return;
 		
+		List<Card> removedCards= new Vector<Card>();
+		
 		int len=copiedCards.size();
 		for(int i=0; i<len-4; ++i)
 		{
@@ -184,18 +186,22 @@ public abstract class AIRobot {
 				{
 					Card res = copiedCards.get(j);
 					addedCards.add(res);
-					copiedCards.remove(res);
+					removedCards.add(res);
 				}
 				mSuits.a123.add(new Suit(addedCards, EType.SingleSequence) );
 				i=k;
 			}
 		}
+		
+		copiedCards.removeAll(removedCards);
 	}
 
 	public void getSequenceDouble(){
 		int suitSize = mSuits.a2.size();
 		if(suitSize < 3)
 			return;
+		
+		List<Suit> removedSuits= new Vector<Suit>();
 		
 		for(int i =0; i< (suitSize -2); ++i)
 		{
@@ -215,15 +221,16 @@ public abstract class AIRobot {
 				for(int j=i; j<k; ++j)
 				{
 					Suit suit = mSuits.a2.get(j);
-					mSuits.a2.remove(suit);
+					removedSuits.add(suit);
 					addedCards.addAll(suit.cards());
 				}
 			
 				mSuits.a112233.add(new Suit(addedCards, EType.DoubleSequence));
 				i=k;
 			}
-			
 		}
+		
+		mSuits.a2.removeAll(removedSuits);
 	}
 	
 	public void getSequenceTriple(){
@@ -231,6 +238,7 @@ public abstract class AIRobot {
 		if(suitSize < 2)
 			return;
 		
+		List<Suit> removedSuits= new Vector<Suit>();
 		for(int i =0; i< (suitSize -1); ++i)
 		{
 			int k = i;
@@ -249,7 +257,7 @@ public abstract class AIRobot {
 				for(int j=i; j<k; ++j)
 				{
 					Suit suit = mSuits.a3.get(j);
-					mSuits.a3.remove(suit);
+					removedSuits.add(suit);
 					addedCards.addAll(suit.cards());
 				}
 			
@@ -257,6 +265,8 @@ public abstract class AIRobot {
 				i=k;
 			}
 		}
+		
+		mSuits.a3.removeAll(removedSuits);
 	}
 
 	public void getDouble(List<Card> copiedCards){
@@ -273,7 +283,8 @@ public abstract class AIRobot {
 	}
 	
 	public void getTriple(List<Card> copiedCards){
-		List<String> matchs = new Vector<String>();
+		/* the triple regular pattern does not work 
+		 * List<String> matchs = new Vector<String>();
 		RuleManager.get().getTriplePattern().definition().getMatchResult(copiedCards, matchs);
 		for(String str:matchs)
 		{
@@ -282,7 +293,38 @@ public abstract class AIRobot {
 			{
 				mSuits.a3.add(new Suit(cards, EType.Triple));
 			}			
+		}*/
+		
+		if(copiedCards.size() < 3)
+			return;
+		
+		List<Card> removedCards= new Vector<Card>();
+		
+		int len=copiedCards.size();
+		for(int i=0; i<len-2; ++i)
+		{
+			int k=i;
+			for(int j=(i + 2); j<len; ++j){
+				if( ( copiedCards.get(j).rank() - copiedCards.get(i).rank() ) == 0 ){
+					k = j; // find a triple
+					break;
+				}		
+			}
+			if( (k-i) >= 2 )
+			{
+				List<Card> addedCards = new Vector<Card>();
+				for(int j=i; j<k; ++j)
+				{
+					Card res = copiedCards.get(j);
+					addedCards.add(res);
+					removedCards.add(res);
+				}
+				mSuits.a3.add(new Suit(addedCards, EType.Triple) );
+				i=k;
+			}
 		}
+		
+		copiedCards.removeAll(removedCards);
 	}
 	
 	public void getBomb(List<Card> copiedCards){

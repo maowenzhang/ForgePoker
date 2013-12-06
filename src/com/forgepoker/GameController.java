@@ -260,6 +260,7 @@ public class GameController {
 			mLastSuit = null;
 			mBidCompleted = false;
 			mFinished = true;
+			mBidNumber = 0;
 			return true;
 		}
 		return false;
