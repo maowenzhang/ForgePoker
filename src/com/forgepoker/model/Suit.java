@@ -11,21 +11,29 @@ import java.util.List;
  */
 public class Suit {
 	public enum EType {
-		Invalid,
-		Single,
-		Double,
-		Triple,
-		TripleWithOne,
-		TripleWithTwo,
-		SingleSequence,
-		DoubleSequence,
-		TripleSequence,
-		TripleWithOneSequence,
-		TripleWithTwoSequence,
-		FourWithOne,
-		FourWithTwo,
-		Bomb,
-		Rocket
+		Invalid("Invalid"),
+		Single("Single"),
+		Double("Double"),
+		Triple("Triple"),
+		TripleWithOne("TripleWithOne"),
+		TripleWithTwo("TripleWithTwo"),
+		SingleSequence("SingleSequence"),
+		DoubleSequence("DoubleSequence"),
+		TripleSequence("TripleSequence"),
+		TripleWithOneSequence("TripleWithOneSequence"),
+		TripleWithTwoSequence("TripleWithTwoSequence"),
+		FourWithOne("FourWithOne"),
+		FourWithTwo("FourWithTwo"),
+		Bomb("Bomb"),
+		Rocket("Rocket");
+		
+		private String mTypeName; 
+		public String getName() {
+			return this.mTypeName;
+		}
+		private EType(String value) {
+			this.mTypeName = value;
+		}
 	}
 	
 	private EType mType = EType.Invalid;

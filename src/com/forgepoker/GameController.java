@@ -191,9 +191,23 @@ public class GameController {
 					break;
 				}
 				
-				if(mLastSuit != null && selSuit.points() <= mLastSuit.points()) {
-					Toast.makeText(gameActivity, "Selected cards must be greater than last.", Toast.LENGTH_SHORT).show();
-					break;
+				if(mLastSuit != null) {
+					// check if the pattern is matched
+					if(pattern1.needMatchPattern() )
+					{
+						if( !pattern1.name().equals(mLastSuit.type().toString()) )
+						{
+							Toast.makeText(gameActivity, "Selected cards must be the same suit as last.", Toast.LENGTH_SHORT).show();
+							break;
+						}
+					}
+
+					// check if the point is bigger
+					if(selSuit.points() <= mLastSuit.points())
+					{
+						Toast.makeText(gameActivity, "Selected cards must be greater than last.", Toast.LENGTH_SHORT).show();
+						break;
+					}
 				}
 				
 				gameActivity.showPlayButtons(false, false);
@@ -266,31 +280,6 @@ public class GameController {
 		return false;
 	}
 	
-	public boolean tryFinishBid() {
-		if(mCurPlayer.cards().size() == 0) {
-			
-			if( Thread.currentThread().getName().equals("PlayCard") ) 
-			{
-				
-			}
-			else
-			{
-				if(mCurPlayer.isLord())
-					Toast.makeText(gameActivity, "Lord wins! Come on, peasant!", Toast.LENGTH_SHORT).show();
-				else
-					Toast.makeText(gameActivity, "Peasant wins!", Toast.LENGTH_SHORT).show();
-			}
-
-			// Reset game states
-			mCurPlayer = null;
-			mLastCurPlayer = null;
-			mLastSuit = null;
-			mBidCompleted = false;
-			mFinished = true;
-			return true;
-		}
-		return false;
-	}
 	
 	public void init(Context context) {
 		Log.d("forge1", "GameController::init");
