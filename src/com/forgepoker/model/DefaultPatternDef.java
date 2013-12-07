@@ -34,7 +34,8 @@ public class DefaultPatternDef extends PatternDef {
 			{
 				Pattern p = Pattern.compile(pattern);
 				boolean ret = p.matcher(inputPattern).matches();
-				return ret;
+				if(ret)
+					return ret;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
