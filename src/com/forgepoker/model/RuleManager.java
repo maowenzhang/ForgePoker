@@ -331,7 +331,7 @@ public class RuleManager implements IPokerRule {
 				if(pattern.definition().matched(suit.cards())) {
 					String patternName = pattern.name();
 					suit.setType(getSuitTypeByPatternName(patternName));
-					suit.setPoints(pattern.calcRank(suit));
+					suit.setPoints(pattern.calcPoints(suit));
 					return pattern;
 				}
 			}

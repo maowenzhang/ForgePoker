@@ -155,14 +155,11 @@ public abstract class AIRobot {
 	public void getSingle(List<Card> copiedCards){
 		List<Card> del=new Vector<Card>();
 		//1
-		ICardPattern pattern = RuleManager.get().getPatternByName("Single");
 		for(int i=0,len=copiedCards.size(); i<len; ++i)
 		{
 			List<Card> cards=new Vector<Card>();
 			cards.add(copiedCards.get(i));
-			Suit suit = new Suit(cards, EType.Single);
-			suit.setPoints(pattern.calcRank(suit));
-			mSuits.a1.add(suit);
+			mSuits.a1.add(new Suit(cards, EType.Single));
 			del.add(copiedCards.get(i));
 		}
 		copiedCards.removeAll(del);
@@ -172,7 +169,6 @@ public abstract class AIRobot {
 		if(copiedCards.size() < 5)
 			return;
 		
-		ICardPattern pattern = RuleManager.get().getPatternByName("SingleSequence");
 		List<Card> removedCards= new Vector<Card>();
 		
 		int len=copiedCards.size();
@@ -192,9 +188,7 @@ public abstract class AIRobot {
 					addedCards.add(res);
 					removedCards.add(res);
 				}
-				Suit suit = new Suit(addedCards, EType.SingleSequence);
-				suit.setPoints(pattern.calcRank(suit));
-				mSuits.a123.add(suit);
+				mSuits.a123.add(new Suit(addedCards, EType.SingleSequence));
 				i=k;
 			}
 		}
@@ -208,8 +202,7 @@ public abstract class AIRobot {
 			return;
 		
 		List<Suit> removedSuits= new Vector<Suit>();
-		
-		ICardPattern pattern = RuleManager.get().getPatternByName("DoubleSequence");
+
 		for(int i =0; i< (suitSize -2); ++i)
 		{
 			int k = i;
@@ -231,10 +224,7 @@ public abstract class AIRobot {
 					removedSuits.add(suit);
 					addedCards.addAll(suit.cards());
 				}
-			
-				Suit suit = new Suit(addedCards, EType.DoubleSequence);
-				suit.setPoints(pattern.calcRank(suit));
-				mSuits.a112233.add(suit);
+				mSuits.a112233.add(new Suit(addedCards, EType.DoubleSequence));
 				i=k;
 			}
 		}
@@ -246,8 +236,7 @@ public abstract class AIRobot {
 		int suitSize = mSuits.a3.size();
 		if(suitSize < 2)
 			return;
-		
-		ICardPattern pattern = RuleManager.get().getPatternByName("TripleSequence");
+
 		List<Suit> removedSuits= new Vector<Suit>();
 		for(int i =0; i< (suitSize -1); ++i)
 		{
@@ -270,10 +259,7 @@ public abstract class AIRobot {
 					removedSuits.add(suit);
 					addedCards.addAll(suit.cards());
 				}
-			
-				Suit suit = new Suit(addedCards, EType.TripleSequence);
-				suit.setPoints(pattern.calcRank(suit));
-				mSuits.a111222.add(suit);
+				mSuits.a111222.add(new Suit(addedCards, EType.TripleSequence));
 				i=k;
 			}
 		}
@@ -282,8 +268,7 @@ public abstract class AIRobot {
 	}
 
 	public void getDouble(List<Card> copiedCards){
-		
-		ICardPattern pattern = RuleManager.get().getDoublePattern();
+
 		List<String> matchs = new Vector<String>();
 		RuleManager.get().getDoublePattern().definition().getMatchResult(copiedCards, matchs);
 		for(String str:matchs)
@@ -291,9 +276,7 @@ public abstract class AIRobot {
 			List<Card> cards = getCards(str, copiedCards);
 			if(!cards.isEmpty())
 			{
-				Suit suit = new Suit(cards, EType.Double);
-				suit.setPoints(pattern.calcRank(suit));
-				mSuits.a2.add(suit);
+				mSuits.a2.add(new Suit(cards, EType.Double));
 			}			
 		}
 	}
@@ -313,8 +296,7 @@ public abstract class AIRobot {
 		
 		if(copiedCards.size() < 3)
 			return;
-		
-		ICardPattern pattern = RuleManager.get().getTriplePattern();
+
 		List<Card> removedCards= new Vector<Card>();
 		
 		int len=copiedCards.size();
@@ -336,9 +318,7 @@ public abstract class AIRobot {
 					addedCards.add(res);
 					removedCards.add(res);
 				}
-				Suit suit = new Suit(addedCards, EType.Triple);
-				suit.setPoints(pattern.calcRank(suit));
-				mSuits.a3.add(suit);
+				mSuits.a3.add(new Suit(addedCards, EType.Triple));
 				i=k;
 			}
 		}
@@ -347,7 +327,7 @@ public abstract class AIRobot {
 	}
 	
 	public void getBomb(List<Card> copiedCards){
-		ICardPattern bombPattern = RuleManager.get().getBombPattern();
+
 		List<String> matchs = new Vector<String>();
 		RuleManager.get().getBombPattern().definition().getMatchResult(copiedCards, matchs);
 		for(String str:matchs)
@@ -355,16 +335,13 @@ public abstract class AIRobot {
 			List<Card> cards = getCards(str, copiedCards);
 			if(!cards.isEmpty())
 			{
-				Suit suit = new Suit(cards, EType.Bomb);
-				suit.setPoints(bombPattern.calcRank(suit));
-				mSuits.a4.add(suit);
+				mSuits.a4.add(new Suit(cards, EType.Bomb));
 			}
 		}
 	}
 	
 	public void getRocket(List<Card> copiedCards){
 
-		ICardPattern pattern = RuleManager.get().getRocketPattern();
 		List<String> matchs = new Vector<String>();
 		RuleManager.get().getRocketPattern().definition().getMatchResult(copiedCards, matchs);
 		for(String str:matchs)
@@ -372,9 +349,7 @@ public abstract class AIRobot {
 			List<Card> cards = getCards(str, copiedCards);
 			if(!cards.isEmpty())
 			{
-				Suit suit = new Suit(cards, EType.Rocket);
-				suit.setPoints(pattern.calcRank(suit));
-				mSuits.a0.add(suit);
+				mSuits.a0.add(new Suit(cards, EType.Rocket));
 			}			
 		}
 	}

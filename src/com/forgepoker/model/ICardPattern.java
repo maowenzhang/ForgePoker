@@ -24,7 +24,7 @@ public interface ICardPattern {
 	/// By default, it only makes sense to compare the rank between same pattern type,
 	/// unless a pattern is allowed to be used in another pattern comparing.
 	/// 
-	public int calcRank(Suit suit);
+	public int calcPoints(Suit suit);
 	
 	/// The weight will be used in calculate the rank. Normally, bigger weight, bigger rank.
 	public int weight();

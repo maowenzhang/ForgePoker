@@ -78,7 +78,7 @@ public class FightLordPattern implements ICardPattern {
 	}
 	
 	@Override
-	public int calcRank(Suit suit) {
+	public int calcPoints(Suit suit) {
 		
 		List<Card> cards = suit.cards();
 		if(cards == null || cards.size() <= 0)

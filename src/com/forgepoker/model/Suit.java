@@ -77,6 +77,14 @@ public class Suit {
 			mSequenceCount = 0; 
 			break;
 		}
+		
+		// Calculate the points of the suit
+		ICardPattern pattern = RuleManager.get().getPatternByName(type.getName());
+		assert(pattern != null);
+		if(pattern != null)
+		{
+			mPoints = pattern.calcPoints(this);
+		}
 	}
 	
 	private void initType() {
