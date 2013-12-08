@@ -2,8 +2,9 @@ package com.forgepoker.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import jregex.Matcher;
+import jregex.Pattern;
 
 public class DefaultPatternDef extends PatternDef {
 
@@ -30,12 +31,12 @@ public class DefaultPatternDef extends PatternDef {
 	{
 		try {
 			String inputPattern = cardsToString(cards);
-			for(String pattern : mPatterns)
+			for(String strPattern : mPatterns)
 			{
-				Pattern p = Pattern.compile(pattern);
-				boolean ret = p.matcher(inputPattern).matches();
-				if(ret)
-					return ret;
+				Pattern p = new Pattern(strPattern);
+				Matcher m = p.matcher(inputPattern);
+				if(m.matches())
+					return true;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -48,15 +49,15 @@ public class DefaultPatternDef extends PatternDef {
 	{
 		try {
 			String inputPattern = cardsToString(cards);
-			for(String pattern : mPatterns)
+			for(String strPattern : mPatterns)
 			{
-				Pattern p = Pattern.compile(pattern);
-				Matcher matcher = p.matcher(inputPattern);
-				while(matcher.find())
+				Pattern p = new Pattern(strPattern);
+				Matcher m = p.matcher(inputPattern);
+				while(m.find())
 				{
-					String result = matcher.group();
+					String result = m.toString();
 					matchedSuits.add(result);
-				}				
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
