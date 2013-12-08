@@ -195,7 +195,7 @@ public class GameController {
 					// check if the pattern is matched
 					if(pattern1.needMatchPattern() )
 					{
-						if( !pattern1.name().equals(mLastSuit.type().toString()) )
+						if( !pattern1.name().equals(mLastSuit.type().getName()) )
 						{
 							Toast.makeText(gameActivity, "Selected cards must be the same suit as last.", Toast.LENGTH_SHORT).show();
 							break;
@@ -414,6 +414,7 @@ public class GameController {
 		if( mCurPlayer!= null && mCurPlayer.isRobot())
 		{
 			Suit showedSuit = mCurPlayer.showCards(mLastSuit);
+			
 			mNewRoundBegin = false;
 			if(showedSuit != null)
 			{

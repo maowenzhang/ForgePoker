@@ -91,11 +91,6 @@ OnTouchListener, Runnable {
 		Log.d("forge", "surfaceCreated");
 		mHasSurface = true;
 		
-		if (mViewThread != null) {
-			int i = 100;
-			i++;
-		}
-		
 		mIsThreadDone = false;
 		mViewThread = new Thread(this, "forge");
 		mViewThread.start();

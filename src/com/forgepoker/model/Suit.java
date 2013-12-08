@@ -107,7 +107,11 @@ public class Suit {
 	public int compareTo(Suit comp) {
 		if(mSequenceCount != comp.sequenceCount())
 			return -1;
-		return mCards.get(0).compareTo(comp.cards().get(0));
+		// check if the point is bigger
+		if(points() <= comp.points())
+			return -1;
+		else
+			return 1;
 	}	
 	
 	public int sequenceCount() {
