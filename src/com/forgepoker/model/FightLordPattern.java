@@ -109,13 +109,18 @@ public class FightLordPattern implements ICardPattern {
 		case FourWithOne:
 		case FourWithTwo:
 			{
-				assert(szCards > 4);
-				Card card1 = cards.get(0);
-				Card card2 = cards.get(1);
-				if(card1.type() != card2.type()) {
-					card1 = cards.get(szCards - 1);
-					card2 = cards.get(szCards - 2);						
-				}
+				assert(szCards >= 4);
+				Card card1, card2, card3;
+				int i = 0;
+				do {
+					card1 = cards.get(i);
+					card2 = cards.get(i+1);
+					card3 = cards.get(i+2);
+					++i;
+					if(i >= szCards)
+						break;
+				} while(card1.type() != card2.type()  || card1.type() != card3.type() || card2.type() != card3.type());
+				assert(card1.type() == card2.type() && card1.type() == card3.type());
 				points = szCards * card1.rank() * weight();
 			}
 			break;

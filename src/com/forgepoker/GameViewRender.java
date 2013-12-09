@@ -345,7 +345,7 @@ public class GameViewRender {
 	private boolean OnTouchCards(int x, int y) {
 		
 		for (Player p : mGameController.players()) {
-			if (p != mGameController.CurrentPlayer())
+			if (p != mGameController.ThisJoinedPlayer())
 				continue;
 
 			for (int i = p.cards().size() - 1; i >= 0; i--) {
