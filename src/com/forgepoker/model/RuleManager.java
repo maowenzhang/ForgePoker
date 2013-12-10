@@ -218,6 +218,7 @@ public class RuleManager implements IPokerRule {
             		_pattern.setWeight(pattern.optInt("weight"));
             		_pattern.setNeedMatchPattern(pattern.optBoolean("needMatchPattern"));
             		_pattern.setNeedSameSuit(pattern.optBoolean("needSameSuit"));
+            		_pattern.setEnabled(pattern.optBoolean("enabled"));
             		initSpecialPatterns(_pattern);
             		mPatterns.add(_pattern);
             	}
@@ -320,6 +321,9 @@ public class RuleManager implements IPokerRule {
 			boolean hasSameSuit = this.hasSameSuit(suit.cards());
 			for(ICardPattern pattern : mPatterns)
 			{
+				// Check if the pattern is disabled in the game.
+				if(!pattern.enabled())
+					continue;
 				// Quick check via the card count and suit.
 				if(pattern.hasLowerLimitation() && szCards < pattern.minCards())
 					continue;

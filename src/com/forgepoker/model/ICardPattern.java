@@ -38,6 +38,11 @@ public interface ICardPattern {
 	/// bomb pattern can be dealed in all other patterns as long as its rank is bigger.
 	public boolean needMatchPattern();
 		
+	/// Indicates whether the pattern is enabled or not. By default, it's true. Player can 
+	/// set this flag to customize the rule. If it's set to false, this pattern cards cannot
+	/// be dealed in the game.
+	public boolean enabled();
+	
 	/// Pattern definition. 
 	public PatternDef definition();
 	

@@ -13,6 +13,7 @@ public class FightLordPattern implements ICardPattern {
 	private int mWeight = 1;
 	private boolean mNeedSameSuit = false;
 	private boolean mNeedMatchPattern = true;
+	private boolean mEnabled = true;
 	private PatternDef mPatternDef = null;
 	
 	public FightLordPattern(String name, 
@@ -158,6 +159,15 @@ public class FightLordPattern implements ICardPattern {
 		mNeedMatchPattern = value;
 	}
 
+	@Override
+	public boolean enabled() {
+		return mEnabled;
+	}
+	
+	public void setEnabled(boolean value) {
+		mEnabled = value;
+	}
+	
 	@Override
 	public PatternDef definition() {
 		return mPatternDef;
