@@ -31,12 +31,19 @@ public class DefaultPatternDef extends PatternDef {
 	{
 		try {
 			String inputPattern = cardsToString(cards);
+			String revInputPattern = new StringBuffer(inputPattern).reverse().toString();
 			for(String strPattern : mPatterns)
 			{
 				Pattern p = new Pattern(strPattern);
 				Matcher m = p.matcher(inputPattern);
 				if(m.matches())
 					return true;
+				else
+				{
+					m = p.matcher(revInputPattern);
+					if(m.matches())
+						return true;
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

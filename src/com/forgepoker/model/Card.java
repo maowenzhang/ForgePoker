@@ -36,11 +36,11 @@ public class Card implements Comparable<Card> {
 	
 	/** Card suit */
 	public enum ESuit {
-		Diamonds("diamond"), // 方块
-		Clubs("club"), // 梅花		
-		Hearts("heart"), // 红桃
+		Jokers("joker"),
 		Spades("spade"), // 黑桃
-		Jokers("joker");
+		Hearts("heart"), // 红桃; 
+		Clubs("club"), // 梅花	
+		Diamonds("diamond"); // 方块
 		
 		private String name; 
 		public String getName() {
@@ -71,12 +71,18 @@ public class Card implements Comparable<Card> {
 		mRank = rank;
 		mImageIndex = imageIndex;
 	}
-	
+
 	public int compareTo(Card c) {
 		if (mRank == c.rank()) {
-			return 0; //mSuit.compareTo(c.suit());
+			// Compare suit, for now spade > heart > club > diamond
+			if(mSuit.ordinal() == c.suit().ordinal())
+				return 0;
+			else if(mSuit.ordinal() < c.suit().ordinal())
+				return -1;
+			else
+				return 1;
 		}
-		if (mRank < c.rank()) {
+		else if (mRank < c.rank()) {
 			return -1;
 		}
 		return 1;

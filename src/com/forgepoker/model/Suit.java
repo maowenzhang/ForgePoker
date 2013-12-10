@@ -48,6 +48,7 @@ public class Suit {
 	public Suit(List<Card> cards) {
 		mCards = cards;
 		Collections.sort(mCards);
+		Collections.reverse(mCards);
 		initType();
 	}
 	
@@ -55,6 +56,7 @@ public class Suit {
 	{
 		mCards = cards;
 		Collections.sort(mCards);
+		Collections.reverse(mCards);
 		mType = type;
 		switch(type)
 		{
