@@ -310,7 +310,7 @@
             "needMatchPattern": true,
             "enabled": true,
             "patternDef": [
-                "(22|EE|DD|CC|BB|AA|99|88|77|66|55|44|33){1}"
+                "^({1}[3-9A-E2]){\\1}$"
             ]
         },
         {

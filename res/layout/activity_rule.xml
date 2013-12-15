@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content" >
+
+    <PreferenceCategory android:title="@string/playerSettings">
+        <EditTextPreference android:name="playerCount"
+            android:summary="[Enter a number]"
+            android:defaultValue="[Enter a number]"
+            android:title="Player Count"
+            android:key="PlayerCount" />
+        <CheckBoxPreference android:title="dynamic players"
+            android:defaultValue="false"
+            android:summary="Can payer count vary in a range?"
+            android:key="checkboxPref"/>
+        
+    </PreferenceCategory>
+</PreferenceScreen>

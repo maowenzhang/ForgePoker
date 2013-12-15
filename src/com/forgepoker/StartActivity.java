@@ -52,6 +52,11 @@ public class StartActivity extends Activity {
 		startActivity(intent);
 	}
 	
+	public void onClickGameRule(View v) {
+		Intent intent = new Intent(this, RuleActivity.class);
+		startActivity(intent);
+	}
+	
 	public void copyAssetFileToSDCard(String assetName, String dir) throws IOException
     {  
         InputStream inputStream = this.getBaseContext().getAssets().open(assetName);  
