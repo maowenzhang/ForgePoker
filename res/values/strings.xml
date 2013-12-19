@@ -18,6 +18,19 @@
     <string name="prompt">提示</string>
     <string name="reselect">重选</string>
     <string name="pass">不出</string>
-    <string name="title_activity_rule">RuleActivity</string>
+    
+    <string name="title_activity_rule">Game Rule Settings</string>
 	<string name="playerSettings">Player Settings</string>
+	<string name="changePlayerCount">Can we change payer count?</string>
+	<string name="playerCount">Player count</string>
+	
+	<string name="deckSettings">Deck Settings</string>
+	<string name="deckContent">Deck content</string>
+	<string name="changeDeckCount">Can we change deck count?</string>
+	<string name="deckCount">Deck count</string>
+	<string name="baseCardCount">Base card count</string>
+	<string name="showRivalCards">Show rival\'s cards</string>
+	
+	<string name="PatternSettings">Pattern Settings</string>
+	<string name="patterns">Patterns</string>
 </resources>

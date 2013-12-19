@@ -266,6 +266,10 @@ public class RuleManager implements IPokerRule {
 	public boolean showRivalCards() {
 		return mShowRivalCards;
 	}
+	
+	public void setShowRivalCards(boolean value) {
+		mShowRivalCards = value;
+	}
 
 	public boolean hasSameSuit(List<Card> cards)
 	{

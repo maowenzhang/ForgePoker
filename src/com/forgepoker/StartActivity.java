@@ -58,13 +58,15 @@ public class StartActivity extends Activity {
 	}
 	
 	public void copyAssetFileToSDCard(String assetName, String dir) throws IOException
-    {  
-        InputStream inputStream = this.getBaseContext().getAssets().open(assetName);  
- 
+    {   
         FileUtils fileUtil = new FileUtils();
         fileUtil.creatSDDir("ForgePoker/"); 
-		fileUtil.creatSDFile("rule.json"); 
-		fileUtil.write2SDFromInput(dir, assetName, inputStream);
-		inputStream.close();
+        if(!fileUtil.isFileExist("rule.json"))
+        {
+        	InputStream inputStream = this.getBaseContext().getAssets().open(assetName);  
+        	fileUtil.creatSDFile("rule.json"); 
+    		fileUtil.write2SDFromInput(dir, assetName, inputStream);
+    		inputStream.close();
+        }
     }  
 }

@@ -3,11 +3,16 @@ package com.forgepoker;
 import java.lang.ref.WeakReference;
 
 import com.forgepoker.GameController.EPlayAction;
+import com.forgepoker.model.RuleManager;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.CheckBoxPreference;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -104,6 +109,7 @@ public class GameActivity extends Activity implements OnClickListener {
 
 		setContentView(R.layout.activity_game);
 
+		initSettings();
 		initControls();
 
 		mLayoutBid.setVisibility(View.GONE);
@@ -140,6 +146,13 @@ public class GameActivity extends Activity implements OnClickListener {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void initSettings()
+	{
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean showRivalCards = sharedPref.getBoolean("prefShowRivalCards", false);
+        RuleManager.get().setShowRivalCards(showRivalCards);
 	}
 
 	@Override

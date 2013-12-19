@@ -4,15 +4,47 @@
     android:layout_height="wrap_content" >
 
     <PreferenceCategory android:title="@string/playerSettings">
-        <EditTextPreference android:name="playerCount"
-            android:summary="[Enter a number]"
-            android:defaultValue="[Enter a number]"
-            android:title="Player Count"
-            android:key="editTextPref" />
-        <CheckBoxPreference android:title="dynamic players"
-            android:defaultValue="false"
-            android:summary="Can payer count vary in a range?"
-            android:key="checkboxPref"/>
-        
+        <CheckBoxPreference android:key="prefDynamicPlayers"
+            android:title="@string/changePlayerCount"
+            android:defaultValue="false" />
+        <ListPreference android:key="prefPlayerCnt" 
+            android:summary="3"
+            android:defaultValue="3"
+            android:title="@string/playerCount"
+            android:dialogTitle="Set player count"
+            android:entries="@array/PlayerCount"
+            android:entryValues="@array/PlayerCountValues"
+            android:dependency="prefDynamicPlayers" />        
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="@string/deckSettings">
+        <Preference android:key="prefDeckContent"
+            android:title="@string/deckContent" />
+        <CheckBoxPreference android:key="prefDynamicDecks"
+            android:title="@string/changeDeckCount"
+            android:defaultValue="false" />
+        <ListPreference android:key="prefDeckCnt" 
+            android:summary="1"
+            android:defaultValue="1"
+            android:title="@string/deckCount"
+            android:dialogTitle="Set deck count"
+            android:entries="@array/DeckCount"
+            android:entryValues="@array/DeckCountValues"
+            android:dependency="prefDynamicDecks" /> 
+        <ListPreference android:key="prefBaseCardCnt" 
+            android:summary="3"
+            android:defaultValue="3"
+            android:title="@string/baseCardCount"
+            android:dialogTitle="Set BaseCard count"
+            android:entries="@array/BaseCardCount"
+            android:entryValues="@array/BaseCardCountValues" /> 
+        <CheckBoxPreference android:key="prefShowRivalCards"
+            android:title="@string/showRivalCards"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="@string/PatternSettings">
+        <Preference android:key="prefPatterns"
+            android:title="@string/patterns" />
     </PreferenceCategory>
 </PreferenceScreen>

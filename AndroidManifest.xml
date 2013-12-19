@@ -8,7 +8,7 @@
     
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="17" />
+        android:targetSdkVersion="19" />
 
     <application
         android:allowBackup="true"
@@ -31,6 +31,14 @@
             android:label="@string/title_activity_game"
             android:screenOrientation="landscape" 
             android:configChanges="keyboardHidden|orientation">
+        </activity>
+        
+        <activity
+            android:name="com.forgepoker.RuleActivity"
+            android:label="@string/title_activity_rule"
+            android:screenOrientation="landscape" 
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">
         </activity>
         
     </application>
