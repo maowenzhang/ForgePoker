@@ -91,6 +91,18 @@ public class GameController {
 	// The player which joins on current device, It will be rendered to show the cards in hand.
 	private Player mThisJoinedPlayer = null;
 
+	static private class DefaultPlayerData 
+	{
+		String playerName;
+		int avatarId;
+		public DefaultPlayerData(String name, int _avatarId)
+		{
+			playerName = name;
+			avatarId = _avatarId;
+		}
+	}
+	private final List<DefaultPlayerData> mDefaultPlayerDataList = new ArrayList<DefaultPlayerData>();
+	
 	public Player ThisJoinedPlayer() {
 		return mThisJoinedPlayer;
 	}
@@ -286,6 +298,8 @@ public class GameController {
 
 		initTableSeat();
 		
+		initDefaultPlayerData();
+		
 		initPlayers();
 
 		dealCards();
@@ -297,6 +311,23 @@ public class GameController {
 			mAvailableSeat.add(i);
 	}
 	
+	private void initDefaultPlayerData() {
+		mDefaultPlayerDataList.add(
+			new DefaultPlayerData("Lucy", R.drawable.lady1));
+		mDefaultPlayerDataList.add(
+				new DefaultPlayerData("Wendy", R.drawable.lady2));
+		mDefaultPlayerDataList.add(
+				new DefaultPlayerData("Tom", R.drawable.man1));
+		mDefaultPlayerDataList.add(
+				new DefaultPlayerData("Jackson", R.drawable.man2));
+		mDefaultPlayerDataList.add(
+				new DefaultPlayerData("Sam", R.drawable.lord1));
+		mDefaultPlayerDataList.add(
+				new DefaultPlayerData("Peter", R.drawable.peasant1));
+		
+		Collections.shuffle(mDefaultPlayerDataList);
+	}
+	
 	private void initPlayers() {
 
 		// TODO: restore status when re-enter game
@@ -306,12 +337,16 @@ public class GameController {
 		// Player p2 = new Player("刘备", R.drawable.liubei, 100);
 		// Player p3 = new Player("诸葛亮", R.drawable.zhugeliang, 10);
 
-		mThisJoinedPlayer = new Player("Me", R.drawable.ic_launcher, 0, false);
-		mThisJoinedPlayer.seatIndex(getSeat());
+		int seat = getSeat();
+		DefaultPlayerData playerData = mDefaultPlayerDataList.get(seat);
+		mThisJoinedPlayer = new Player(playerData.playerName, playerData.avatarId, 0, false);
+		mThisJoinedPlayer.seatIndex(seat);
 		mPlayers.add(mThisJoinedPlayer);
 		for (int i = 1; i < mRule.playerCount(); ++i) {
-			Player p = new Player("player" + i, R.drawable.ic_launcher, 0, true);
-			p.seatIndex(getSeat());
+			seat = getSeat();
+			playerData = mDefaultPlayerDataList.get(seat);
+			Player p = new Player(playerData.playerName, playerData.avatarId, 0, true);
+			p.seatIndex(seat);
 			mPlayers.add(p);
 		}
 		

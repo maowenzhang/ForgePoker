@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.FontMetrics;
 import android.graphics.Rect;
 import android.util.Log;
 
@@ -179,21 +180,33 @@ public class GameViewRender {
 	}
 
 	private void renderPlayerBasic(Player p, Rect des) {
-		// TODO: draw name, score
-		mPaint.setStrokeWidth(0.5f);
-		mPaint.setColor(Color.BLACK);
-		mCanvas.save();
-		mCanvas.drawBitmap(mPlayerImages.get(p), null, des, mPaint);
-		mCanvas.drawText(p.name(), des.centerX(), des.centerY(), mPaint);
 		
+		// draw player avatar
+		mCanvas.drawBitmap(mPlayerImages.get(p), null, des, mPaint);
+		
+		mPaint.setStyle(Paint.Style.FILL);
+		mPaint.setColor(Color.WHITE);
+		mPaint.setStrokeWidth(0.5f);
+		mPaint.setTextSize(15);
+		
+		// draw player name
+		FontMetrics fontMetrics = mPaint.getFontMetrics();
+		float txtHeight = (fontMetrics.bottom - fontMetrics.ascent);
+		float txtWidth = mPaint.measureText(p.name());
+		float x = des.left + (des.width() > txtWidth ? ((des.width()-txtWidth)/2f) 
+				 : ((des.width()+(txtWidth-des.width()))/2f));
+		float y = des.bottom + txtHeight;
+		mCanvas.drawText(p.name(), x, y, mPaint);
+		
+		// draw lord mark
 		if(p.isLord()) {
+			mCanvas.save();
 			mPaint.setStyle(Paint.Style.STROKE);
 			mPaint.setStrokeWidth((float) 2.5);
 			mPaint.setColor(Color.RED);
 			mCanvas.drawRect(des, mPaint);
-		}
-		mCanvas.restore();
-		
+			mCanvas.restore();
+		}		
 	}
 
 	/**
@@ -202,9 +215,11 @@ public class GameViewRender {
 	 */
 	private void initCardsPosition() {
 
+		int gapOfAvatarCards = 30;
+		
 		if (mGameController.rule().showRivalCards()) {
 			int left = mLeftOrRightMargin;
-			int top = mBottomOrTopMargin + mAvatarWidthHeight + 15;
+			int top = mBottomOrTopMargin + mAvatarWidthHeight + gapOfAvatarCards;
 			int bottom = mScreenHeight - mCurPlayerDesRect.top - 15;
 			mLeftPlayerCardRect = new Rect(left, top, left + CardRender.mCardWidth,
 					bottom);
@@ -215,7 +230,7 @@ public class GameViewRender {
 		}
 		else {
 			int left = mLeftOrRightMargin;
-			int top = mBottomOrTopMargin + mAvatarWidthHeight + 15;
+			int top = mBottomOrTopMargin + mAvatarWidthHeight + gapOfAvatarCards;
 			int bottom = top + CardRender.mCardHeight;
 			mLeftPlayerCardRect = new Rect(left, top, left + CardRender.mCardWidth,
 					bottom);
