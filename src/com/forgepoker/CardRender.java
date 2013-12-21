@@ -1,8 +1,10 @@
 package com.forgepoker;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -82,7 +84,13 @@ public class CardRender {
 	}
 	
 	public void renderCardBack(Rect des) {
-		mCanvas.drawBitmap(mCardsImage, mCardBackPos, des, null);
+		
+		if(mBkgIndex >= mCardBkgNodes.size())
+			mBkgIndex = 0;
+		SceneNode node = mCardBkgNodes.get(mBkgIndex);
+		if(node != null) {
+			mCanvas.drawBitmap(mCardsImage, node.srcRect(), des, null);
+		}
 	}
 
 	public boolean isTouched(Card c, int touchPosX, int touchPosY) {
@@ -184,7 +192,8 @@ public class CardRender {
 	 */
 	private Map<Card, CardSceneNode> mCardNodes = new HashMap<Card, CardSceneNode>();
 	private Map<Card, CardSceneNode> mBaseCardNodes = new HashMap<Card, CardSceneNode>();
-	private Rect mCardBackPos;
+	private List<SceneNode> mCardBkgNodes = new ArrayList<SceneNode>();
+	private int mBkgIndex = 0;
 
 	private void initCardNodes() {
 		if (mCardNodes.size() > 0) {
@@ -218,12 +227,21 @@ public class CardRender {
 		}
 
 		// Card back is at 55th
-		int col = 2 % numOfCol;
 		int row = 54 / numOfCol;
-		int left = mCardWidthImage * col;
-		int top = mCardHeightImage * row;
-		int right = left + mCardWidthImage;
-		int bottom = top + mCardHeightImage;
-		mCardBackPos = new Rect(left, top, right, bottom);
+		for(int i = 2; i < 13; ++i)
+		{
+			int col = i % numOfCol;
+			int left = mCardWidthImage * col;
+			int top = mCardHeightImage * row;
+			int right = left + mCardWidthImage;
+			int bottom = top + mCardHeightImage;
+			Rect rect = new Rect(left, top, right, bottom);
+			SceneNode node = new SceneNode(rect);
+			node.srcRect(rect);
+			mCardBkgNodes.add(node);
+		}
+		
+		Random r = new Random();
+		mBkgIndex = r.nextInt(mCardBkgNodes.size());
 	}
 }
