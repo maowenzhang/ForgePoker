@@ -10,9 +10,6 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
-import android.view.Window;
-import android.view.WindowManager;
 
 public class RuleActivity extends PreferenceActivity 
 						  implements OnSharedPreferenceChangeListener {

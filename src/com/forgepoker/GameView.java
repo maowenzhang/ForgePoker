@@ -24,8 +24,6 @@ OnTouchListener, Runnable {
 	private SurfaceHolder mHolder;
 		
 	/** Draw graphics */
-	private Context mContext;	
-	
 	private GameController mGameController;
 	private GameViewRender mRender;	
 	public GameViewRender render() {
@@ -62,7 +60,6 @@ OnTouchListener, Runnable {
 		mHolder.addCallback(this);
 		mHasSurface = false;
 		
-		mContext = context;
 		mGameController = GameController.get();		
 		mGameController.init(context);
 		
@@ -105,8 +102,6 @@ OnTouchListener, Runnable {
 		mViewThread = null;
 	}
 
-	private int mTouchPosX = 0;
-	private int mTouchPosY = 0;
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		Log.d("forge", "GameView::onTouch");
@@ -121,15 +116,11 @@ OnTouchListener, Runnable {
 		switch (event.getAction()) {
 		// start touch
 		case MotionEvent.ACTION_DOWN:
-			mTouchPosX = x;
-			mTouchPosY = y;
 			mRender.OnTouch(x, y);
 			
 			break;
 		// touch and move
 		case MotionEvent.ACTION_MOVE:
-			mTouchPosX = x;
-			mTouchPosY = y;
 			break;
 			
 		// end touch

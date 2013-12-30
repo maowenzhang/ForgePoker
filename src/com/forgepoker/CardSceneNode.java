@@ -10,7 +10,8 @@ import com.forgepoker.model.Card;
  *
  */
 public class CardSceneNode extends SceneNode {
-	private int mImageIndex = 0;
+	//TODO: create sceneGraph to manager scene nodes
+	//private int mImageIndex = 0;
 	private Card mCard;
 	private boolean mIsHit = false;
 	
